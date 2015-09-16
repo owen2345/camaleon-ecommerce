@@ -1,0 +1,36 @@
+.ec-list-orders-address{
+  padding: 0;
+  list-style: none;
+  li{
+    overflow: hidden;
+    margin-bottom: 2px;
+    list-style: none !important;
+    strong{
+      width: 80px;
+      float: left;
+    }
+    span{
+      display: block;
+      float: left;
+    }
+  }
+}
+
+.shopping_cart_box{
+  h5{
+    margin-top: 0;
+    margin-bottom: 4px;
+  }
+  p{
+    margin-bottom: 4px;
+  }
+}
+.form-validate-ec label.error{
+  color: #ff4d00;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.form-validate-ec .form-control.error{
+  border-color: #ff4d00;
+}

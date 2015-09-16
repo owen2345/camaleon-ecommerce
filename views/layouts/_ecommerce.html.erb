@@ -1,0 +1,43 @@
+<div class="container">
+
+    <div class="row" style="min-height: 64px">
+        <div class="col-md-8">
+          <ol class="breadcrumb" style="margin: 0;">
+            <% @ecommerce_bredcrumb.each_with_index do |m, index| %>
+                <% if m[1].present? %>
+                    <li class="<%= "active" if @ecommerce_bredcrumb.size == index+1 %>"><a href="<%= m[1] %>"><%= m[0] %></a></li>
+                <% else %>
+                    <li class="<%= "active" if @ecommerce_bredcrumb.size == index+1 %>"><span><%= m[0] %></span></li>
+                <% end %>
+            <% end %>
+
+            <%= raw add_breadcrumb if defined?(add_breadcrumb) %>
+          </ol>
+        </div>
+
+        <div class="col-md-4">
+          <% if signin? %>
+              <div class="well shopping_cart_box">
+                <% @cart = current_site.carts.set_user(current_user).first_or_create(name: "Cart by #{current_user.id}")  %>
+                <h5>Shopping Cart</h5>
+                <p>(<%= @cart.the_items_count %>) Items, Total: <%= current_site.current_unit %> <%= @cart.the_amount_total %></p>
+                  <span>
+                    <a href="<%= @ecommerce_post_type.the_url %>" class="btn btn-default btn-xs">All Products</a>
+                    <% if( @cart.the_items_count.to_i > 0 ) %>
+                        <a href="<%= plugins_ecommerce_checkout_cart_path %>" class="btn btn-warning btn-xs">Purchase</a>
+                    <% end %>
+                    <a href="<%= plugins_ecommerce_orders_path %>" class="btn btn-success btn-xs">My Orders</a>
+                  </span>
+              </div>
+          <% else %>
+              <div class=" text-right">
+                <a href="<%= @ecommerce_post_type.the_url %>" class="btn btn-default">All Products</a>
+              </div>
+          <% end %>
+        </div>
+    </div>
+    <div class="clearfix" >
+        <%= render partial: "/flash_messages.html.erb" %>
+        <%= yield %>
+    </div>
+</div>
