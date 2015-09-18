@@ -16,3 +16,6 @@ get 'orders/:order/success' => 'front/orders#success', as: :order_success
 get 'orders/:order/cancel' => 'front/orders#cancel', as: :order_cancel
 post 'orders/:order/pay_by_bank_transfer' => 'front/orders#pay_by_bank_transfer', as: :order_pay_by_bank_transfer
 post 'orders/:order/pay_by_credit_card' => 'front/orders#pay_by_credit_card', as: :order_pay_by_credit_card
+post 'orders/:order/pay_by_credit_card_authorize_net' => 'front/orders#pay_by_credit_card_authorize_net', as: :order_pay_by_credit_card_authorize_net
+post 'orders/:order/pay_by_authorize_net' => 'front/orders#pay_by_authorize_net', as: :order_pay_by_authorize_net
+

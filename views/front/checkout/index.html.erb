@@ -59,7 +59,7 @@
           <select class="form-control" name="order[payment][shipping_method]" id="shipping_methods" >
             <% current_site.shipping_methods.each do |m|
               price = m.get_price_from_weight(total_weight)
-              if price.to_i > 0
+              if price.to_i >= 0
                 exist_shipping_method = true
                 weight_price = price unless weight_price.to_i > 0
             %>

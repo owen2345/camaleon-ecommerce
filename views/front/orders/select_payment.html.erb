@@ -44,6 +44,12 @@
                 <input type="hidden" name="payment[type]" value="credit_card">
                 <img src="http://i76.imgup.net/accepted_c22e0.png" alt="Buy now with Credit Card" />
             <% end  %>
+            <% if payment.options[:type] == 'authorize_net' %>
+                <h3>Method by Authorize.net</h3>
+                <p><%= payment.description %></p>
+                <input type="hidden" name="payment[type]" value="authorize_net">
+                <img src="http://i76.imgup.net/accepted_c22e0.png" alt="Buy now with Authorize.net" />
+            <% end  %>
           </div>
       <% end %>
     </div>

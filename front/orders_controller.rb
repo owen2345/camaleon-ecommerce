@@ -65,6 +65,10 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
       @payment_methods = current_site.payment_methods.find(@order.meta[:payment][:payment_id])
       @ecommerce_bredcrumb << ["Payment by Credit Card"]
       render 'pay_by_credit_card'
+    elsif @order.meta[:payment][:type] == 'authorize_net'
+      @payment_methods = current_site.payment_methods.find(@order.meta[:payment][:payment_id])
+      @ecommerce_bredcrumb << ['Payment by Credit Card']
+      render 'pay_by_credit_card_authorize_net'
     else
       @payment_methods = current_site.payment_methods.find(@order.meta[:payment][:payment_id])
       @ecommerce_bredcrumb << ["Payment by Bank Transfer"]
@@ -96,6 +100,22 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
       redirect_to action: :index
     end
    end
+
+  def pay_by_credit_card_authorize_net
+    @order = current_site.orders.find_by_slug(params[:order])
+    res = pay_by_credit_card_authorize_net_run
+    if res[:error].present?
+      @error = res[:error]
+      @payment_methods = current_site.payment_methods.find(@order.meta[:payment][:payment_id])
+      render 'pay_by_credit_card_authorize_net'
+    else
+      @order.update({status: 'received'})
+      @order.details.update({received_at: Time.now})
+      @order.set_meta('pay_authorize_net', params)
+      flash[:notice] = 'Updated Pay'
+      redirect_to action: :index
+    end
+  end
 
   def success
     @order = current_site.orders.find_by_slug(params[:order])
@@ -183,8 +203,6 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
     end
   end
 
-
-
   def pay_by_paypal
     payment = @order.meta[:payment]
     billing_address = @order.meta[:billing_address]
@@ -231,6 +249,57 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
     redirect_to @gateway.redirect_url_for(response.token)
   end
 
+  def pay_by_credit_card_authorize_net_run
+    payment = @order.meta[:payment]
+    billing_address = @order.meta[:billing_address]
+    details = @order.meta[:details]
+    @payment_method = current_site.payment_methods.find(payment[:payment_id])
+    @amount = to_cents(payment[:amount].to_f)
+
+    @params = {
+      :order_id => @order.slug,
+      :currency => current_site.currency_code,
+      :email => details[:email],
+      :billing_address => {:name => "#{billing_address[:first_name]} #{billing_address[:last_name]}",
+                           :address1 => billing_address[:address1],
+                           :address2 => billing_address[:address2],
+                           :city => billing_address[:city],
+                           :state => billing_address[:state],
+                           :country => billing_address[:country],
+                           :zip => billing_address[:zip]
+      },
+      :description => 'Buy Products',
+      :ip => request.remote_ip
+    }
+
+    authorize_net_options = {
+      :login => @payment_method.options[:authorize_net_login_id],
+      :password => @payment_method.options[:authorize_net_transaction_key]
+    }
+
+    ActiveMerchant::Billing::Base.mode = @payment_method.options[:authorize_net_sandbox].to_s.to_bool ? :test : :production
+
+    @credit_card = ActiveMerchant::Billing::CreditCard.new(
+      :first_name => params[:firstName],
+      :last_name => params[:lastName],
+      :number => params[:cardNumber],
+      :month => params[:expMonth],
+      :year => "20#{params[:expYear]}",
+      :verification_value => params[:cvCode]
+    )
+
+    if @credit_card.valid?
+      @gateway = ActiveMerchant::Billing::AuthorizeNetGateway.new(authorize_net_options)
+      response = @gateway.purchase(@amount, @credit_card, @params)
+      if response.success?
+        return {success: 'Paid Correct'} #puts "Successfully charged $#{sprintf("%.2f", @amount / 100)} to the credit card #{@credit_card.display_number}"
+      else
+        return {error: response.message} #raise StandardError, response.message
+      end
+    else
+      return {error: 'Credit Card Invalid'}
+    end
+  end
 
   def get_items(products)
     products.collect do |key, product|
