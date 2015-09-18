@@ -53,6 +53,24 @@
                   <li><strong><%= t('plugin.ecommerce.table.details') %>:</strong> <span> <%= @payment_method.options[:bank_transfer_detail] %></span></li>
                 </ul>
               <% end  %>
+
+              <% if @payment_method.options[:type] == 'authorize_net' %>
+                  <h3><%= t('plugin.ecommerce.method_authorize_net') %></h3>
+                  <ul class="ec-list-orders-address">
+                    <li>
+                      <strong><%= t('plugin.ecommerce.table.login_id') %>:</strong>
+                      <span> <%= @payment_method.options[:authorize_net_login_id] %></span>
+                    </li>
+                    <li>
+                      <strong><%= t('plugin.ecommerce.table.transaction_key') %>:</strong>
+                      <span> <%= @payment_method.options[:authorize_net_transaction_key] %></span>
+                    </li>
+                    <li>
+                      <strong><%= t('plugin.ecommerce.table.sandbox') %>:</strong>
+                      <span> <%= @payment_method.options[:authorize_net_sandbox].to_s.to_bool ? 'Yes' : 'No' %></span>
+                    </li>
+                  </ul>
+              <% end %>
             </div>
           </div>
 

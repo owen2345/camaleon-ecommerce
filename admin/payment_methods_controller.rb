@@ -46,11 +46,13 @@ class Plugins::Ecommerce::Admin::PaymentMethodsController < Plugins::Ecommerce::
 
     if defined?(params[:options][:type]) && params[:options][:type] == 'paypal'
       unless valid_paypal_data(params[:options])
-        flash.now[:error] = "#{t('plugin.ecommerce.message.error_paypal_values')})}"
+        flash.now[:error] = "#{t('plugin.ecommerce.message.error_paypal_values')}"
         render 'form'
         return
       end
     end
+
+    #FIXME create valid_authorize_net_data function
 
     if @payment_method.update(data)
       @payment_method.set_meta('_default',params[:options])

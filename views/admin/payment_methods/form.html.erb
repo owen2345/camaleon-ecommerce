@@ -40,6 +40,7 @@
                   <li class="<%= 'active' if options[:type] == 'bank_transfer' %>"><a href="#tab8" data-toggle="tab"><%= t('plugin.ecommerce.by_bank_transfer') %></a></li>
                   <li class="<%= 'active' if options[:type] == 'paypal' %>"><a href="#tab9" data-toggle="tab"><%= t('plugin.ecommerce.by_paypal') %></a></li>
                   <li class="<%= 'active' if options[:type] == 'credit_card' %>"><a href="#tab7" data-toggle="tab"><%= t('plugin.ecommerce.by_credit_card') %></a></li>
+                  <li class="<%= 'active' if options[:type] == 'authorize_net' %>"><a href="#tab10" data-toggle="tab"><%= t('plugin.ecommerce.by_authorize_net') %></a></li>
                 </ul>
                 <div class="panel-body tab-content">
 
@@ -90,6 +91,25 @@
                     </div>
                     <div class="form-group">
                       <div class="checkbox"><label><input type="checkbox" name="options[cc_paypal_sandbox]" value="1" <%= 'checked' if options[:cc_paypal_sandbox] %>>  <%= t('plugin.ecommerce.table.sandbox') %> </label></div>
+                    </div>
+                  </div>
+
+                  <div class="tab-pane <%= 'active' if options[:type] == 'authorize_net' %>" id="tab10">
+                    <%= hidden_field_tag('options[type]', 'authorize_net') %>
+                    <div class="form-group">
+                      <label><%= t('plugin.ecommerce.table.login_id') %></label><br>
+                      <%= text_field_tag('options[authorize_net_login_id]', options[:authorize_net_login_id], class: 'form-control required') %>
+                    </div>
+                    <div class="form-group">
+                      <label><%= t('plugin.ecommerce.table.transaction_key') %></label><br>
+                      <%= text_field_tag('options[authorize_net_transaction_key]', options[:authorize_net_transaction_key], class: 'form-control required') %>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="options[authorize_net_sandbox]" value="1" <%= 'checked' if options[:authorize_net_sandbox] %>>  <%= t('plugin.ecommerce.table.sandbox') %>
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </div>
