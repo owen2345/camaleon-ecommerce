@@ -1,11 +1,11 @@
 Site.class_eval do
   #attr_accessible :my_id
-  has_many :carts, :class_name => "Plugins::Ecommerce::Models::Cart", foreign_key: :parent_id, dependent: :destroy
-  has_many :orders, :class_name => "Plugins::Ecommerce::Models::Order", foreign_key: :parent_id, dependent: :destroy
-  has_many :payment_methods, :class_name => "Plugins::Ecommerce::Models::PaymentMethod", foreign_key: :parent_id, dependent: :destroy
-  has_many :shipping_methods, :class_name => "Plugins::Ecommerce::Models::ShippingMethod", foreign_key: :parent_id, dependent: :destroy
-  has_many :coupons, :class_name => "Plugins::Ecommerce::Models::Coupon", foreign_key: :parent_id, dependent: :destroy
-  has_many :tax_rates, :class_name => "Plugins::Ecommerce::Models::TaxRate", foreign_key: :parent_id, dependent: :destroy
+  has_many :carts, :class_name => "Plugins::Ecommerce::Cart", foreign_key: :parent_id, dependent: :destroy
+  has_many :orders, :class_name => "Plugins::Ecommerce::Order", foreign_key: :parent_id, dependent: :destroy
+  has_many :payment_methods, :class_name => "Plugins::Ecommerce::PaymentMethod", foreign_key: :parent_id, dependent: :destroy
+  has_many :shipping_methods, :class_name => "Plugins::Ecommerce::ShippingMethod", foreign_key: :parent_id, dependent: :destroy
+  has_many :coupons, :class_name => "Plugins::Ecommerce::Coupon", foreign_key: :parent_id, dependent: :destroy
+  has_many :tax_rates, :class_name => "Plugins::Ecommerce::TaxRate", foreign_key: :parent_id, dependent: :destroy
 end
 
 SiteDecorator.class_eval do
