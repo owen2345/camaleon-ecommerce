@@ -15,12 +15,12 @@ class Plugins::Ecommerce::Admin::PaymentMethodsController < Plugins::Ecommerce::
 
   def new
     @payment_method = current_site.payment_methods.new
-    admin_breadcrumb_add("#{t('plugin.camaleon_ecommerce.new')}")
+    admin_breadcrumb_add("#{t('plugin.ecommerce.new')}")
     render 'form'
   end
 
   def show
-    admin_breadcrumb_add("#{t('plugin.camaleon_ecommerce.table.details')}")
+    admin_breadcrumb_add("#{t('plugin.ecommerce.table.details')}")
     @payment_method = @payment_method.decorate
   end
 
@@ -46,7 +46,7 @@ class Plugins::Ecommerce::Admin::PaymentMethodsController < Plugins::Ecommerce::
 
     if defined?(params[:options][:type]) && params[:options][:type] == 'paypal'
       unless valid_paypal_data(params[:options])
-        flash.now[:error] = "#{t('plugin.camaleon_ecommerce.message.error_paypal_values')}"
+        flash.now[:error] = "#{t('plugin.ecommerce.message.error_paypal_values')}"
         render 'form'
         return
       end

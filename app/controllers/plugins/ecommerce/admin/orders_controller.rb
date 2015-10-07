@@ -7,7 +7,7 @@
   See the  GNU Affero General Public License (GPLv3) for more details.
 =end
 class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminController
-  before_action :set_order, only: ['show','edit','update','destroy']
+  before_action :set_order, only: ['show', 'edit', 'update', 'destroy']
 
   def index
     orders = current_site.orders
@@ -17,13 +17,13 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
     end
     if params[:c].present?
       #orders = orders.where(user_id: User.joins(:metas).where(usermeta: {key: ['first_name','last_name']}).where("usermeta.value LIKE ?","%#{params[:c]}%").pluck(:id))
-      orders = orders.joins(:details).where("plugins_order_details.customer LIKE ?","%#{params[:c]}%")
+      orders = orders.joins(:details).where("plugins_order_details.customer LIKE ?", "%#{params[:c]}%")
     end
     if params[:e].present?
-      orders = orders.joins(:details).where("plugins_order_details.email LIKE ?","%#{params[:e]}%")
+      orders = orders.joins(:details).where("plugins_order_details.email LIKE ?", "%#{params[:e]}%")
     end
     if params[:p].present?
-      orders = orders.joins(:details).where("plugins_order_details.phone LIKE ?","%#{params[:p]}%")
+      orders = orders.joins(:details).where("plugins_order_details.phone LIKE ?", "%#{params[:p]}%")
     end
     if params[:s].present?
       orders = orders.where(status: params[:s])
@@ -31,34 +31,42 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
 
     @orders = orders.paginate(:page => params[:page], :per_page => current_site.admin_per_page)
   end
+
   def show
     admin_breadcrumb_add("#{t('plugin.ecommerce.table.details')}")
     @order = @order.decorate
   end
+
   def new
     @order = current_site.orders.new
     render 'form'
   end
+
   def edit
     admin_breadcrumb_add("#{t('admin.button.edit')}")
     render 'form'
   end
+
   def update
     @order.details.update(@order.details.attributes.merge(params[:order][:details]))
     @order.set_meta("billing_address", @order.meta[:billing_address].merge(params[:order][:billing_address]))
     @order.set_meta("shipping_address", @order.meta[:shipping_address].merge(params[:order][:shipping_address]))
-    flash[:notice] = "#{t('plugin.camaleon_ecommerce.message.order', status: "#{t('plugin.camaleon_ecommerce.message.updated')}")}"
+    flash[:notice] = "#{t('plugin.ecommerce.message.order', status: "#{t('plugin.ecommerce.message.updated')}")}"
     redirect_to action: :show, id: params[:id]
   end
 
   # accepted order
   def accepted
     @order = current_site.orders.find_by_slug(params[:order_id])
+    r = {order: @order}; hooks_run('plugin_ecommerce_before_accepted_order', r)
     @order.update({status: 'accepted'})
     @order.details.update({accepted_at: Time.now})
-    flash[:info] = "#{t('plugin.camaleon_ecommerce.message.order', status: "#{t('plugin.camaleon_ecommerce.message.accepted')}")}"
+    message = "#{t('plugin.ecommerce.message.order', status: "#{t('plugin.ecommerce.message.accepted')}")}"
+    r = {order: @order, message: message}; hooks_run('plugin_ecommerce_after_accepted_order', r)
+    flash[:info] = r[:message]
     redirect_to action: :show, id: params[:order_id]
   end
+
   # shipped order
   def shipped
     @order = current_site.orders.find_by_slug(params[:order_id])
@@ -66,7 +74,7 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
     @order.details.update({shipped_at: Time.now})
     code = params[:payment][:consignment_number]
     @order.set_meta("payment", @order.meta[:payment].merge({consignment_number: code}))
-    flash[:info] = "#{t('plugin.camaleon_ecommerce.message.order', status: "#{t('plugin.camaleon_ecommerce.message.shipped')}")}"
+    flash[:info] = "#{t('plugin.ecommerce.message.order', status: "#{t('plugin.ecommerce.message.shipped')}")}"
     redirect_to action: :show, id: params[:order_id]
   end
 

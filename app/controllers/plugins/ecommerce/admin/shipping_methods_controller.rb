@@ -15,12 +15,12 @@ class Plugins::Ecommerce::Admin::ShippingMethodsController < Plugins::Ecommerce:
 
   def new
     @shipping_method = current_site.shipping_methods.new
-    admin_breadcrumb_add("#{t('plugin.camaleon_ecommerce.new')}")
+    admin_breadcrumb_add("#{t('plugin.ecommerce.new')}")
     render 'form'
   end
 
   def show
-    admin_breadcrumb_add("#{t('plugin.camaleon_ecommerce.table.details')}")
+    admin_breadcrumb_add("#{t('plugin.ecommerce.table.details')}")
   end
 
   def edit

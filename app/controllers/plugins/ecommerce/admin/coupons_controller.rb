@@ -15,7 +15,7 @@ class Plugins::Ecommerce::Admin::CouponsController < Plugins::Ecommerce::AdminCo
 
   def new
     @coupon = current_site.coupons.new
-    admin_breadcrumb_add("#{t('plugin.camaleon_ecommerce.new')}")
+    admin_breadcrumb_add("#{t('plugin.ecommerce.new')}")
     render 'form'
   end
 
