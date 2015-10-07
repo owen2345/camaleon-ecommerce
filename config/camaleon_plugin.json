@@ -1,0 +1,47 @@
+{
+  "title": "E-Commerce",
+  "descr": "Plugins E-commerce",
+  "version": "0.2",
+  "key": "ecommerce",
+  "helpers": [
+    "Plugins::Ecommerce::EcommerceHelper",
+    "Plugins::Ecommerce::EcommerceFunctionsHelper"
+  ],
+  "options": [
+  ],
+  "hooks": {
+    "on_active": [
+      "ecommerce_on_active"
+    ],
+    "on_inactive": [
+      "ecommerce_on_inactive"
+    ],
+    "on_upgrade": [
+      "ecommerce_on_upgrade"
+    ],
+    "front_before_load": [
+      "ecommerce_front_before_load"
+    ],
+    "admin_before_load": [
+      "ecommerce_admin_before_load"
+    ],
+    "on_render_post": [
+      "ecommerce_on_render_post"
+    ],
+    "on_render_post_type": [
+      "ecommerce_on_render_post_type"
+    ],
+    "list_post": [
+      "ecommerce_admin_list_post"
+    ],
+    "app_before_load": [
+      "ecommerce_app_before_load"
+    ],
+    "edit_post": [
+      "ecommerce_form_post"
+    ],
+    "new_post": [
+      "ecommerce_form_post"
+    ]
+  }
+}
