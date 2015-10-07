@@ -29,7 +29,7 @@ class Plugins::Ecommerce::Admin::ShippingMethodsController < Plugins::Ecommerce:
   end
 
   def create
-    data = params[:plugins_ecommerce_models_shipping_method]
+    data = params[:plugins_ecommerce_shipping_method]
     @shipping_method = current_site.shipping_methods.new(data)
     if @shipping_method.save
       @shipping_method.set_meta('_default',params[:options])
@@ -41,7 +41,7 @@ class Plugins::Ecommerce::Admin::ShippingMethodsController < Plugins::Ecommerce:
   end
 
   def update
-    data = params[:plugins_ecommerce_models_shipping_method]
+    data = params[:plugins_ecommerce_shipping_method]
     if @shipping_method.update(data)
       @shipping_method.set_meta('_default',params[:options])
       flash[:notice] = t('admin.post_type.message.updated')

@@ -28,7 +28,7 @@ class Plugins::Ecommerce::Admin::CouponsController < Plugins::Ecommerce::AdminCo
   end
 
   def create
-    data = params[:plugins_ecommerce_models_coupon]
+    data = params[:plugins_ecommerce_coupon]
     @coupon = current_site.coupons.new(data)
     if @coupon.save
       @coupon.set_meta('_default', params[:options])
@@ -40,7 +40,7 @@ class Plugins::Ecommerce::Admin::CouponsController < Plugins::Ecommerce::AdminCo
   end
 
   def update
-    data = params[:plugins_ecommerce_models_coupon]
+    data = params[:plugins_ecommerce_coupon]
     if @coupon.update(data)
       @coupon.set_meta('_default', params[:options])
       flash[:notice] = t('admin.post_type.message.updated')

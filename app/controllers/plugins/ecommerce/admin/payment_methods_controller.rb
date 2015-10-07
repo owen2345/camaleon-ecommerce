@@ -30,7 +30,7 @@ class Plugins::Ecommerce::Admin::PaymentMethodsController < Plugins::Ecommerce::
   end
 
   def create
-    data = params[:plugins_ecommerce_models_payment_method]
+    data = params[:plugins_ecommerce_payment_method]
     @payment_method = current_site.payment_methods.new(data)
     if @payment_method.save
       @payment_method.set_meta('_default',params[:options])
@@ -42,7 +42,7 @@ class Plugins::Ecommerce::Admin::PaymentMethodsController < Plugins::Ecommerce::
   end
 
   def update
-    data = params[:plugins_ecommerce_models_payment_method]
+    data = params[:plugins_ecommerce_payment_method]
 
     if defined?(params[:options][:type]) && params[:options][:type] == 'paypal'
       unless valid_paypal_data(params[:options])

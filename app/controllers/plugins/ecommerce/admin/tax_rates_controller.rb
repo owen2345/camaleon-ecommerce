@@ -28,7 +28,7 @@ class Plugins::Ecommerce::Admin::TaxRatesController < Plugins::Ecommerce::AdminC
   end
 
   def create
-    data = params[:plugins_ecommerce_models_tax_rate]
+    data = params[:plugins_ecommerce_tax_rate]
     @tax_rate = current_site.tax_rates.new(data)
     if @tax_rate.save
       @tax_rate.set_meta('_default', params[:options])
@@ -40,7 +40,7 @@ class Plugins::Ecommerce::Admin::TaxRatesController < Plugins::Ecommerce::AdminC
   end
 
   def update
-    data = params[:plugins_ecommerce_models_tax_rate]
+    data = params[:plugins_ecommerce_tax_rate]
     if @tax_rate.update(data)
       @tax_rate.set_meta('_default', params[:options])
       flash[:notice] = t('admin.post_type.message.updated')
