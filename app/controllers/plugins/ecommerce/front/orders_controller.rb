@@ -34,7 +34,7 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
       render json: {error: error}
     else
       coupon = coupon.decorate
-      render json: { data: {text: "#{coupon.the_amount}", options: coupon.options, code: coupon.slug, current_unit: current_site.current_unit} }
+      render json: {data: {text: "#{coupon.the_amount}", options: coupon.options, code: coupon.slug, current_unit: current_site.current_unit}}
     end
   end
 
@@ -52,7 +52,7 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
 
   def set_select_payment
     @order = current_site.orders.find_by_slug(params[:order])
-    @order.set_meta("payment",@order.meta[:payment].merge(params[:payment]))
+    @order.set_meta("payment", @order.meta[:payment].merge(params[:payment]))
     redirect_to plugins_ecommerce_order_pay_path(order: @order.slug)
   end
 
@@ -99,19 +99,16 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
       flash[:notice] = "Updated Pay"
       redirect_to action: :index
     end
-   end
+  end
 
   def pay_by_credit_card_authorize_net
     @order = current_site.orders.find_by_slug(params[:order])
-    res = pay_by_credit_card_authorize_net_run
+    res = payment_pay_by_credit_card_authorize_net(@order)
     if res[:error].present?
       @error = res[:error]
       @payment_methods = current_site.payment_methods.find(@order.meta[:payment][:payment_id])
       render 'pay_by_credit_card_authorize_net'
     else
-      @order.update({status: 'received'})
-      @order.details.update({received_at: Time.now})
-      @order.set_meta('pay_authorize_net', params)
       flash[:notice] = 'Updated Pay'
       redirect_to action: :index
     end
@@ -125,6 +122,7 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
     flash[:notice] = "Updated Pay"
     redirect_to action: :index
   end
+
   def cancel
     #@order = current_site.orders.find_by_slug(params[:order])
     flash[:notice] = "Cancel Pay by Paypal"
@@ -134,127 +132,11 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
   private
 
 
-
-
   def pay_by_credit_card_run
     payment = @order.meta[:payment]
     billing_address = @order.meta[:billing_address]
     details = @order.meta[:details]
     @payment_method = current_site.payment_methods.find(payment[:payment_id])
-
-    @params = {
-        :order_id => @order.slug,
-        :currency => current_site.currency_code,
-        :email => details[:email],
-        :billing_address => { :name => "#{billing_address[:first_name]} #{billing_address[:last_name]}",
-                              :address1 => billing_address[:address1],
-                              :address2 => billing_address[:address2],
-                              :city => billing_address[:city],
-                              :state => billing_address[:state],
-                              :country => billing_address[:country],
-                              :zip => billing_address[:zip]
-        } ,
-        :description => 'Buy Products',
-        :ip => request.remote_ip
-    }
-
-    @params_test = {
-        ip: '54.88.208.145',
-        billing_address: {
-            name:      "Flaying Cakes",
-            address1:  "123 5th Av.",
-            city:      "Ashburn",
-            state:     "LIS",
-            country:   "US",
-            zip:       "20147"
-        }
-    }
-
-    @amount = to_cents(payment[:amount].to_f)
-
-    paypal_options = {
-        :login => @payment_method.options[:cc_paypal_login],
-        :password => @payment_method.options[:cc_paypal_password],
-        :signature => @payment_method.options[:cc_paypal_signature]
-    }
-
-    ActiveMerchant::Billing::Base.mode = @payment_method.options[:cc_paypal_sandbox].to_s.to_bool ? :test : :production
-    @gateway = ActiveMerchant::Billing::PaypalGateway.new(paypal_options)
-
-    @credit_card = ActiveMerchant::Billing::CreditCard.new(
-        :first_name         => params[:firstName],
-        :last_name          => params[:lastName],
-        :number             => params[:cardNumber],
-        :month              => params[:expMonth],
-        :year               => "20#{params[:expYear]}",
-        :verification_value => params[:cvCode])
-
-    if @credit_card.validate.empty?
-      puts "--#{@params.inspect}--"
-      response = @gateway.verify(@credit_card, @params)
-      #response = @gateway.purchase(@amount, @credit_card, @params)
-      if response.success?
-         return {success: 'Paid Correct'} #puts "Successfully charged $#{sprintf("%.2f", @amount / 100)} to the credit card #{@credit_card.display_number}"
-      else
-        return {error: response.message} #raise StandardError, response.message
-      end
-    else
-      return {error: "Credit Card Invalid"}
-    end
-  end
-
-  def pay_by_paypal
-    payment = @order.meta[:payment]
-    billing_address = @order.meta[:billing_address]
-    details = @order.meta[:details]
-    @payment_method = current_site.payment_methods.find(payment[:payment_id])
-
-    ActiveMerchant::Billing::Base.mode = @payment_method.options[:paypal_sandbox].to_s.to_bool ? :test : :production
-    paypal_options = {
-        :login => @payment_method.options[:paypal_login],
-        :password => @payment_method.options[:paypal_password],
-        :signature => @payment_method.options[:paypal_signature]
-    }
-
-    @gateway = ActiveMerchant::Billing::PaypalExpressGateway.new(paypal_options)
-
-    #subtotal, shipping, total, tax = get_totals(payment)
-    @options = {
-        brand_name: current_site.name,
-
-        #allow_guest_checkout: true,
-        #items: get_items(@order.meta[:products]),
-
-        items: [{number: @order.slug, name: 'Buy Products', amount: to_cents(payment[:amount].to_f)}],
-        :order_id => @order.slug,
-        :currency => current_site.currency_code,
-        :email => details[:email],
-        :billing_address => { :name => "#{billing_address[:first_name]} #{billing_address[:last_name]}",
-                              :address1 => billing_address[:address1],
-                              :address2 => billing_address[:address2],
-                              :city => billing_address[:city],
-                              :state => billing_address[:state],
-                              :country => billing_address[:country],
-                              :zip => billing_address[:zip]
-        } ,
-        :description => 'Buy Products',
-        :ip => request.remote_ip,
-        :return_url => plugins_ecommerce_order_success_url(order: @order.slug),
-        :cancel_return_url => plugins_ecommerce_order_cancel_url(order: @order.slug)
-    }
-
-    #response = @gateway.setup_purchase(to_cents(payment[:amount].to_f), @options)
-    response = @gateway.setup_purchase(to_cents(payment[:amount].to_f), @options)
-
-    redirect_to @gateway.redirect_url_for(response.token)
-  end
-
-  def pay_by_credit_card_authorize_net_run
-    payment = @order.meta[:payment]
-    billing_address = @order.meta[:billing_address]
-    details = @order.meta[:details]
-    @payment_method = current_site.payment_methods.find(payment[:payment_id])
-    @amount = to_cents(payment[:amount].to_f)
 
     @params = {
       :order_id => @order.slug,
@@ -272,12 +154,16 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
       :ip => request.remote_ip
     }
 
-    authorize_net_options = {
-      :login => @payment_method.options[:authorize_net_login_id],
-      :password => @payment_method.options[:authorize_net_transaction_key]
+    @amount = to_cents(payment[:amount].to_f)
+
+    paypal_options = {
+      :login => @payment_method.options[:cc_paypal_login],
+      :password => @payment_method.options[:cc_paypal_password],
+      :signature => @payment_method.options[:cc_paypal_signature]
     }
 
-    ActiveMerchant::Billing::Base.mode = @payment_method.options[:authorize_net_sandbox].to_s.to_bool ? :test : :production
+    ActiveMerchant::Billing::Base.mode = @payment_method.options[:cc_paypal_sandbox].to_s.to_bool ? :test : :production
+    @gateway = ActiveMerchant::Billing::PaypalGateway.new(paypal_options)
 
     @credit_card = ActiveMerchant::Billing::CreditCard.new(
       :first_name => params[:firstName],
@@ -285,29 +171,74 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
       :number => params[:cardNumber],
       :month => params[:expMonth],
       :year => "20#{params[:expYear]}",
-      :verification_value => params[:cvCode]
-    )
+      :verification_value => params[:cvCode])
 
-    if @credit_card.valid?
-      @gateway = ActiveMerchant::Billing::AuthorizeNetGateway.new(authorize_net_options)
-      response = @gateway.purchase(@amount, @credit_card, @params)
+    if @credit_card.validate.empty?
+      puts "--#{@params.inspect}--"
+      response = @gateway.verify(@credit_card, @params)
+      #response = @gateway.purchase(@amount, @credit_card, @params)
       if response.success?
         return {success: 'Paid Correct'} #puts "Successfully charged $#{sprintf("%.2f", @amount / 100)} to the credit card #{@credit_card.display_number}"
       else
         return {error: response.message} #raise StandardError, response.message
       end
     else
-      return {error: 'Credit Card Invalid'}
+      return {error: "Credit Card Invalid"}
     end
+  end
+
+  def pay_by_paypal
+    payment = @order.meta[:payment]
+    billing_address = @order.meta[:billing_address]
+    details = @order.meta[:details]
+    @payment_method = current_site.payment_methods.find(payment[:payment_id])
+
+    ActiveMerchant::Billing::Base.mode = @payment_method.options[:paypal_sandbox].to_s.to_bool ? :test : :production
+    paypal_options = {
+      :login => @payment_method.options[:paypal_login],
+      :password => @payment_method.options[:paypal_password],
+      :signature => @payment_method.options[:paypal_signature]
+    }
+
+    @gateway = ActiveMerchant::Billing::PaypalExpressGateway.new(paypal_options)
+
+    #subtotal, shipping, total, tax = get_totals(payment)
+    @options = {
+      brand_name: current_site.name,
+
+      #allow_guest_checkout: true,
+      #items: get_items(@order.meta[:products]),
+
+      items: [{number: @order.slug, name: 'Buy Products', amount: to_cents(payment[:amount].to_f)}],
+      :order_id => @order.slug,
+      :currency => current_site.currency_code,
+      :email => details[:email],
+      :billing_address => {:name => "#{billing_address[:first_name]} #{billing_address[:last_name]}",
+                           :address1 => billing_address[:address1],
+                           :address2 => billing_address[:address2],
+                           :city => billing_address[:city],
+                           :state => billing_address[:state],
+                           :country => billing_address[:country],
+                           :zip => billing_address[:zip]
+      },
+      :description => 'Buy Products',
+      :ip => request.remote_ip,
+      :return_url => plugins_ecommerce_order_success_url(order: @order.slug),
+      :cancel_return_url => plugins_ecommerce_order_cancel_url(order: @order.slug)
+    }
+
+    response = @gateway.setup_purchase(to_cents(payment[:amount].to_f), @options)
+
+    redirect_to @gateway.redirect_url_for(response.token)
   end
 
   def get_items(products)
     products.collect do |key, product|
       {
-          :name => product[:product_title],
-          :number => product[:product_id],
-          :quantity => product[:qty],
-          :amount => to_cents(product[:price].to_f),
+        :name => product[:product_title],
+        :number => product[:product_id],
+        :quantity => product[:qty],
+        :amount => to_cents(product[:price].to_f),
       }
     end
   end
