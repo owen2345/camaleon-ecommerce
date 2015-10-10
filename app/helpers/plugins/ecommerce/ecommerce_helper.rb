@@ -59,7 +59,7 @@ module Plugins::Ecommerce::EcommerceHelper
       if pt.manage_tags?
         items_i << {icon: "tags", title: t('admin.post_type.tags'), url: admin_post_type_post_tags_path(pt.id)} if can? :post_tags, pt
       end
-      items_i << {icon: "reorder", title: "#{t('plugin.ecommerce.orders')} <div class=\"informer informer-success\">#{current_site.orders.size}</div>", url: admin_plugins_ecommerce_orders_path}
+      items_i << {icon: "reorder", title: "<span>#{t('plugin.ecommerce.orders')} <small class='label label-primary'>#{current_site.orders.size}</small></span>", url: admin_plugins_ecommerce_orders_path}
       items_i << {icon: "money", title: t('plugin.ecommerce.tax_rates'), url: admin_plugins_ecommerce_tax_rates_path}
       items_i << {icon: "taxi", title: t('plugin.ecommerce.shipping_methods'), url: admin_plugins_ecommerce_shipping_methods_path}
       items_i << {icon: "credit-card", title: t('plugin.ecommerce.payment_methods'), url: admin_plugins_ecommerce_payment_methods_path}
