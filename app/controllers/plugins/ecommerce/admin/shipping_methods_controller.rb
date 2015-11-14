@@ -24,7 +24,7 @@ class Plugins::Ecommerce::Admin::ShippingMethodsController < Plugins::Ecommerce:
   end
 
   def edit
-    admin_breadcrumb_add("#{t('admin.button.edit')}")
+    admin_breadcrumb_add("#{t('camaleon_cms.admin.button.edit')}")
     render 'form'
   end
 
@@ -33,7 +33,7 @@ class Plugins::Ecommerce::Admin::ShippingMethodsController < Plugins::Ecommerce:
     @shipping_method = current_site.shipping_methods.new(data)
     if @shipping_method.save
       @shipping_method.set_meta('_default',params[:options])
-      flash[:notice] = t('admin.post_type.message.created')
+      flash[:notice] = t('camaleon_cms.admin.post_type.message.created')
       redirect_to action: :index
     else
       render 'form'
@@ -44,7 +44,7 @@ class Plugins::Ecommerce::Admin::ShippingMethodsController < Plugins::Ecommerce:
     data = params[:plugins_ecommerce_shipping_method]
     if @shipping_method.update(data)
       @shipping_method.set_meta('_default',params[:options])
-      flash[:notice] = t('admin.post_type.message.updated')
+      flash[:notice] = t('camaleon_cms.admin.post_type.message.updated')
       redirect_to action: :index
     else
       render 'form'

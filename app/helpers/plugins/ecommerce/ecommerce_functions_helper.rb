@@ -31,7 +31,7 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
 
   # use in add cart
   def e_add_data_product(data, product_id)
-    post = Post.find(product_id).decorate
+    post = CamaleonCms::Post.find(product_id).decorate
     attributes = post.attributes
     attributes[:content] = ''
     data[:product_title] = post.the_title
@@ -42,6 +42,8 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
     data[:tax_percent] = tax_product
     data[:tax] = data[:price].to_f * data[:tax_percent] / 100 rescue 0
     data[:currency_code] = current_site.currency_code
-    data.merge(post: attributes, fields: post.get_field_values_hash, meta: post.meta)
+    metas = {}
+    post.metas.map{|m| metas[m.key] = m.value }
+    data.merge(post: attributes, fields: post.get_field_values_hash, meta: metas)
   end
 end

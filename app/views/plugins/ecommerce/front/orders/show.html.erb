@@ -10,14 +10,14 @@
       </ul>
 
       <h4>billing address</h4>
-      <% detail = @order.meta[:billing_address] %>
+      <% detail = @order.get_meta("billing_address") %>
       <ul class="ec-list-orders-address">
         <li><strong>Name:</strong> <span><%= detail[:first_name] %> <%= detail[:last_name] %></span></li>
         <li><strong>Address:</strong> <span><%= detail[:address1] %> <br/> <%= detail[:address2] %> <br/> <%= detail[:city] %> <br/>  <%= detail[:state] %> <br/>  <%= detail[:zip] %> <br/> <%= detail[:country] %></span></li>
       </ul>
 
       <h4>shipping address</h4>
-      <% detail = @order.meta[:shipping_address] %>
+      <% detail = @order.get_meta("shipping_address") %>
       <ul class="ec-list-orders-address">
         <li><strong>Name:</strong> <span><%= detail[:first_name] %> <%= detail[:last_name] %></span></li>
         <li><strong>Address:</strong> <span><%= detail[:address1] %> <br/> <%= detail[:address2] %> <br/> <%= detail[:city] %> <br/>  <%= detail[:state] %> <br/>  <%= detail[:zip] %> <br/> <%= detail[:country] %></span></li>
@@ -37,7 +37,7 @@
 
       <tr>
         <td><%= @order.payment_method.name  rescue 'Not Payment' %></td>
-        <td><% if @order.meta[:payment][:amount].to_f > 0 && @order.unpaid? %>
+        <td><% if @order.get_meta("payment")[:amount].to_f > 0 && @order.unpaid? %>
               <a href="<%= plugins_ecommerce_order_select_payment_path(order: @order.slug) %>" class="btn btn-warning">Pay Now</a> or
               <a href="<%= plugins_ecommerce_order_select_payment_path(order: @order.slug, cancel: true) %>" class="btn btn-default btn-sm">Cancel Order</a>
           <% else %>

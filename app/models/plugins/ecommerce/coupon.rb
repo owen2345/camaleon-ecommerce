@@ -8,7 +8,7 @@
 =end
 class Plugins::Ecommerce::Coupon < TermTaxonomy
   default_scope { where(taxonomy: :ecommerce_coupon) }
-  belongs_to :site, :class_name => "Site", foreign_key: :parent_id
+  belongs_to :site, :class_name => "CamaleonCms::Site", foreign_key: :parent_id
   scope :actives, -> {where(status: '1')}
 
   def self.find_valid_by_code(code)

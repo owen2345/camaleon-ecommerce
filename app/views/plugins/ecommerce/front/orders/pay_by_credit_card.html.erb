@@ -81,7 +81,7 @@
             <h4><%= @payment_methods.name %></h4>
           <p><%= @payment_methods.description %></p>
           <ul class="ec-list-orders-address">
-            <li><strong>Amount:</strong> <span><%= current_site.current_unit %> <%= @order.meta[:payment][:amount] %></span></li>
+            <li><strong>Amount:</strong> <span><%= current_site.current_unit %> <%= @order.get_meta("payment")[:amount] %></span></li>
           </ul>
         </div>
       </div>

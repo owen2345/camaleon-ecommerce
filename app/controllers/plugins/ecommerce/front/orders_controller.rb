@@ -52,25 +52,25 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
 
   def set_select_payment
     @order = current_site.orders.find_by_slug(params[:order])
-    @order.set_meta("payment", @order.meta[:payment].merge(params[:payment]))
+    @order.set_meta("payment", @order.get_meta("payment", {}).merge(params[:payment]))
     redirect_to plugins_ecommerce_order_pay_path(order: @order.slug)
   end
 
   def pay
     @order = current_site.orders.find_by_slug(params[:order])
     @ecommerce_bredcrumb << ["Orders", url_for(action: :index)]
-    if @order.meta[:payment][:type] == 'paypal'
+    if @order.get_meta("payment", {})[:type] == 'paypal'
       pay_by_paypal
-    elsif @order.meta[:payment][:type] == 'credit_card'
-      @payment_methods = current_site.payment_methods.find(@order.meta[:payment][:payment_id])
+    elsif @order.get_meta("payment", {})[:type] == 'credit_card'
+      @payment_methods = current_site.payment_methods.find(@order.get_meta("payment", {})[:payment_id])
       @ecommerce_bredcrumb << ["Payment by Credit Card"]
       render 'pay_by_credit_card'
-    elsif @order.meta[:payment][:type] == 'authorize_net'
-      @payment_methods = current_site.payment_methods.find(@order.meta[:payment][:payment_id])
+    elsif @order.get_meta("payment", {})[:type] == 'authorize_net'
+      @payment_methods = current_site.payment_methods.find(@order.get_meta("payment", {})[:payment_id])
       @ecommerce_bredcrumb << ['Payment by Credit Card']
       render 'pay_by_credit_card_authorize_net'
     else
-      @payment_methods = current_site.payment_methods.find(@order.meta[:payment][:payment_id])
+      @payment_methods = current_site.payment_methods.find(@order.get_meta("payment", {})[:payment_id])
       @ecommerce_bredcrumb << ["Payment by Bank Transfer"]
       render 'pay_by_bank_transfer'
     end
@@ -90,7 +90,7 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
     res = pay_by_credit_card_run
     if res[:error].present?
       @error = res[:error]
-      @payment_methods = current_site.payment_methods.find(@order.meta[:payment][:payment_id])
+      @payment_methods = current_site.payment_methods.find(@order.get_meta("payment", {})[:payment_id])
       render 'pay_by_credit_card'
     else
       @order.update({status: 'received'})
@@ -106,7 +106,7 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
     res = payment_pay_by_credit_card_authorize_net(@order)
     if res[:error].present?
       @error = res[:error]
-      @payment_methods = current_site.payment_methods.find(@order.meta[:payment][:payment_id])
+      @payment_methods = current_site.payment_methods.find(@order.get_meta("payment", {})[:payment_id])
       render 'pay_by_credit_card_authorize_net'
     else
       flash[:notice] = 'Updated Pay'
@@ -133,9 +133,9 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
 
 
   def pay_by_credit_card_run
-    payment = @order.meta[:payment]
-    billing_address = @order.meta[:billing_address]
-    details = @order.meta[:details]
+    payment = @order.get_meta("payment", {})
+    billing_address = @order.get_meta("billing_address")
+    details = @order.get_meta("details")
     @payment_method = current_site.payment_methods.find(payment[:payment_id])
 
     @params = {
@@ -188,9 +188,9 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
   end
 
   def pay_by_paypal
-    payment = @order.meta[:payment]
-    billing_address = @order.meta[:billing_address]
-    details = @order.meta[:details]
+    payment = @order.get_meta("payment", {})
+    billing_address = @order.get_meta("billing_address")
+    details = @order.get_meta("details")
     @payment_method = current_site.payment_methods.find(payment[:payment_id])
 
     ActiveMerchant::Billing::Base.mode = @payment_method.options[:paypal_sandbox].to_s.to_bool ? :test : :production

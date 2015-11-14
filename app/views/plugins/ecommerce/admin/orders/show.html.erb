@@ -29,7 +29,7 @@
             <div class="col-md-4">
               <h3><%= t('plugin.ecommerce.billing_address') %></h3>
 
-              <% detail = @order.meta[:billing_address] %>
+              <% detail = @order.get_meta("billing_address") %>
               <ul class="ec-list-orders-address">
                 <li><strong><%= t('plugin.ecommerce.table.name') %>:</strong> <span><%= detail[:first_name] %> <%= detail[:last_name] %></span></li>
                 <li><strong><%= t('plugin.ecommerce.table.address') %>:</strong> <span><%= detail[:address1] %> <br/> <%= detail[:address2] %> <br/> <%= detail[:city] %> <br/>  <%= detail[:state] %> <br/>  <%= detail[:zip] %> <br/> <%= detail[:country] %></span></li>
@@ -38,7 +38,7 @@
 
             <div class="col-md-4">
               <h3><%= t('plugin.ecommerce.shipping_address') %></h3>
-              <% detail = @order.meta[:shipping_address] %>
+              <% detail = @order.get_meta("shipping_address") %>
               <ul class="ec-list-orders-address">
                 <li><strong><%= t('plugin.ecommerce.table.name') %>:</strong> <span><%= detail[:first_name] %> <%= detail[:last_name] %></span></li>
                 <li><strong><%= t('plugin.ecommerce.table.address') %>:</strong> <span><%= detail[:address1] %> <br/> <%= detail[:address2] %> <br/> <%= detail[:city] %> <br/>  <%= detail[:state] %> <br/>  <%= detail[:zip] %> <br/> <%= detail[:country] %></span></li>
@@ -150,8 +150,8 @@
                   <th id=""><%= t('plugin.ecommerce.table.amount') %></th>
                   <th id=""><%= t('plugin.ecommerce.table.details') %></th>
                 </tr>
-                <% payment = @order.meta[:payment]
-                details = @order.meta["pay_#{payment[:type]}".to_sym]
+                <% payment = @order.get_meta("payment")
+                details = @order.get_meta("pay_#{payment[:type]}".to_sym)
                 %>
                     <tr>
                       <td><%= @order.payment_method.name rescue "" %></td>

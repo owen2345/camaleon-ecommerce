@@ -2,9 +2,9 @@ module Plugins::Ecommerce::EcommercePaymentHelper
 
 
   def payment_pay_by_credit_card_authorize_net(order)
-    payment = order.meta[:payment]
-    billing_address = order.meta[:billing_address]
-    details = order.meta[:details]
+    payment = order.get_meta("payment")
+    billing_address = order.get_meta("billing_address")
+    details = order.get_meta("details")
     payment_method = current_site.payment_methods.find(payment[:payment_id])
     amount = to_cents(payment[:amount].to_f)
 

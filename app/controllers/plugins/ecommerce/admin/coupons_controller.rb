@@ -23,7 +23,7 @@ class Plugins::Ecommerce::Admin::CouponsController < Plugins::Ecommerce::AdminCo
   end
 
   def edit
-    admin_breadcrumb_add("#{t('admin.button.edit')}")
+    admin_breadcrumb_add("#{t('camaleon_cms.admin.button.edit')}")
     render 'form'
   end
 
@@ -32,7 +32,7 @@ class Plugins::Ecommerce::Admin::CouponsController < Plugins::Ecommerce::AdminCo
     @coupon = current_site.coupons.new(data)
     if @coupon.save
       @coupon.set_meta('_default', params[:options])
-      flash[:notice] = t('admin.post_type.message.created')
+      flash[:notice] = t('camaleon_cms.admin.post_type.message.created')
       redirect_to action: :index
     else
       render 'form'
@@ -43,7 +43,7 @@ class Plugins::Ecommerce::Admin::CouponsController < Plugins::Ecommerce::AdminCo
     data = params[:plugins_ecommerce_coupon]
     if @coupon.update(data)
       @coupon.set_meta('_default', params[:options])
-      flash[:notice] = t('admin.post_type.message.updated')
+      flash[:notice] = t('camaleon_cms.admin.post_type.message.updated')
       redirect_to action: :index
     else
       render 'form'

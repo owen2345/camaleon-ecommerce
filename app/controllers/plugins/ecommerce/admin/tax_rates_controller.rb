@@ -23,7 +23,7 @@ class Plugins::Ecommerce::Admin::TaxRatesController < Plugins::Ecommerce::AdminC
   end
 
   def edit
-    admin_breadcrumb_add("#{t('admin.button.edit')}")
+    admin_breadcrumb_add("#{t('camaleon_cms.admin.button.edit')}")
     render 'form'
   end
 
@@ -32,7 +32,7 @@ class Plugins::Ecommerce::Admin::TaxRatesController < Plugins::Ecommerce::AdminC
     @tax_rate = current_site.tax_rates.new(data)
     if @tax_rate.save
       @tax_rate.set_meta('_default', params[:options])
-      flash[:notice] = t('admin.post_type.message.created')
+      flash[:notice] = t('camaleon_cms.admin.post_type.message.created')
       redirect_to action: :index
     else
       render 'form'
@@ -43,7 +43,7 @@ class Plugins::Ecommerce::Admin::TaxRatesController < Plugins::Ecommerce::AdminC
     data = params[:plugins_ecommerce_tax_rate]
     if @tax_rate.update(data)
       @tax_rate.set_meta('_default', params[:options])
-      flash[:notice] = t('admin.post_type.message.updated')
+      flash[:notice] = t('camaleon_cms.admin.post_type.message.updated')
       redirect_to action: :index
     else
       render 'form'

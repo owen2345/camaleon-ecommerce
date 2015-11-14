@@ -25,7 +25,7 @@ class Plugins::Ecommerce::Admin::PaymentMethodsController < Plugins::Ecommerce::
   end
 
   def edit
-    admin_breadcrumb_add("#{t('admin.button.edit')}")
+    admin_breadcrumb_add("#{t('camaleon_cms.admin.button.edit')}")
     render 'form'
   end
 
@@ -34,7 +34,7 @@ class Plugins::Ecommerce::Admin::PaymentMethodsController < Plugins::Ecommerce::
     @payment_method = current_site.payment_methods.new(data)
     if @payment_method.save
       @payment_method.set_meta('_default',params[:options])
-      flash[:notice] = t('admin.post_type.message.created')
+      flash[:notice] = t('camaleon_cms.admin.post_type.message.created')
       redirect_to action: :index
     else
       render 'form'
@@ -56,7 +56,7 @@ class Plugins::Ecommerce::Admin::PaymentMethodsController < Plugins::Ecommerce::
 
     if @payment_method.update(data)
       @payment_method.set_meta('_default',params[:options])
-      flash[:notice] = t('admin.post_type.message.updated')
+      flash[:notice] = t('camaleon_cms.admin.post_type.message.updated')
       redirect_to action: :index
     else
       render 'form'

@@ -67,7 +67,7 @@
               <th id=""><%= t('plugin.ecommerce.table.amount') %></th>
               <th id=""><%= t('plugin.ecommerce.table.received_time') %></th>
               <th id=""><%= t('plugin.ecommerce.table.payment_method') %></th>
-              <th><%= t('admin.table.actions')%></th>
+              <th><%= t('camaleon_cms.admin.table.actions')%></th>
             </tr>
             </thead>
             <tbody>
@@ -81,16 +81,16 @@
                   <td><%= raw order.the_status  %></td>
                   <td><%= order.paid? ? 'Yes' : 'No'  %></td>
                   <td>
-                    <% order.meta[:products].each do |key, product| %>
+                    <% order.get_meta("products", {}).each do |key, product| %>
                         <%= product[:qty] %> x <%= product[:product_title] %> (<%= "#{current_site.current_unit} #{product[:price]}" %>) <br>
                     <% end %>
                   </td>
-                  <td><%= current_site.current_unit %> <%= order.meta[:payment][:amount]  %></td>
+                  <td><%= current_site.current_unit %> <%= order.get_meta("payment", {})[:amount]  %></td>
                   <td><%= order.details.received_at %></td>
                   <td><%= order.payment_method.name rescue "" %></td>
                   <td>
-                    <%= link_to raw('<i class="fa fa-eye"></i>'), {action: :show, id: order.slug }, class: "btn btn-info btn-xs", title: "#{t('admin.button.preview')}" %>
-                    <%= link_to raw('<i class="fa fa-edit"></i>'), {action: :edit, id: order.slug }, class: "btn btn-default btn-xs", title: "#{t('admin.button.edit')}" %>
+                    <%= link_to raw('<i class="fa fa-eye"></i>'), {action: :show, id: order.slug }, class: "btn btn-info btn-xs", title: "#{t('camaleon_cms.admin.button.preview')}" %>
+                    <%= link_to raw('<i class="fa fa-edit"></i>'), {action: :edit, id: order.slug }, class: "btn btn-default btn-xs", title: "#{t('camaleon_cms.admin.button.edit')}" %>
                   </td>
                 </tr>
             <% end  %>
@@ -98,7 +98,7 @@
 
             </tbody>
           </table>
-          <%= content_tag("div", raw(t('admin.message.data_found_list')), class: "alert alert-warning") if @orders.empty? %>
+          <%= content_tag("div", raw(t('camaleon_cms.admin.message.data_found_list')), class: "alert alert-warning") if @orders.empty? %>
           <%= will_paginate @orders, renderer: BootstrapPagination::Rails  %>
         </div>
       </div>

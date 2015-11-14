@@ -40,7 +40,7 @@ class Plugins::Ecommerce::OrderDecorator < TermTaxonomyDecorator
       "<span class='label label-success'>#{I18n.t('plugin.ecommerce.select.received')}</span>"
     elsif object.canceled?
       "<span class='label label-default'>#{I18n.t('plugin.ecommerce.select.canceled')}</span>"
-    elsif object.meta[:payment][:coupon].to_s.parameterize == 'free'
+    elsif object.get_meta("payment", {})[:coupon].to_s.parameterize == 'free'
       "<span class='label label-success'>Free</span>"
     else
       "<span class='label label-danger'>#{I18n.t('plugin.ecommerce.select.unpaid')}</span>"
@@ -48,7 +48,7 @@ class Plugins::Ecommerce::OrderDecorator < TermTaxonomyDecorator
   end
 
   def the_url_tracking
-    consignment_number = object.meta[:payment][:consignment_number] rescue 'none'
+    consignment_number = object.get_meta("payment")[:consignment_number] rescue 'none'
     object.shipping_method.options[:url_tracking].gsub("{{consignment_number}}", consignment_number) rescue "#{I18n.t('plugin.ecommerce.message.not_shipped')}"
   end
 end

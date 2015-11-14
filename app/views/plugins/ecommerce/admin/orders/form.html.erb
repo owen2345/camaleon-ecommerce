@@ -34,7 +34,7 @@
                 </div>
               </div>
               <div class="col-md-12">
-                <%= render partial: 'plugins/ecommerce/partials/form_address', locals: {billing_address: @order.meta[:billing_address], shipping_address: @order.meta[:shipping_address]} %>
+                <%= render partial: 'plugins/ecommerce/partials/form_address', locals: {billing_address: @order.get_meta("billing_address"), shipping_address: @order.get_meta("shipping_address")} %>
               </div>
             </div>
             <hr/>
@@ -46,12 +46,12 @@
                   <tr><td><%= t('plugin.ecommerce.products').singularize %></td><td><%= t('plugin.ecommerce.product.qty') %></td><td><%= t('plugin.ecommerce.product.price') %></td><td><%= t('plugin.ecommerce.product.tax') %></td></tr>
                   </thead>
                   <tbody>
-                  <% @order.meta[:products].each do |key, product| %>
+                  <% @order.get_meta("products", {}).each do |key, product| %>
                       <tr><td><%= product[:product_title] %></td><td><%= product[:qty] %></td><td><%= e_symbol_by_code(product[:currency_code]) %> <%= product[:price] %></td><td><%= e_symbol_by_code(product[:currency_code]) %> <%= product[:tax] %></td></tr>
                   <% end %>
                   </tbody>
                 </table>
-              <%#= debug @order.meta[:products] %>
+              <%#= debug @order.get_meta("products") %>
                 </div>
             </div>
 
@@ -60,8 +60,8 @@
           </div>
 
           <div class="panel-footer">
-            <button class="btn btn-default" onclick="history.back()"><%= t('admin.button.back') %></button>
-            <button class="btn btn-primary pull-right"><%= t('admin.button.update') %></button>
+            <button class="btn btn-default" onclick="history.back()"><%= t('camaleon_cms.admin.button.back') %></button>
+            <button class="btn btn-primary pull-right"><%= t('camaleon_cms.admin.button.update') %></button>
           </div>
 
         </div>

@@ -43,14 +43,14 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
   end
 
   def edit
-    admin_breadcrumb_add("#{t('admin.button.edit')}")
+    admin_breadcrumb_add("#{t('camaleon_cms.admin.button.edit')}")
     render 'form'
   end
 
   def update
     @order.details.update(@order.details.attributes.merge(params[:order][:details]))
-    @order.set_meta("billing_address", @order.meta[:billing_address].merge(params[:order][:billing_address]))
-    @order.set_meta("shipping_address", @order.meta[:shipping_address].merge(params[:order][:shipping_address]))
+    @order.set_meta("billing_address", @order.get_meta("billing_address", {}).merge(params[:order][:billing_address]))
+    @order.set_meta("shipping_address", @order.get_meta("shipping_address", {}).merge(params[:order][:shipping_address]))
     flash[:notice] = "#{t('plugin.ecommerce.message.order', status: "#{t('plugin.ecommerce.message.updated')}")}"
     redirect_to action: :show, id: params[:id]
   end
@@ -73,7 +73,7 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
     @order.update({status: 'shipped'})
     @order.details.update({shipped_at: Time.now})
     code = params[:payment][:consignment_number]
-    @order.set_meta("payment", @order.meta[:payment].merge({consignment_number: code}))
+    @order.set_meta("payment", @order.get_meta("payment", {}).merge({consignment_number: code}))
     flash[:info] = "#{t('plugin.ecommerce.message.order', status: "#{t('plugin.ecommerce.message.shipped')}")}"
     redirect_to action: :show, id: params[:order_id]
   end

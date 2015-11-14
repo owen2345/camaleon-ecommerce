@@ -8,7 +8,7 @@
 =end
 class Plugins::Ecommerce::TaxRate < TermTaxonomy
   default_scope { where(taxonomy: :ecommerce_tax_rate) }
-  belongs_to :site, :class_name => "Site", foreign_key: :parent_id
+  belongs_to :site, :class_name => "CamaleonCms::Site", foreign_key: :parent_id
   scope :actives, -> {where(status: '1')}
 
   def the_name

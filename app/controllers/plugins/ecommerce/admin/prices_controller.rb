@@ -26,7 +26,7 @@ class Plugins::Ecommerce::Admin::PricesController < Plugins::Ecommerce::AdminCon
   def edit
     @price = @prices[params[:id].to_sym] || {}
     admin_breadcrumb_add("#{t('plugin.ecommerce.product.price')}", admin_plugins_ecommerce_shipping_method_prices_path( params[:shipping_method_id] ))
-    admin_breadcrumb_add("#{t('admin.button.edit')}")
+    admin_breadcrumb_add("#{t('camaleon_cms.admin.button.edit')}")
     render 'form'
   end
 
@@ -36,7 +36,7 @@ class Plugins::Ecommerce::Admin::PricesController < Plugins::Ecommerce::AdminCon
     data[:id] = _id
     @prices[_id] = data
     @shipping_method.set_meta('prices', @prices)
-    flash[:notice] = t('admin.post_type.message.created')
+    flash[:notice] = t('camaleon_cms.admin.post_type.message.created')
     redirect_to action: :index
   end
 
@@ -45,14 +45,14 @@ class Plugins::Ecommerce::Admin::PricesController < Plugins::Ecommerce::AdminCon
     @price = @prices[params[:id].to_sym] || {}
     @prices[_id] = @price.merge(params[:price])
     @shipping_method.set_meta('prices', @prices)
-    flash[:notice] = t('admin.post_type.message.updated')
+    flash[:notice] = t('camaleon_cms.admin.post_type.message.updated')
     redirect_to action: :index
   end
 
   def destroy
     @prices.delete(params[:id].to_sym)
     @shipping_method.set_meta('prices', @prices)
-    flash[:notice] = t('admin.post_type.message.deleted')
+    flash[:notice] = t('camaleon_cms.admin.post_type.message.deleted')
     redirect_to action: :index
   end
 
@@ -61,7 +61,10 @@ class Plugins::Ecommerce::Admin::PricesController < Plugins::Ecommerce::AdminCon
   private
   def set_shipping_method
     @shipping_method = current_site.shipping_methods.find(params[:shipping_method_id])
-    @prices = @shipping_method.meta[:prices] || {}
+    add_breadcrumb(t("plugin.ecommerce.shipping_methods"))
+    add_breadcrumb(@shipping_method.name)
+    add_breadcrumb(t("plugin.ecommerce.shipping_prices"))
+    @prices = @shipping_method.get_meta("prices", {})
   end
 
 end

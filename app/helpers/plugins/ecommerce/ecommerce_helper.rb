@@ -51,13 +51,13 @@ module Plugins::Ecommerce::EcommerceHelper
     pt = current_site.post_types.hidden_menu.where(slug: "commerce").first
     if pt.present?
       items_i = []
-      items_i << {icon: "list", title: t('plugin.ecommerce.all_products'), url: admin_post_type_posts_path(pt.id)} if can? :posts, pt
-      items_i << {icon: "plus", title: t('admin.post_type.add_new'), url: new_admin_post_type_post_path(pt.id)} if can? :create_post, pt
+      items_i << {icon: "list", title: t('plugin.ecommerce.all_products'), url: cama_admin_post_type_posts_path(pt.id)} if can? :posts, pt
+      items_i << {icon: "plus", title: t('camaleon_cms.admin.post_type.add_new'), url: new_cama_admin_post_type_post_path(pt.id)} if can? :create_post, pt
       if pt.manage_categories?
-        items_i << {icon: "folder-open", title: t('admin.post_type.categories'), url: admin_post_type_categories_path(pt.id)} if can? :categories, pt
+        items_i << {icon: "folder-open", title: t('camaleon_cms.admin.post_type.categories'), url: cama_admin_post_type_categories_path(pt.id)} if can? :categories, pt
       end
       if pt.manage_tags?
-        items_i << {icon: "tags", title: t('admin.post_type.tags'), url: admin_post_type_post_tags_path(pt.id)} if can? :post_tags, pt
+        items_i << {icon: "tags", title: t('camaleon_cms.admin.post_type.tags'), url: cama_admin_post_type_post_tags_path(pt.id)} if can? :post_tags, pt
       end
       items_i << {icon: "reorder", title: "<span>#{t('plugin.ecommerce.orders')} <small class='label label-primary'>#{current_site.orders.size}</small></span>", url: admin_plugins_ecommerce_orders_path}
       items_i << {icon: "money", title: t('plugin.ecommerce.tax_rates'), url: admin_plugins_ecommerce_tax_rates_path}
@@ -65,7 +65,7 @@ module Plugins::Ecommerce::EcommerceHelper
       items_i << {icon: "credit-card", title: t('plugin.ecommerce.payment_methods'), url: admin_plugins_ecommerce_payment_methods_path}
       items_i << {icon: "tag", title: t('plugin.ecommerce.coupons'), url: admin_plugins_ecommerce_coupons_path}
 
-      items_i << {icon: "cogs", title: t('admin.button.settings'), url: admin_plugins_ecommerce_settings_path}
+      items_i << {icon: "cogs", title: t('camaleon_cms.admin.button.settings'), url: admin_plugins_ecommerce_settings_path}
 
       admin_menu_insert_menu_after("content", "e-commerce", {icon: "shopping-cart", title: t('plugin.ecommerce.e_commerce'), url: "", items: items_i}) if items_i.present?
     end
@@ -76,7 +76,7 @@ module Plugins::Ecommerce::EcommerceHelper
   end
 
   def ecommerce_app_before_load
-    Site.class_eval do
+    CamaleonCms::Site.class_eval do
       #attr_accessible :my_id
       has_many :carts, :class_name => 'Plugins::Ecommerce::Cart', foreign_key: :parent_id, dependent: :destroy
       has_many :orders, :class_name => 'Plugins::Ecommerce::Order', foreign_key: :parent_id, dependent: :destroy
@@ -86,21 +86,21 @@ module Plugins::Ecommerce::EcommerceHelper
       has_many :tax_rates, :class_name => 'Plugins::Ecommerce::TaxRate', foreign_key: :parent_id, dependent: :destroy
     end
 
-    SiteDecorator.class_eval do
+    CamaleonCms::SiteDecorator.class_eval do
       def current_unit
-        @current_unit ||= h.e_get_currency_units[object.meta[:_setting_ecommerce][:current_unit]]['symbol'] rescue '$'
+        @current_unit ||= h.e_get_currency_units[object.get_meta("_setting_ecommerce", {})[:current_unit]]['symbol'] rescue '$'
       end
 
       def currency_code
-        @currency_code ||= h.e_get_currency_units[object.meta[:_setting_ecommerce][:current_unit]]['code'] rescue 'USD'
+        @currency_code ||= h.e_get_currency_units[object.get_meta("_setting_ecommerce", {})[:current_unit]]['code'] rescue 'USD'
       end
 
       def current_weight
-        @current_weight ||= h.e_get_currency_weight[object.meta[:_setting_ecommerce][:current_weight]]['code'] rescue 'kg'
+        @current_weight ||= h.e_get_currency_weight[object.get_meta("_setting_ecommerce", {})[:current_weight]]['code'] rescue 'kg'
       end
     end
 
-    PostDecorator.class_eval do
+    CamaleonCms::PostDecorator.class_eval do
       def the_sku
         object.get_field_value('ecommerce_sku').to_s
       end

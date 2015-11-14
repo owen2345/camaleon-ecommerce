@@ -1,4 +1,4 @@
-Site.class_eval do
+CamaleonCms::Site.class_eval do
   #attr_accessible :my_id
   has_many :carts, :class_name => "Plugins::Ecommerce::Cart", foreign_key: :parent_id, dependent: :destroy
   has_many :orders, :class_name => "Plugins::Ecommerce::Order", foreign_key: :parent_id, dependent: :destroy
@@ -8,7 +8,7 @@ Site.class_eval do
   has_many :tax_rates, :class_name => "Plugins::Ecommerce::TaxRate", foreign_key: :parent_id, dependent: :destroy
 end
 
-SiteDecorator.class_eval do
+CamaleonCms::SiteDecorator.class_eval do
   def current_unit
     @current_unit ||= h.e_get_currency_units[object.meta[:_setting_ecommerce][:current_unit]]['symbol'] rescue '$'
   end
@@ -20,7 +20,7 @@ SiteDecorator.class_eval do
   end
 end
 
-PostDecorator.class_eval do
+CamaleonCms::PostDecorator.class_eval do
   def the_sku
     object.get_field_value('ecommerce_sku').to_s
   end

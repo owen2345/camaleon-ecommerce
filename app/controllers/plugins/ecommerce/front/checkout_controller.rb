@@ -122,7 +122,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
     product_id = data[:product_id]
     @cart.add_product(product_id)
     @cart.set_option("product_#{product_id}", e_add_data_product(data, product_id))
-    flash[:notice] = "Add correct product in Cart."
+    flash[:notice] = "Added product successfully in Cart."
     redirect_to action: :cart_index
   end
 
@@ -138,7 +138,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
   def cart_remove
     @cart.remove_product(params[:product_id])
     @cart.delete_option("product_#{params[:product_id]}")
-    flash[:notice] = "Deleted correct product in Cart."
+    flash[:notice] = "Deleted product from the Cart."
     redirect_to action: :cart_index
   end
 

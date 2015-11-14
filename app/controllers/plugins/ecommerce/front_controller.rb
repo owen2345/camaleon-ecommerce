@@ -6,7 +6,7 @@
   This program is distributed in the hope that it will be useful,  but WITHOUT ANY WARRANTY; without even the implied warranty of  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
   See the  GNU Affero General Public License (GPLv3) for more details.
 =end
-class Plugins::Ecommerce::FrontController < Apps::PluginsFrontController
+class Plugins::Ecommerce::FrontController < CamaleonCms::Apps::PluginsFrontController
   before_action :ecommerce_add_assets_in_front
   def index
     # here your actions for frontend module

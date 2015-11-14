@@ -18,13 +18,13 @@
       <%
          @orders.each do |order|
            order = order.decorate
-           payment = order.meta[:payment]
+           payment = order.get_meta("payment")
       %>
           <tr>
             <td><%= order.slug %></td>
             <td><%= raw order.the_status  %></td>
             <td>
-              <% order.meta[:products].each do |key, product| %>
+              <% order.get_meta("products").each do |key, product| %>
                   <%= product[:qty] %> x <%= product[:product_title] %> (<%= current_site.current_unit %> <%= product[:price] %>) <br>
               <% end %>
             </td>

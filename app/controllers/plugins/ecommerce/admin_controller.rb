@@ -6,7 +6,8 @@
   This program is distributed in the hope that it will be useful,  but WITHOUT ANY WARRANTY; without even the implied warranty of  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
   See the  GNU Affero General Public License (GPLv3) for more details.
 =end
-class Plugins::Ecommerce::AdminController < Apps::PluginsAdminController
+class Plugins::Ecommerce::AdminController < CamaleonCms::Apps::PluginsAdminController
+  add_breadcrumb I18n.t("plugin.ecommerce.e_commerce")
   def index
     # here your actions for admin panel
   end

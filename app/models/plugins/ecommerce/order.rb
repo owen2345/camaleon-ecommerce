@@ -10,7 +10,7 @@ class Plugins::Ecommerce::Order < TermTaxonomy
   default_scope { where(taxonomy: :ecommerce_order) }
   has_one :details, class_name: "Plugins::Ecommerce::OrderDetail", foreign_key: :order_id, dependent: :destroy
   has_many :products, foreign_key: :objectid, through: :term_relationships, :source => :objects
-  belongs_to :customer, class_name: "User", foreign_key: :user_id
+  belongs_to :customer, class_name: "CamaleonCms::User", foreign_key: :user_id
 
   def add_product(object)
     post_id = defined?(object.id) ? object.id : object.to_i
@@ -22,16 +22,16 @@ class Plugins::Ecommerce::Order < TermTaxonomy
   end
 
   def payment_method
-    Plugins::Ecommerce::PaymentMethod.find_by_id meta[:payment][:payment_id]
+    Plugins::Ecommerce::PaymentMethod.find_by_id get_meta("payment")[:payment_id]
   end
 
   def payment
-    payment = meta[:payment]
-    meta["pay_#{payment[:type]}".to_sym]
+    payment = get_meta("payment")
+    get_meta("pay_#{payment[:type]}".to_sym)
   end
 
   def shipping_method
-    Plugins::Ecommerce::ShippingMethod.find_by_id meta[:payment][:shipping_method]
+    Plugins::Ecommerce::ShippingMethod.find_by_id get_meta("payment", {})[:shipping_method]
   end
 
   def canceled?

@@ -9,7 +9,7 @@
 class Plugins::Ecommerce::Cart < TermTaxonomy
   default_scope { where(taxonomy: :ecommerce_cart) }
   has_many :products, foreign_key: :objectid, through: :term_relationships, :source => :objects
-  belongs_to :site, :class_name => "Site", foreign_key: :parent_id
+  belongs_to :site, :class_name => "CamaleonCms::Site", foreign_key: :parent_id
 
   def add_product(object)
     post_id = defined?(object.id) ? object.id : object.to_i

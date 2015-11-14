@@ -46,6 +46,8 @@
       list_orders: 'List Orders'
       list_tax_rate: 'Tax Rate List'
       list_shipping_methods: 'Shipping Method List'
+      shipping_methods: 'Shipping Methods'
+      shipping_prices: 'Shipping Prices'
       list_price: 'Price List'
       list_payment_methods: 'Payment Methods List'
       list_coupons: 'Coupons List'
