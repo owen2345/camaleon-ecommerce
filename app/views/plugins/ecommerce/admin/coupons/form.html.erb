@@ -13,7 +13,7 @@
         </div>
         <%= form_for @coupon, url:{action: @coupon.new_record? ? :create : :update},  html: {class: 'validate-coupon', id: 'form-coupon'}  do |f| %>
             <div class="panel-body">
-              <%= render partial: 'layouts/admin/form_error', locals: {data: @coupon} %>
+              <%= render partial: 'layouts/camaleon_cms/admin/form_error', locals: {data: @coupon} %>
               <div class="form-group">
                 <%= f.label t('plugin.ecommerce.table.name') %><br>
                 <%= f.text_field :name, :class => "form-control required" %>

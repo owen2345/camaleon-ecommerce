@@ -4,7 +4,7 @@
     </div>
     <%= form_for @payment_method, url:{action: @payment_method.new_record? ? :create : :update},  html: {class: 'validate-payment_method', id: 'form-payment_method'}  do |f| %>
         <div class="panel-body">
-            <%= render partial: 'layouts/admin/form_error', locals: {data: @payment_method} %>
+            <%= render partial: 'layouts/camaleon_cms/admin/form_error', locals: {data: @payment_method} %>
             <div class="form-group">
                 <%= f.label t('plugin.ecommerce.table.name') %><br>
                 <%= f.text_field :name, :class => "form-control required" %>

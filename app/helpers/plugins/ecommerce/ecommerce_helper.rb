@@ -43,7 +43,7 @@ module Plugins::Ecommerce::EcommerceHelper
 
   def ecommerce_front_before_load
     @ecommerce_post_type = current_site.post_types.where(slug: 'commerce').first.decorate
-    @ecommerce_bredcrumb = [].push(["Home", root_url])
+    @ecommerce_bredcrumb = [].push(["Home", cama_root_url])
   end
 
   def ecommerce_admin_before_load
@@ -175,10 +175,6 @@ module Plugins::Ecommerce::EcommerceHelper
         t.timestamps
       end
     end
-
-    #ActiveRecord::Base.connection.execute('create table plugins_shopping_carts(id int not null, user_id int not null, site_id int not null, created_at timestamp, updated_at timestamp, PRIMARY KEY (id));')
-    #ActiveRecord::Base.connection.execute('create table plugins_shopping_cart_items(id int not null, cart_id int not null, product_id int not null, site_id int not null, shopping_cart_item_fields text, created_at timestamp, updated_at timestamp, PRIMARY KEY (id));')
-
   end
 
   # here all actions on going to inactive

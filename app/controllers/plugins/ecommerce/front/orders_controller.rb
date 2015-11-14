@@ -52,7 +52,7 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
 
   def set_select_payment
     @order = current_site.orders.find_by_slug(params[:order])
-    @order.set_meta("payment", @order.get_meta("payment", {}).merge(params[:payment]))
+    @order.set_meta("payment", @order.get_meta("payment", {}).merge(params[:payment] || {}))
     redirect_to plugins_ecommerce_order_pay_path(order: @order.slug)
   end
 

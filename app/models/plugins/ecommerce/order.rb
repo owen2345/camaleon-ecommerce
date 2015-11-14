@@ -6,7 +6,7 @@
   This program is distributed in the hope that it will be useful,  but WITHOUT ANY WARRANTY; without even the implied warranty of  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
   See the  GNU Affero General Public License (GPLv3) for more details.
 =end
-class Plugins::Ecommerce::Order < TermTaxonomy
+class Plugins::Ecommerce::Order < CamaleonCms::TermTaxonomy
   default_scope { where(taxonomy: :ecommerce_order) }
   has_one :details, class_name: "Plugins::Ecommerce::OrderDetail", foreign_key: :order_id, dependent: :destroy
   has_many :products, foreign_key: :objectid, through: :term_relationships, :source => :objects

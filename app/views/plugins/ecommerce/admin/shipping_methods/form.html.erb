@@ -4,7 +4,7 @@
     </div>
     <%= form_for @shipping_method, url:{action: @shipping_method.new_record? ? :create : :update},  html: {class: 'validate-shipping_method', id: 'form-shipping_method'}  do |f| %>
         <div class="panel-body">
-            <%= render partial: 'layouts/admin/form_error', locals: {data: @shipping_method} %>
+            <%= render partial: 'layouts/camaleon_cms/admin/form_error', locals: {data: @shipping_method} %>
             <div class="form-group">
                 <%= f.label t('plugin.ecommerce.table.name') %><br>
                 <%= f.text_field :name, :class => "form-control required" %>
