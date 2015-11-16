@@ -6,7 +6,7 @@
   This program is distributed in the hope that it will be useful,  but WITHOUT ANY WARRANTY; without even the implied warranty of  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
   See the  GNU Affero General Public License (GPLv3) for more details.
 =end
-class Plugins::Ecommerce::Product < Post
+class Plugins::Ecommerce::Product < CamaleonCms::Post
     # attrs:
   #   slug => plugin key
   #default_scope { where(taxonomy: :e_commerce_product) }
