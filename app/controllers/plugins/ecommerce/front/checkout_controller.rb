@@ -152,7 +152,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
       @cart = current_site.carts.set_user(current_user).first_or_create(name: "Cart by #{current_user.id}")
     else
       cookies[:return_to] = request.referer
-      redirect_to admin_login_path
+      redirect_to cama_admin_login_path
     end
   end
 
