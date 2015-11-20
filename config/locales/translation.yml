@@ -92,6 +92,7 @@
         in_stock: 'In Stock'
         not_in_tock: 'Not In Stock'
         total_excluding_tax: 'Total (excluding Tax)'
+      products: 'Products'
       shipping_address: 'Shipping Address'
       shipping_methods: 'Shipping Methods'
       shipped_date: 'Shipped Date'
