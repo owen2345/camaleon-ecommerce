@@ -81,7 +81,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
     payment_amount = 0 if payment_amount < 0
 
     order_id = Time.now.to_i
-    @order = current_site.orders.set_user(current_user).create(name: "Order #{order_id}", slug: order_id, status: pay_status )
+    @order = current_site.orders.set_user(current_user).create(name: "Order #{order_id}", slug: order_id, status: pay_status)
     details = params[:order][:details]
     details[:received_at] = Time.now
     @order.create_details(details)
@@ -91,15 +91,15 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
     @order.set_meta("shipping_address", params[:order][:shipping_address])
     total = sub_total + tax_total + weight_price
     @order.set_meta("payment", params[:order][:payment].merge({
-                                                     amount: payment_amount,
-                                                     currency_code: current_site.currency_code,
-                                                     total: total,
-                                                     sub_total: sub_total,
-                                                     tax_total: tax_total,
-                                                     weight_price: weight_price,
-                                                     coupon: coupon_total,
-                                                     coupon_amount: coupon_amount
-                                                 }))
+                                                                amount: payment_amount,
+                                                                currency_code: current_site.currency_code,
+                                                                total: total,
+                                                                sub_total: sub_total,
+                                                                tax_total: tax_total,
+                                                                weight_price: weight_price,
+                                                                coupon: coupon_total,
+                                                                coupon_amount: coupon_amount
+                                                              }))
 
     @cart.destroy
 
@@ -122,7 +122,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
     product_id = data[:product_id]
     @cart.add_product(product_id)
     @cart.set_option("product_#{product_id}", e_add_data_product(data, product_id))
-    flash[:notice] = "Added product successfully in Cart."
+    flash[:notice] = t('plugin.ecommerce.msg.added_product_in_cart')
     redirect_to action: :cart_index
   end
 
@@ -155,7 +155,6 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
       redirect_to cama_admin_login_path
     end
   end
-
 
 
   def process_pay(data = {})

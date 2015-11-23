@@ -169,6 +169,9 @@
         method_type: 'Method type'
         transaction_key: 'Transaction key'
       tax_rates: 'Tax Rates'
+      add_to_cart: 'Add to cart'
+      msg:
+        added_product_in_cart: 'Added product successfully in Cart.'
 es:
   plugin:
     ecommerce:
@@ -339,4 +342,7 @@ es:
         method_type: 'Tipo de metodo'
         transaction_key: 'Clave de transacción'
       tax_rates: 'Tasas de Impuesto'
+      add_to_cart: 'Añadir al carro'
+      msg:
+        added_product_in_cart: 'Producto añadido al carro correctamente.'
 
