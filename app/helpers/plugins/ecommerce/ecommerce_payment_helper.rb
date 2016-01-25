@@ -8,7 +8,7 @@ module Plugins::Ecommerce::EcommercePaymentHelper
     payment_method = current_site.payment_methods.find(payment[:payment_id])
     amount = to_cents(payment[:amount].to_f)
 
-    params = {
+    @payment_params = {
       :order_id => order.slug,
       :currency => current_site.currency_code,
       :email => details[:email],
@@ -40,9 +40,9 @@ module Plugins::Ecommerce::EcommercePaymentHelper
       :verification_value => params[:cvCode]
     )
 
-    if credit_card.valid?
+    if credit_card.validate.empty?
       gateway = ActiveMerchant::Billing::AuthorizeNetGateway.new(authorize_net_options)
-      response = gateway.purchase(amount, credit_card, params)
+      response = gateway.purchase(amount, credit_card, @payment_params)
       if response.success?
         mark_order_received(order, @params)
         return {success: 'Paid Correct'}
