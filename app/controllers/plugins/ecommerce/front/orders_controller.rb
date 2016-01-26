@@ -78,9 +78,8 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
 
   def pay_by_bank_transfer
     @order = current_site.orders.find_by_slug(params[:order])
-    @order.update({status: 'received'})
-    @order.details.update({received_at: Time.now})
     @order.set_meta("pay_bank_transfer", params[:details])
+    mark_order_like_received(@order)
     flash[:notice] = "Updated Pay"
     redirect_to action: :index
   end
@@ -93,10 +92,9 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
       @payment_methods = current_site.payment_methods.find(@order.get_meta("payment", {})[:payment_id])
       render 'pay_by_credit_card'
     else
-      @order.update({status: 'received'})
-      @order.details.update({received_at: Time.now})
-      @order.set_meta("pay_credit_card", params)
-      flash[:notice] = "Updated Pay"
+      @order.set_meta('pay_credit_card', params)
+      mark_order_like_received(@order)
+      flash[:notice] = 'Updated Pay'
       redirect_to action: :index
     end
   end
@@ -116,16 +114,15 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
 
   def success
     @order = current_site.orders.find_by_slug(params[:order])
-    @order.update({status: 'received'})
-    @order.details.update({received_at: Time.now})
-    @order.set_meta("pay_paypal", {token: params[:token], PayerID: params[:PayerID]})
-    flash[:notice] = "Updated Pay"
+    @order.set_meta('pay_paypal', {token: params[:token], PayerID: params[:PayerID]})
+    mark_order_like_received(@order)
+    flash[:notice] = 'Updated Pay'
     redirect_to action: :index
   end
 
   def cancel
     #@order = current_site.orders.find_by_slug(params[:order])
-    flash[:notice] = "Cancel Pay by Paypal"
+    flash[:notice] = 'Cancel Pay by Paypal'
     redirect_to action: :index
   end
 

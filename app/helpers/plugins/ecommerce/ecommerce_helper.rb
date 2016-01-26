@@ -189,15 +189,15 @@ module Plugins::Ecommerce::EcommerceHelper
       @ecommerce = current_site.post_types.hidden_menu.new(slug: "commerce", name: "Product")
       if @ecommerce.save
         @ecommerce.set_meta('_default', {
-                                        has_category: true,
-                                        has_tags: true,
-                                        not_deleted: true,
-                                        has_summary: true,
-                                        has_content: true,
-                                        has_comments: false,
-                                        has_picture: true,
-                                        has_template: false,
-                                      })
+          has_category: true,
+          has_tags: true,
+          not_deleted: true,
+          has_summary: true,
+          has_content: true,
+          has_comments: false,
+          has_picture: true,
+          has_template: false,
+        })
         @ecommerce.categories.create({name: 'Uncategorized', slug: 'Uncategorized'.parameterize})
       end
 
@@ -207,6 +207,12 @@ module Plugins::Ecommerce::EcommerceHelper
 
   def ecommerce_add_assets_in_front
     append_asset_libraries({ecommerce_front: {css: [plugin_gem_asset('front')], js: [plugin_gem_asset('cart')]}})
+  end
+
+  def mark_order_like_received(order)
+    order.update({status: 'received'})
+    order.details.update({received_at: Time.now})
+    send_order_received_email(order)
   end
 
   private
