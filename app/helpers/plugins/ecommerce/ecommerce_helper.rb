@@ -7,6 +7,7 @@
   See the  GNU Affero General Public License (GPLv3) for more details.
 =end
 module Plugins::Ecommerce::EcommerceHelper
+  include Plugins::Ecommerce::EcommerceEmailHelper
 
   def ecommerce_on_render_post(d)
     if d[:post_type].slug == 'commerce'

@@ -5,7 +5,11 @@ module Plugins::Ecommerce::EcommercePaymentHelper
     payment = order.get_meta("payment")
     billing_address = order.get_meta("billing_address")
     details = order.get_meta("details")
-    payment_method = current_site.payment_methods.find(payment[:payment_id])
+    if payment[:payment_id].nil?
+      payment_method = current_site.payment_methods.find_by_slug('authorizenet')
+    else
+      payment_method = current_site.payment_methods.find(payment[:payment_id])
+    end
     amount = to_cents(payment[:amount].to_f)
 
     @payment_params = {
@@ -55,4 +59,9 @@ module Plugins::Ecommerce::EcommercePaymentHelper
     end
 
   end
+
+  def to_cents(money)
+    (money*100).round
+  end
+
 end
