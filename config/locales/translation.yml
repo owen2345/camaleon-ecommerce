@@ -172,6 +172,21 @@
       add_to_cart: 'Add to cart'
       msg:
         added_product_in_cart: 'Added product successfully in Cart.'
+      mail:
+        order_received:
+          welcome: "Hi"
+          thanks: "Thank you for your purchase."
+          reference: "For your reference, your order number is:"
+        recovery_cart:
+          body: "We noticed that you might be stuck."
+          reference: "For your reference, your order number is:"
+      email:
+        order_received:
+          subject: "Thank you for purchasing"
+        recovery_cart:
+          subject: "We noticed that you might be stuck"
+        order_received_admin:
+          subject: "New purchase"
 es:
   plugin:
     ecommerce:

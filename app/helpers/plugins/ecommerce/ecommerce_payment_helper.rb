@@ -1,11 +1,15 @@
 module Plugins::Ecommerce::EcommercePaymentHelper
-
+  include Plugins::Ecommerce::EcommerceHelper
 
   def payment_pay_by_credit_card_authorize_net(order)
     payment = order.get_meta("payment")
     billing_address = order.get_meta("billing_address")
     details = order.get_meta("details")
-    payment_method = current_site.payment_methods.find(payment[:payment_id])
+    if payment[:payment_id].nil?
+      payment_method = current_site.payment_methods.find_by_slug('authorizenet')
+    else
+      payment_method = current_site.payment_methods.find(payment[:payment_id])
+    end
     amount = to_cents(payment[:amount].to_f)
 
     @payment_params = {
@@ -44,7 +48,8 @@ module Plugins::Ecommerce::EcommercePaymentHelper
       gateway = ActiveMerchant::Billing::AuthorizeNetGateway.new(authorize_net_options)
       response = gateway.purchase(amount, credit_card, @payment_params)
       if response.success?
-        mark_order_received(order, @params)
+        order.set_meta('pay_authorize_net', @payment_params)
+        mark_order_like_received(order)
         return {success: 'Paid Correct'}
       else
         return {error: response.message}
@@ -55,13 +60,8 @@ module Plugins::Ecommerce::EcommercePaymentHelper
 
   end
 
-
-  private
-
-  def mark_order_received(order, params)
-    order.update({status: 'received'})
-    order.details.update({received_at: Time.now})
-    order.set_meta('pay_authorize_net', params)
+  def to_cents(money)
+    (money*100).round
   end
 
 end
