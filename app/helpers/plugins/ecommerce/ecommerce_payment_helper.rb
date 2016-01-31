@@ -48,7 +48,7 @@ module Plugins::Ecommerce::EcommercePaymentHelper
       gateway = ActiveMerchant::Billing::AuthorizeNetGateway.new(authorize_net_options)
       response = gateway.purchase(amount, credit_card, @payment_params)
       if response.success?
-        order.set_meta('pay_authorize_net', params)
+        order.set_meta('pay_authorize_net', @payment_params)
         mark_order_like_received(order)
         return {success: 'Paid Correct'}
       else

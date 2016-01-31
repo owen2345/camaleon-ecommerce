@@ -185,6 +185,8 @@
           subject: "Thank you for purchasing"
         recovery_cart:
           subject: "We noticed that you might be stuck"
+        order_received_admin:
+          subject: "New purchase"
 es:
   plugin:
     ecommerce:

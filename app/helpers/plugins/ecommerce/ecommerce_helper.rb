@@ -214,6 +214,8 @@ module Plugins::Ecommerce::EcommerceHelper
     order.update({status: 'received'})
     order.details.update({received_at: Time.now})
     send_order_received_email(order)
+    # Send email to admins
+    send_order_received_admin_notice(order)
   end
 
   private
