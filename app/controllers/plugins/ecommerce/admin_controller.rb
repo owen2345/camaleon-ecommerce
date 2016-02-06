@@ -12,6 +12,7 @@ class Plugins::Ecommerce::AdminController < CamaleonCms::Apps::PluginsAdminContr
     # here your actions for admin panel
   end
 
-  # here add your custom functions
-
+  def verify_permission
+    authorize! :posts, get_commerce_post_type
+  end
 end
