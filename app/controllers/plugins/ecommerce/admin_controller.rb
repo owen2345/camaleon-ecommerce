@@ -7,12 +7,14 @@
   See the  GNU Affero General Public License (GPLv3) for more details.
 =end
 class Plugins::Ecommerce::AdminController < CamaleonCms::Apps::PluginsAdminController
+  before_action :verify_ecommerce_permission
   add_breadcrumb I18n.t("plugin.ecommerce.e_commerce")
   def index
     # here your actions for admin panel
   end
 
-  def verify_permission
+  private
+  def verify_ecommerce_permission
     authorize! :posts, get_commerce_post_type
   end
 end
