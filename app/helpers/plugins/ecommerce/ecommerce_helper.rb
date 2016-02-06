@@ -60,13 +60,14 @@ module Plugins::Ecommerce::EcommerceHelper
       if pt.manage_tags?
         items_i << {icon: "tags", title: t('camaleon_cms.admin.post_type.tags'), url: cama_admin_post_type_post_tags_path(pt.id)} if can? :post_tags, pt
       end
-      items_i << {icon: "reorder", title: "<span>#{t('plugin.ecommerce.orders')} <small class='label label-primary'>#{current_site.orders.size}</small></span>", url: admin_plugins_ecommerce_orders_path} if can? :posts, pt
-      items_i << {icon: "money", title: t('plugin.ecommerce.tax_rates'), url: admin_plugins_ecommerce_tax_rates_path} if can? :posts, pt
-      items_i << {icon: "taxi", title: t('plugin.ecommerce.shipping_methods'), url: admin_plugins_ecommerce_shipping_methods_path} if can? :posts, pt
-      items_i << {icon: "credit-card", title: t('plugin.ecommerce.payment_methods'), url: admin_plugins_ecommerce_payment_methods_path} if can? :posts, pt
-      items_i << {icon: "tag", title: t('plugin.ecommerce.coupons'), url: admin_plugins_ecommerce_coupons_path} if can? :posts, pt
-
-      items_i << {icon: "cogs", title: t('camaleon_cms.admin.button.settings'), url: admin_plugins_ecommerce_settings_path} if can? :posts, pt
+      if can? :posts, pt
+        items_i << {icon: "reorder", title: "<span>#{t('plugin.ecommerce.orders')} <small class='label label-primary'>#{current_site.orders.size}</small></span>", url: admin_plugins_ecommerce_orders_path}
+        items_i << {icon: "money", title: t('plugin.ecommerce.tax_rates'), url: admin_plugins_ecommerce_tax_rates_path}
+        items_i << {icon: "taxi", title: t('plugin.ecommerce.shipping_methods'), url: admin_plugins_ecommerce_shipping_methods_path}
+        items_i << {icon: "credit-card", title: t('plugin.ecommerce.payment_methods'), url: admin_plugins_ecommerce_payment_methods_path}
+        items_i << {icon: "tag", title: t('plugin.ecommerce.coupons'), url: admin_plugins_ecommerce_coupons_path}
+        items_i << {icon: "cogs", title: t('camaleon_cms.admin.button.settings'), url: admin_plugins_ecommerce_settings_path}
+      end
 
       admin_menu_insert_menu_after("content", "e-commerce", {icon: "shopping-cart", title: t('plugin.ecommerce.e_commerce'), url: "", items: items_i}) if items_i.present?
     end
