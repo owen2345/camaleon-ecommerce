@@ -35,6 +35,7 @@ Rails.application.routes.draw do
         resources :orders, controller: 'admin/orders' do
           post 'accepted'
           post 'shipped'
+          post 'closed'
           get 'canceled'
         end
         resources :payment_methods, controller: 'admin/payment_methods'

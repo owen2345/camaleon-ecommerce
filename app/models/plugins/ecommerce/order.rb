@@ -12,10 +12,13 @@ class Plugins::Ecommerce::Order < CamaleonCms::TermTaxonomy
   has_many :products, foreign_key: :objectid, through: :term_relationships, :source => :objects
   belongs_to :customer, class_name: "CamaleonCms::User", foreign_key: :user_id
 
+  scope :not_closed, -> { where('status != ?', :closed) }
+
   def add_product(object)
     post_id = defined?(object.id) ? object.id : object.to_i
     term_relationships.where(objectid: post_id).first_or_create if post_id > 0
   end
+
   def remove_product(object)
     post_id = defined?(object.id) ? object.id : object.to_i
     term_relationships.where(objectid: post_id).destroy_all if post_id > 0
@@ -37,8 +40,13 @@ class Plugins::Ecommerce::Order < CamaleonCms::TermTaxonomy
   def canceled?
     status == 'canceled'
   end
+
   def unpaid?
     status == 'unpaid'
+  end
+
+  def closed?
+    status == 'closed'
   end
 
   def paid?

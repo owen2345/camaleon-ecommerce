@@ -43,8 +43,8 @@
           <div class="bg-bar"></div>
           <ul>
             <%
-               approved_accepted = @order.paid?
-               approved_shipped = false
+              approved_accepted = @order.paid?
+              approved_shipped = false
             %>
             <li class="received">
               <div class="icon"><i class="fa fa-inbox"></i></div>
@@ -57,8 +57,8 @@
             <% if approved_accepted %>
                 <li class="accepted">
                   <%
-                     if @order.details.accepted_at.present?
-                       approved_shipped = true
+                    if @order.details.accepted_at.present?
+                      approved_shipped = true
                   %>
                       <div class="icon"><i class="fa fa-thumbs-up"></i></div>
                       <h4><%= t('plugin.ecommerce.order_accepted') %></h4>
@@ -162,6 +162,12 @@
     </div>
 
     <%#= debug @order.meta %>
-
+    <% unless @order.closed? %>
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <%= link_to raw('<i class="fa fa-lock"></i> Close order'), admin_plugins_ecommerce_order_closed_path(order_id: @order.slug), method: :post, data: {confirm: t('plugin.ecommerce.message.modal_close_order')}, class: "btn btn-danger cama_ajax_request", title: "#{t('plugin.ecommerce.buttons.close_order')}" unless @order.closed? %>
+          </div>
+        </div>
+    <% end %>
   </div>
 </div>

@@ -29,6 +29,7 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
       orders = orders.where(status: params[:s])
     end
 
+    orders = orders.order('updated_at DESC')
     @orders = orders.paginate(:page => params[:page], :per_page => current_site.admin_per_page)
   end
 
@@ -75,6 +76,15 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
     code = params[:payment][:consignment_number]
     @order.set_meta("payment", @order.get_meta("payment", {}).merge({consignment_number: code}))
     flash[:info] = "#{t('plugin.ecommerce.message.order', status: "#{t('plugin.ecommerce.message.shipped')}")}"
+    redirect_to action: :show, id: params[:order_id]
+  end
+
+  # closed order
+  def closed
+    @order = current_site.orders.find_by_slug(params[:order_id])
+    @order.update({status: 'closed'})
+    @order.details.update({closed_at: Time.now})
+    flash[:info] = "#{t('plugin.ecommerce.message.order', status: "#{t('plugin.ecommerce.message.closed')}")}"
     redirect_to action: :show, id: params[:order_id]
   end
 
