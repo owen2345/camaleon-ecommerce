@@ -29,6 +29,7 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
       orders = orders.where(status: params[:s])
     end
 
+    orders = orders.order('updated_at DESC')
     @orders = orders.paginate(:page => params[:page], :per_page => current_site.admin_per_page)
   end
 
