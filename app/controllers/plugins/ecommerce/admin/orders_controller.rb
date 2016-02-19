@@ -79,6 +79,15 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
     redirect_to action: :show, id: params[:order_id]
   end
 
+  # closed order
+  def closed
+    @order = current_site.orders.find_by_slug(params[:order_id])
+    @order.update({status: 'closed'})
+    @order.details.update({closed_at: Time.now})
+    flash[:info] = "#{t('plugin.ecommerce.message.order', status: "#{t('plugin.ecommerce.message.closed')}")}"
+    redirect_to action: :show, id: params[:order_id]
+  end
+
   private
   def set_order
     @order = current_site.orders.find_by_slug(params[:id])

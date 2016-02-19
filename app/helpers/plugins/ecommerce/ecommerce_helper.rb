@@ -61,7 +61,7 @@ module Plugins::Ecommerce::EcommerceHelper
         items_i << {icon: "tags", title: t('camaleon_cms.admin.post_type.tags'), url: cama_admin_post_type_post_tags_path(pt.id)} if can? :post_tags, pt
       end
       if can? :posts, pt
-        items_i << {icon: "reorder", title: "<span>#{t('plugin.ecommerce.orders')} <small class='label label-primary'>#{current_site.orders.size}</small></span>", url: admin_plugins_ecommerce_orders_path}
+        items_i << {icon: "reorder", title: "<span>#{t('plugin.ecommerce.orders')} <small class='label label-primary'>#{current_site.orders.not_closed.size}</small></span>", url: admin_plugins_ecommerce_orders_path}
         items_i << {icon: "money", title: t('plugin.ecommerce.tax_rates'), url: admin_plugins_ecommerce_tax_rates_path}
         items_i << {icon: "taxi", title: t('plugin.ecommerce.shipping_methods'), url: admin_plugins_ecommerce_shipping_methods_path}
         items_i << {icon: "credit-card", title: t('plugin.ecommerce.payment_methods'), url: admin_plugins_ecommerce_payment_methods_path}
