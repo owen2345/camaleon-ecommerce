@@ -39,8 +39,11 @@
               </div>
 
               <div class="form-group">
-                <label for=""><%= t('plugin.ecommerce.table.expiration_date') %></label><br>
-                <%= text_field_tag "options[expirate_date]",options[:expirate_date] || '', :class => "form-control required" %>
+                  <label for=""><%= t('plugin.ecommerce.table.expiration_date') %></label><br>
+                  <div class="input-group date date-input-box">
+                      <%= text_field_tag "options[expirate_date]",options[:expirate_date] || '', :class => "form-control required", "data-locale" => current_locale %>
+                      <span class="add-on input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                  </div>
               </div>
 
               <div class="form-group">
@@ -67,7 +70,9 @@
 
 <% add_asset_library('datepicker')  %>
 <script>
-  run.push(function(){
-    jQuery( '#form-coupon' ).on( "change", 'input[type="number"], #options_min_cart_total', function() {setTimeout(function(){jQuery(this).val(Math.abs(jQuery(this).val()) || 0);}.bind(this), 60)});
-  })
+  jQuery(function(){
+    var form = jQuery( '#form-coupon');
+    form.on( "change", 'input[type="number"], #options_min_cart_total', function() {setTimeout(function(){jQuery(this).val(Math.abs(jQuery(this).val()) || 0);}.bind(this), 60)});
+    form.find('#options_expirate_date').parent().datepicker();
+  });
 </script>

@@ -15,17 +15,32 @@ class Plugins::Ecommerce::Cart < CamaleonCms::TermTaxonomy
     post_id = defined?(object.id) ? object.id : object.to_i
     term_relationships.where(objectid: post_id).first_or_create if post_id > 0
   end
+
+  # update or set product quantity
+  # return true if it is possible to add the quantity
+  # return false if quantity is not enough
+  def set_product_qty(product, qty)
+    _options = self.get_option("product_#{product.id}")
+    if qty.to_f <= product.the_qty_real.to_f
+      _options['qty'] = qty
+      self.set_option("product_#{product.id}", _options)
+      true
+    else
+      false
+    end
+  end
+
   def remove_product(object)
     post_id = defined?(object.id) ? object.id : object.to_i
     term_relationships.where(objectid: post_id).destroy_all if post_id > 0
   end
 
   def the_items_count
-    options.map{|k, p| p[:qty].to_i}.inject{|sum,x| sum + x } || 0
+    options.map{|k, p| p[:qty].to_i}.inject{|sum,x| sum + x } || 0 rescue 0
   end
 
   def the_amount_total
-    options.map{|k, p| (p[:price].to_f + p[:tax])* p[:qty].to_f}.inject{|sum,x| sum + x } || 0
+    options.map{|k, p| (p[:price].to_f + p[:tax])* p[:qty].to_f}.inject{|sum,x| sum + x } || 0 rescue 0
   end
 
 

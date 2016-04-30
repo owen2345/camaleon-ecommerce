@@ -91,6 +91,7 @@ es:
         in_stock: 'Disponible'
         not_in_tock: 'No Disponible'
         total_excluding_tax: 'Total (impuestos excluidos)'
+        attrs_descr: 'Ingresa los atributos de tu producto separados por comas, ejemplo: Color ==> Rojo, Azul, Verde'
       products: 'Productos'
       shipping_address: 'Dirección de Envío'
       shipping_methods: 'Métodos de Envío'

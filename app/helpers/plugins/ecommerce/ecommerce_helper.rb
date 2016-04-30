@@ -78,80 +78,6 @@ module Plugins::Ecommerce::EcommerceHelper
   end
 
   def ecommerce_app_before_load
-    CamaleonCms::Site.class_eval do
-      #attr_accessible :my_id
-      has_many :carts, :class_name => 'Plugins::Ecommerce::Cart', foreign_key: :parent_id, dependent: :destroy
-      has_many :orders, :class_name => 'Plugins::Ecommerce::Order', foreign_key: :parent_id, dependent: :destroy
-      has_many :payment_methods, :class_name => 'Plugins::Ecommerce::PaymentMethod', foreign_key: :parent_id, dependent: :destroy
-      has_many :shipping_methods, :class_name => 'Plugins::Ecommerce::ShippingMethod', foreign_key: :parent_id, dependent: :destroy
-      has_many :coupons, :class_name => 'Plugins::Ecommerce::Coupon', foreign_key: :parent_id, dependent: :destroy
-      has_many :tax_rates, :class_name => 'Plugins::Ecommerce::TaxRate', foreign_key: :parent_id, dependent: :destroy
-    end
-
-    CamaleonCms::SiteDecorator.class_eval do
-      def current_unit
-        @current_unit ||= h.e_get_currency_units[object.get_meta("_setting_ecommerce", {})[:current_unit]]['symbol'] rescue '$'
-      end
-
-      def currency_code
-        @currency_code ||= h.e_get_currency_units[object.get_meta("_setting_ecommerce", {})[:current_unit]]['code'] rescue 'USD'
-      end
-
-      def current_weight
-        @current_weight ||= h.e_get_currency_weight[object.get_meta("_setting_ecommerce", {})[:current_weight]]['code'] rescue 'kg'
-      end
-    end
-
-    CamaleonCms::PostDecorator.class_eval do
-      def the_sku
-        object.get_field_value('ecommerce_sku').to_s
-      end
-
-      def the_price
-        "#{h.current_site.current_unit} #{object.get_field_value('ecommerce_price').to_f}"
-      end
-
-      def the_weight
-        "#{h.current_site.current_weight} #{object.get_field_value('ecommerce_weight').to_f}"
-      end
-
-      def the_qty
-        object.get_field_value('ecommerce_qty') || 0
-      end
-
-      def the_photos
-        object.get_field_values('ecommerce_photos') || []
-      end
-
-      def in_stock?
-        object.get_field_value('ecommerce_stock').to_s.to_bool
-      end
-
-      def the_stock_status
-        if in_stock? && the_qty_real.to_i > 0
-          "<span class='label label-success'>#{I18n.t('plugin.ecommerce.product.in_stock')}</span>"
-        else
-          "<span class='label label-danger'>#{I18n.t('plugin.ecommerce.product.not_in_tock')}</span>"
-        end
-      end
-
-      def featured?
-        object.get_field_value('ecommerce_featured').to_s.to_bool
-      end
-
-      def the_featured_status
-        if featured?
-          "<span class='label label-primary'>#{I18n.t('plugin.ecommerce.product.featured')}</span>"
-        else
-          ""
-        end
-      end
-
-      def the_qty_real
-        object.get_field_value('ecommerce_qty') || 0
-      end
-    end
-
 
   end
 
@@ -228,7 +154,7 @@ module Plugins::Ecommerce::EcommerceHelper
       @ecommerce.get_field_groups.destroy_all
       group = @ecommerce.add_custom_field_group({name: 'Products Details', slug: 'plugin_ecommerce_product_data'})
       group.add_manual_field({"name" => "t('plugin.ecommerce.product.sku', default: 'Sku')", "slug" => "ecommerce_sku"}, {field_key: "text_box", required: true, label_eval: true})
-      group.add_manual_field({"name" => "t('plugin.ecommerce.product.attrs', default: 'Attributes')", "slug" => "ecommerce_attrs"}, {field_key: "field_attrs", required: false, multiple: true, false: true, label_eval: true})
+      group.add_manual_field({"name" => "t('plugin.ecommerce.product.attrs', default: 'Attributes')", "slug" => "ecommerce_attrs", description: "t('plugin.ecommerce.product.attrs_descr', default: 'Please enter your product attributes separated by commas, like: Color ==> Red, Blue, Green')"}, {field_key: "field_attrs", required: false, multiple: true, false: true, translate: true, label_eval: true})
       group.add_manual_field({"name" => "t('plugin.ecommerce.product.photos', default: 'Photos')", "slug" => "ecommerce_photos"}, {field_key: "image", required: false, multiple: true, label_eval: true})
       group.add_manual_field({"name" => "t('plugin.ecommerce.product.price', default: 'Price')", "slug" => "ecommerce_price", "description" => "t('plugin.ecommerce.product.current_unit', default: 'Current unit: %{unit}', unit: current_site.current_unit.to_s)"}, {field_key: "numeric", required: true, label_eval: true})
       group.add_manual_field({"name" => "t('plugin.ecommerce.product.tax', default: 'Tax')", "slug" => "ecommerce_tax"}, {field_key: "select_eval", required: false, command: "options_from_collection_for_select(current_site.tax_rates.all, \"id\", \"the_name\")", label_eval: true})

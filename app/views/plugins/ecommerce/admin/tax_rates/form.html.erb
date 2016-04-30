@@ -30,7 +30,7 @@
 </div>
 
 <script>
-  run.push(function(){
+  jQuery(function(){
     jQuery( '#form-tax_rate' ).on( "change", '#options_rate', function() {setTimeout(function(){jQuery(this).val(Math.abs(jQuery(this).val()) || 0);}.bind(this), 60)});
   })
 </script>

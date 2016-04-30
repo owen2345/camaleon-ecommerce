@@ -6,6 +6,9 @@ CamaleonCms::Site.class_eval do
   has_many :shipping_methods, :class_name => "Plugins::Ecommerce::ShippingMethod", foreign_key: :parent_id, dependent: :destroy
   has_many :coupons, :class_name => "Plugins::Ecommerce::Coupon", foreign_key: :parent_id, dependent: :destroy
   has_many :tax_rates, :class_name => "Plugins::Ecommerce::TaxRate", foreign_key: :parent_id, dependent: :destroy
+  def products
+    post_types.where(slug: 'commerce').first.try(:posts)
+  end
 end
 
 CamaleonCms::SiteDecorator.class_eval do
@@ -47,11 +50,12 @@ CamaleonCms::PostDecorator.class_eval do
     end
   end
 
-  def featured?
+  def eco_featured?
     object.get_field_value('ecommerce_featured').to_s.to_bool
   end
+
   def the_featured_status
-    if featured?
+    if eco_featured?
       "<span class='label label-primary'>#{I18n.t('plugin.ecommerce.product.featured')}</span>"
     else
       ""
@@ -59,6 +63,6 @@ CamaleonCms::PostDecorator.class_eval do
   end
 
   def the_qty_real
-    object.get_field_value('ecommerce_qty') || 0
+    object.get_field_value('ecommerce_qty').to_f || 0
   end
 end

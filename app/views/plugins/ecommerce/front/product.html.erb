@@ -85,8 +85,8 @@
                     <table class="table table-bordered">
                       <% attrs.each do |data| %>
                           <tr>
-                            <td><strong><%= data['attr'] %></strong></td>
-                            <td><%= data['value'] %></td>
+                            <td><strong><%= data['attr'].to_s.translate %></strong></td>
+                            <td><%= data['value'].to_s.translate %></td>
                           </tr>
                       <% end %>
                     </table>

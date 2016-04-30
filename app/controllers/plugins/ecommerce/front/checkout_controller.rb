@@ -86,6 +86,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
     details[:received_at] = Time.now
     @order.create_details(details)
     @order.set_meta("products", @cart.options)
+    @order.set_meta("cart_id", @cart.id)
     @order.set_meta("details", params[:order][:details])
     @order.set_meta("billing_address", params[:order][:billing_address])
     @order.set_meta("shipping_address", params[:order][:shipping_address])
@@ -120,6 +121,12 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
   def cart_add
     data = params[:cart]
     product_id = data[:product_id]
+    product = current_site.products.find(product_id).decorate
+    if data[:qty].to_f > product.the_qty_real
+      flash[:error] =  t('.not_enough_product_qty', product: product.the_title, qty: product.the_qty_real)
+      redirect_to :back
+      return
+    end
     @cart.add_product(product_id)
     @cart.set_option("product_#{product_id}", e_add_data_product(data, product_id))
     flash[:notice] = t('plugin.ecommerce.msg.added_product_in_cart')
@@ -127,11 +134,13 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
   end
 
   def cart_update
+    errors = []
     params[:products].each do |data|
-      product_id = data[:product_id]
-      @cart.set_option("product_#{product_id}", e_add_data_product(data, product_id))
+      product = @cart.products.find(data[:product_id]).decorate
+      errors << t('.not_enough_product_qty', product: product.the_title, qty: product.the_qty_real) unless @cart.set_product_qty(product, data[:qty])
     end
-    flash[:notice] = "Updated product in Cart."
+    flash[:error] = errors.join('<br>') if errors.present?
+    flash[:notice] = t('.updated_products') unless errors.present?
     redirect_to action: :cart_index
   end
 
