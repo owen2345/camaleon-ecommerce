@@ -1,14 +1,14 @@
 <%= render layout: 'plugins/ecommerce/layouts/ecommerce', locals: {} do %>
-<h2>Shopping Cart</h2>
+<h2><%= t('.title', default: 'Shopping Cart') %></h2>
 <%= form_tag(plugins_ecommerce_checkout_cart_update_path, :method => "post", :class => "form") do %>
     <table id="table-shopping-cart" class="table">
       <thead>
       <tr>
-        <th id="item_col">Item</th>
-        <th id="price_col">Price</th>
-        <th id="price_col">Tax</th>
-        <th id="quantity_col">Quantity</th>
-        <th id="subtotal_col">Subtotal</th>
+        <th id="item_col"><%= t('.item', default: 'Item') %></th>
+        <th id="price_col"><%= t('.price', default: 'Price') %></th>
+        <th id="price_col"><%= t('.tax', default: 'Tax') %></th>
+        <th id="quantity_col"><%= t('.quantity', default: 'Quantity') %></th>
+        <th id="subtotal_col"><%= t('.subtotal', default: 'Subtotal') %></th>
         <th></th>
       </tr>
       </thead>
@@ -34,7 +34,7 @@
             </td>
             <td data-subtotal="<%= sub_total %>"><%= current_site.current_unit %> <%= sub_total.to_f.round(2) %></td>
             <td>
-              <a rel="nofollow" data-method="delete" href="<%= plugins_ecommerce_checkout_cart_remove_path(product_id: product.id) %>">Remove</a>
+              <a rel="nofollow" data-method="delete" href="<%= plugins_ecommerce_checkout_cart_remove_path(product_id: product.id) %>"><%= t('.delete', default: 'Remove') %></a>
             </td>
           </tr>
       <% end  %>
@@ -42,15 +42,15 @@
       <tfoot>
       <tr>
         <td colspan="4"></td>
-        <td>Subtotal</td>
+        <td><%= t('.subtotal', default: 'Subtotal') %></td>
         <td id="total" ><%= current_site.current_unit %> <%= total.to_f.round(2) %></td>
       </tr>
       </tfoot>
     </table>
     <% if @products.size > 0 %>
         <div class="text-right">
-            <button type="submit" class="btn btn-default"> Update </button>
-            <a class="btn btn-info" href="<%= plugins_ecommerce_checkout_path %>"><i class="fa fa-shopping-cart"></i> Proceed to Checkout</a>
+            <button type="submit" class="btn btn-default"> <%= t('.update', default: 'Update') %> </button>
+            <a class="btn btn-info" href="<%= plugins_ecommerce_checkout_path %>"><i class="fa fa-shopping-cart"></i> <%= t('.proceed', default: 'Proceed to Checkout') %></a>
         </div>
     <% end %>
 

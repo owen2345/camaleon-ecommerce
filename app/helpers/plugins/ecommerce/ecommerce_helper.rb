@@ -10,29 +10,15 @@ module Plugins::Ecommerce::EcommerceHelper
   include Plugins::Ecommerce::EcommerceEmailHelper
 
   def ecommerce_on_render_post(d)
-    if d[:post_type].slug == 'commerce'
-      ecommerce_add_assets_in_front
-      d[:render] = 'plugins/ecommerce/front/product'
-    end
-    d
+
   end
 
   def ecommerce_on_render_post_type(d)
-    # d = {post_type: @post_type, layout: (self.send :_layout), render: verify_template("post_type")}
-    if d[:post_type].slug == 'commerce'
-      ecommerce_add_assets_in_front
-      @ecommerce_bredcrumb << [d[:post_type].the_title]
-      d[:render] = 'plugins/ecommerce/front/list_products'
-    end
-    d
+
   end
 
   def ecommerce_admin_list_post(d)
-    if d[:post_type].slug == 'commerce'
-      ecommerce_add_assets_in_front
-      d[:render] = 'plugins/ecommerce/admin/products/index'
-    end
-    d
+
   end
 
   def ecommerce_form_post(d)
@@ -93,22 +79,12 @@ module Plugins::Ecommerce::EcommerceHelper
   # plugin: plugin model
   def ecommerce_on_active(plugin)
     generate_custom_field_products
-
-    unless ActiveRecord::Base.connection.table_exists? 'plugins_order_details'
-      Plugins::Ecommerce::Order.where("1 = 1").delete_all
-      ActiveRecord::Base.connection.create_table :plugins_order_details do |t|
-        t.integer :order_id
-        t.string :customer, :email, :phone
-        t.datetime :received_at, :accepted_at, :shipped_at, :closed_at
-        t.timestamps
-      end
-    end
   end
 
   # here all actions on going to inactive
   # plugin: plugin model
   def ecommerce_on_inactive(plugin)
-
+    current_site.post_types.hidden_menu.where(slug: "commerce").first.destroy
   end
 
   def get_commerce_post_type
@@ -116,23 +92,23 @@ module Plugins::Ecommerce::EcommerceHelper
     unless @ecommerce.present?
       @ecommerce = current_site.post_types.hidden_menu.new(slug: "commerce", name: "Product")
       if @ecommerce.save
-        @ecommerce.set_meta('_default', {
+        @ecommerce.set_options({
           has_category: true,
           has_tags: true,
           not_deleted: true,
           has_summary: true,
           has_content: true,
-          has_comments: false,
+          has_comments: true,
           has_picture: true,
           has_template: false,
+          has_featured: true,
+          cama_post_decorator_class: 'Ecommerce::ProductDecorator'
         })
         @ecommerce.categories.create({name: 'Uncategorized', slug: 'Uncategorized'.parameterize})
-        # @ecommerce.set_option("default_layout", 'plugins/ecommerce/front/product')
-        @ecommerce.set_option("default_template", 'plugins/ecommerce/front/product')
       end
-
+      @ecommerce.set_options({posts_feature_image_label: 'plugin.ecommerce.product.image_label',
+                              posts_feature_image_label_default: 'Product Image'})
     end
-
   end
 
   def ecommerce_add_assets_in_front
@@ -161,7 +137,7 @@ module Plugins::Ecommerce::EcommerceHelper
       group.add_manual_field({"name" => "t('plugin.ecommerce.product.weight', default: 'Weight')", "slug" => "ecommerce_weight", "description" => "t('plugin.ecommerce.product.current_weight', default: 'Current weight: %{weight}', weight: current_site.current_weight.to_s)"}, {field_key: "text_box", required: true, label_eval: true})
       group.add_manual_field({"name" => "t('plugin.ecommerce.product.stock', default: 'Stock')", "slug" => "ecommerce_stock"}, {field_key: "checkbox", default: true, label_eval: true})
       group.add_manual_field({"name" => "t('plugin.ecommerce.product.qty', default: 'Quantity')", "slug" => "ecommerce_qty"}, {field_key: "numeric", required: true, label_eval: true})
-      group.add_manual_field({"name" => "t('plugin.ecommerce.product.featured', default: 'Is Featured?')", "slug" => "ecommerce_featured"}, {field_key: "checkbox", default: true, label_eval: true})
+      # group.add_manual_field({"name" => "t('plugin.ecommerce.product.featured', default: 'Is Featured?')", "slug" => "ecommerce_featured"}, {field_key: "checkbox", default: true, label_eval: true})
     end
   end
 

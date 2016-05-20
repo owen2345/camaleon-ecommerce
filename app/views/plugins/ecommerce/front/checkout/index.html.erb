@@ -5,7 +5,7 @@
 
 %>
 <div id="checkout" class="row">
-  <h1 class="col-md-12">Checkout</h1>
+  <h1 class="col-md-12"><%= t('.titles') %> Checkout</h1>
 
   <%= form_tag(plugins_ecommerce_checkout_processing_path, :method => "post", :class => "form form-validate-ec") do %>
 

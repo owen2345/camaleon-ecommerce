@@ -3,7 +3,12 @@ Rails.application.routes.draw do
     # frontend
     namespace :plugins do
       namespace 'ecommerce' do
-        get 'index' => 'front#index'
+        controller :front do
+          get 'login'
+          post 'login' => :do_login
+          get 'register'
+          post 'register' => :do_register
+        end
 
         get 'checkout' => 'front/checkout#index'
         post 'checkout/processing' => 'front/checkout#processing'

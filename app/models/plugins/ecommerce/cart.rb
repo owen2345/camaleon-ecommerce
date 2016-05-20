@@ -43,6 +43,10 @@ class Plugins::Ecommerce::Cart < CamaleonCms::TermTaxonomy
     options.map{|k, p| (p[:price].to_f + p[:tax])* p[:qty].to_f}.inject{|sum,x| sum + x } || 0 rescue 0
   end
 
+  # return the price of current cart ($10)
+  def the_price
+    "#{self.site.decorate.current_unit}#{sprintf('%.2f', the_amount_total)}"
+  end
 
   # set user in filter
   def self.set_user(user)

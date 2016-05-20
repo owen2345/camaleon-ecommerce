@@ -1,3 +1,3 @@
 <p><%= t('plugin.ecommerce.mail.order_received.welcome') %><%= @extra_data[:admin][:fullname] %></p>
-<p><%= @extra_data[:fullname] %> has bought!</p>
+<p><%= t('plugin.ecommerce.mail.order_received.boght_by', user: @extra_data[:fullname], default: '%{user} has bought') %></p>
 <p><%= t('plugin.ecommerce.mail.order_received.reference') %> <a href="<%= @extra_data[:order_url] %>"><%= @extra_data[:order_slug] %></a>

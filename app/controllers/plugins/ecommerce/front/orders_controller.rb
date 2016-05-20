@@ -12,6 +12,7 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
   def index
     @ecommerce_bredcrumb << ["Orders"]
     @orders = current_site.orders.set_user(current_user).all
+    render "index"
   end
 
   def show

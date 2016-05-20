@@ -21,10 +21,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
   end
 
   def processing
-
-
     @products = @cart.products
-
     total_weight = 0
     tax_total = 0
     sub_total = 0
@@ -86,7 +83,6 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
     details[:received_at] = Time.now
     @order.create_details(details)
     @order.set_meta("products", @cart.options)
-    @order.set_meta("cart_id", @cart.id)
     @order.set_meta("details", params[:order][:details])
     @order.set_meta("billing_address", params[:order][:billing_address])
     @order.set_meta("shipping_address", params[:order][:shipping_address])
@@ -140,7 +136,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
       errors << t('.not_enough_product_qty', product: product.the_title, qty: product.the_qty_real) unless @cart.set_product_qty(product, data[:qty])
     end
     flash[:error] = errors.join('<br>') if errors.present?
-    flash[:notice] = t('.updated_products') unless errors.present?
+    flash[:notice] = t('.updated_products', default: 'Shopping Cart Updated') unless errors.present?
     redirect_to action: :cart_index
   end
 
@@ -161,7 +157,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
       @cart = current_site.carts.set_user(current_user).first_or_create(name: "Cart by #{current_user.id}")
     else
       cookies[:return_to] = request.referer
-      redirect_to cama_admin_login_path
+      redirect_to plugins_ecommerce_login_path
     end
   end
 

@@ -1,0 +1,96 @@
+<div class="container" id="ecommerce_login_panel">
+    <%= render 'camaleon_cms/flash_messages' %>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-login">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <a href="#" class="active" id="login-form-link">Login</a>
+                        </div>
+                        <div class="col-xs-6">
+                            <a href="#" id="register-form-link">Register</a>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <%= form_tag plugins_ecommerce_login_path, id: 'login-form' do %>
+                                <%= hidden_field_tag :kind_form, 'login-form' %>
+                                <div class="form-group">
+                                    <input type="text" name="username" id="username" tabindex="1" class="form-control required" placeholder="Username" value="">
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" name="password" id="password" tabindex="2" class="form-control required" placeholder="Password">
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" name="login-submit" id="login-submit" tabindex="4" class="btn btn-default col-md-3" value="Log In">
+                                    <a href="<%= cama_admin_forgot_url(return_to: site_current_url) %>" tabindex="5" class="pull-right">Forgot Password?</a>
+                                </div>
+                                <div class="clearfix"></div>
+                            <% end %>
+
+                            <%= form_for @user, url: plugins_ecommerce_register_path, html: { id: 'register-form', style: 'display: none;' } do |f| %>
+                                <%= render partial: 'layouts/camaleon_cms/admin/form_error', locals: {data: @user} %>
+                                <%= hidden_field_tag :kind_form, 'register-form' %>
+                                <div class="form-group">
+                                    <%= f.text_field :first_name, class: 'form-control required', tabindex: 1, placeholder: 'Full Name' %>
+                                </div>
+                                <div class="form-group">
+                                    <%= f.text_field :username, class: 'form-control required', tabindex: 2, placeholder: 'Username' %>
+                                </div>
+                                <div class="form-group">
+                                    <%= f.text_field :email, class: 'form-control email required', tabindex: 3, placeholder: 'Email Address' %>
+                                </div>
+                                <div class="form-group">
+                                    <%= f.password_field :password, class: 'form-control required', tabindex: 4, placeholder: 'Password' %>
+                                </div>
+                                <div class="form-group">
+                                    <%= f.password_field :password_confirmation, class: 'form-control required', equalTo: '#camaleon_cms_user_password', tabindex: 5, placeholder: 'Confirm Password' %>
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" name="login-submit" id="login-submit" tabindex="6" class="btn btn-default col-md-3" value="Register">
+                                </div>
+                                <div class="clearfix"></div>
+                            <% end %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+  $(function() {
+    var panel = $('#ecommerce_login_panel');
+    $('#login-form-link', panel).click(function(e) {
+      $("#login-form", panel).delay(100).fadeIn(100);
+      $("#register-form", panel).fadeOut(100);
+      $('#register-form-link', panel).css('font-weight', 'normal');
+      $(this).css('font-weight', 'bold');
+      e.preventDefault();
+    });
+
+    $('#register-form-link', panel).click(function(e) {
+      $("#register-form", panel).delay(100).fadeIn(100);
+      $("#login-form", panel).fadeOut(100);
+      $('#login-form-link', panel).css('font-weight', 'normal');
+      $(this).css('font-weight', 'bold');
+      e.preventDefault();
+    });
+
+    <% if params[:kind_form].present? %>
+      $('#<%= params[:kind_form] %>-link', panel).click();
+    <% end %>
+
+    function do_validation(){
+      $("#register-form", panel).validate();
+      $("#login-form", panel).validate();
+    }
+
+    if(!$.fn.validator) $.getScript('<%= asset_url('camaleon_cms/admin/jquery.validate') %>', function(){ do_validation(); });
+    else do_validation();
+  });
+</script>

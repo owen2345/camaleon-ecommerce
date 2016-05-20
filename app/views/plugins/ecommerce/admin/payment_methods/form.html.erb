@@ -32,6 +32,7 @@
                     <li class="<%= 'active' if options[:type] == 'paypal' %>"><a href="#tab9" data-toggle="tab"><%= t('plugin.ecommerce.by_paypal') %></a></li>
                     <li class="<%= 'active' if options[:type] == 'credit_card' %>"><a href="#tab7" data-toggle="tab"><%= t('plugin.ecommerce.by_credit_card') %></a></li>
                     <li class="<%= 'active' if options[:type] == 'authorize_net' %>"><a href="#tab10" data-toggle="tab"><%= t('plugin.ecommerce.by_authorize_net') %></a></li>
+                    <li class="<%= 'active' if options[:type] == 'stripe' %>"><a href="#tab11" data-toggle="tab"><%= t('plugin.ecommerce.by_stripe', default: 'Stripe') %></a></li>
                 </ul>
                 <div class="panel-body tab-content">
 
@@ -101,6 +102,17 @@
                                     <input type="checkbox" name="options[authorize_net_sandbox]" value="1" <%= 'checked' if options[:authorize_net_sandbox] %>>  <%= t('plugin.ecommerce.table.sandbox') %>
                                 </label>
                             </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane <%= 'active' if options[:type] == 'stripe' %>" id="tab11">
+                        <%= hidden_field_tag('options[type]', 'stripe') %>
+                        <div class="form-group">
+                            <label><%= t('plugin.ecommerce.table.login_id') %></label><br>
+                            <%= text_field_tag('options[stripe_id]', options[:stripe_id], class: 'form-control required') %>
+                        </div>
+                        <div class="form-group">
+                            <label><%= t('plugin.ecommerce.table.transaction_key') %></label><br>
+                            <%= text_field_tag('options[stripe_key]', options[:stripe_key], class: 'form-control required') %>
                         </div>
                     </div>
                 </div>

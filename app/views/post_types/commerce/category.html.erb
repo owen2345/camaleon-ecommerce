@@ -1,0 +1,35 @@
+<article id="category-view" class="category_<%= @category.slug %>">
+    <%= render partial: 'partials/breadcrumb', locals: {breadcrumb: @category.the_breadcrumb } %>
+    <h1><%= @category.the_title %><%= @category.the_edit_link %></h1>
+    <div class="content">
+        <%= raw @category.the_content %>
+    </div><br><br>
+
+    <% if @children.present? %>
+        <div class="well">
+            <%= render partial: "partials/categories_list", locals: {categories: @children } %>
+        </div>
+    <% end %>
+
+    <div class="row">
+        <% @posts.decorate.each_with_index do |post, index| %>
+            <%= raw "<div class='clearfix'></div>" if index%3 == 0 && index > 0 %>
+            <div class="col-sm-6 col-md-4 post-list-item">
+                <div class="thumbnail">
+                    <%= raw post.the_link_thumb({}, {style: "height: 200px; width: 100%; display: block;"}) %>
+                    <div class="caption">
+                        <h4 id="thumbnail-label">
+                            <a href="<%= post.the_url %>"><%= post.the_title %> (<i class="fa fa-cart"></i> <%= post.the_price %>)</a>
+                        </h4>
+                        <small class="" style="display: block;"><%= post.the_created_at %></small>
+                        <hr>
+                        <p><%= raw post.the_excerpt %> <%= post.the_edit_link %></p>
+                    </div>
+                </div>
+            </div>
+        <% end %>
+    </div>
+    <%= content_tag("div", raw(ct('no_contents_found', default: 'No contents found')), class: "alert alert-warning") if @posts.empty? %>
+    <%= will_paginate @posts, renderer: BootstrapPagination::Rails if @posts.present? %>
+
+</article>

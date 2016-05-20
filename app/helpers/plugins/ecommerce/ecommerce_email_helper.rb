@@ -12,7 +12,7 @@ module Plugins::Ecommerce::EcommerceEmailHelper
       :total_cost => order.get_meta("payment")[:amount],
       :order => order
     }
-    send_email(order.customer.email, t('plugin.ecommerce.email.order_received.subject'), '', nil, [], 'order_received', 'plugins/ecommerce/mailer', extra_data)
+    send_email(order.customer.email, t('plugin.ecommerce.email.order_received.subject'), '', nil, [], 'order_received', nil, extra_data)
   end
 
   def send_order_received_admin_notice(order)
@@ -30,7 +30,7 @@ module Plugins::Ecommerce::EcommerceEmailHelper
     users = current_site.users.where(:role => :admin)
     users.each do |user|
       extra_data[:admin] = user
-      send_email(user.email, t('plugin.ecommerce.email.order_received_admin.subject'), '', nil, [], 'order_received_admin', 'plugins/ecommerce/mailer', extra_data)
+      send_email(user.email, t('plugin.ecommerce.email.order_received_admin.subject'), '', nil, [], 'order_received_admin', nil, extra_data)
     end
   end
 
@@ -39,7 +39,7 @@ module Plugins::Ecommerce::EcommerceEmailHelper
       :fullname => order.customer.fullname,
       :order => order
     }
-    send_email(order.customer.email, t('plugin.ecommerce.email.recovery_cart.subject'), '', nil, [], 'recovery_cart', 'plugins/ecommerce/mailer', extra_data)
+    send_email(order.customer.email, t('plugin.ecommerce.email.recovery_cart.subject'), '', nil, [], 'recovery_cart', nil, extra_data)
     Rails.logger.info "Send recovery to #{order.customer.email} with order #{order.slug}"
   end
 
