@@ -26,7 +26,7 @@
               <td><%= row.name %></td>
               <td><%= row.method_text %></td>
               <td><%= raw row.the_status %></td>
-              <td><%= row.description %></td>
+              <td><%= row.description.translate %></td>
               <td>
                 <%= link_to raw('<i class="fa fa-eye"></i>'), {action: :show, id: row.id}, class: "btn btn-info btn-xs", title: "#{t('camaleon_cms.admin.button.preview')}" %>
                 <%= link_to raw('<i class="fa fa-edit"></i>'), {action: :edit, id: row.id}, class: "btn btn-default btn-xs", title: "#{t('camaleon_cms.admin.button.edit')}" %>

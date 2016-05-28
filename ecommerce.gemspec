@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rails' #, '~> 4.2', '>= 4.2.4'
   s.add_dependency 'country_select', '~> 2.4'
   s.add_dependency 'activemerchant', '~> 1.54'
+  s.add_dependency 'stripe'
 
   s.add_development_dependency 'sqlite3', '~> 1.3'
 end

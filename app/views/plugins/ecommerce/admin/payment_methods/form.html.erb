@@ -9,13 +9,13 @@
                 <%= f.label t('plugin.ecommerce.table.name') %><br>
                 <%= f.text_field :name, :class => "form-control required" %>
             </div>
-            <div class="form-group">
+            <div class="form-group hidden">
                 <%= f.label t('camaleon_cms.admin.table.slug') %><br>
                 <%= f.text_field :slug, :class => "form-control slug", "data-parent" => 'plugins_ecommerce_payment_method_name' %>
             </div>
             <div class="form-group">
                 <%= f.label t('plugin.ecommerce.table.description') %><br>
-                <%= f.text_area :description, :class => "form-control", :rows => 4 %>
+                <%= f.text_area :description, :class => "form-control translatable", :rows => 4 %>
             </div>
             <div class="form-group">
                 <label><%= f.check_box :status %> &nbsp; <%= t('plugin.ecommerce.active') %> </label>
@@ -30,7 +30,7 @@
                 <ul  class="nav nav-tabs nav-justified">
                     <li class="<%= 'active' if options[:type] == 'bank_transfer' %>"><a href="#tab8" data-toggle="tab"><%= t('plugin.ecommerce.by_bank_transfer') %></a></li>
                     <li class="<%= 'active' if options[:type] == 'paypal' %>"><a href="#tab9" data-toggle="tab"><%= t('plugin.ecommerce.by_paypal') %></a></li>
-                    <li class="<%= 'active' if options[:type] == 'credit_card' %>"><a href="#tab7" data-toggle="tab"><%= t('plugin.ecommerce.by_credit_card') %></a></li>
+                    <!--<li class="<%= 'active' if options[:type] == 'credit_card' %>"><a href="#tab7" data-toggle="tab"><%= t('plugin.ecommerce.by_credit_card') %></a></li>-->
                     <li class="<%= 'active' if options[:type] == 'authorize_net' %>"><a href="#tab10" data-toggle="tab"><%= t('plugin.ecommerce.by_authorize_net') %></a></li>
                     <li class="<%= 'active' if options[:type] == 'stripe' %>"><a href="#tab11" data-toggle="tab"><%= t('plugin.ecommerce.by_stripe', default: 'Stripe') %></a></li>
                 </ul>
@@ -107,11 +107,11 @@
                     <div class="tab-pane <%= 'active' if options[:type] == 'stripe' %>" id="tab11">
                         <%= hidden_field_tag('options[type]', 'stripe') %>
                         <div class="form-group">
-                            <label><%= t('plugin.ecommerce.table.login_id') %></label><br>
+                            <label><%= t('plugin.ecommerce.stripe_scret_key', default: 'Secret Key') %></label><br>
                             <%= text_field_tag('options[stripe_id]', options[:stripe_id], class: 'form-control required') %>
                         </div>
                         <div class="form-group">
-                            <label><%= t('plugin.ecommerce.table.transaction_key') %></label><br>
+                            <label><%= t('plugin.ecommerce.stripe_publish_key', default: 'Publishable Key') %></label><br>
                             <%= text_field_tag('options[stripe_key]', options[:stripe_key], class: 'form-control required') %>
                         </div>
                     </div>
@@ -125,3 +125,18 @@
         </div>
     <% end %>
 </div>
+<script>
+    jQuery(function(){
+        $('#tab-select-payment-method > ul a').click(function (e) {
+            e.preventDefault();
+            disabled_inputs(this)
+        });
+
+        function disabled_inputs(dom_a){
+            var attr_id = $(dom_a).attr('href')
+            $('#tab-select-payment-method .tab-content .tab-pane').find('input, select, textarea').attr('disabled', 'disabled');
+            $(attr_id).find('input, select, textarea').removeAttr('disabled');
+        }
+        disabled_inputs($('#tab-select-payment-method > ul li.active a')[0]);
+    });
+</script>

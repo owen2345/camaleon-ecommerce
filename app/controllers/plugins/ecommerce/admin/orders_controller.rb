@@ -12,11 +12,9 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
   def index
     orders = current_site.orders
     if params[:q].present?
-      #orders = orders.where(params[:q].strip_stopwords2(I18n.locale).split(" ").map{|text| "posts.title LIKE '%#{text}%'" }.join(" OR "))
       orders = orders.where(slug: params[:q])
     end
     if params[:c].present?
-      #orders = orders.where(user_id: User.joins(:metas).where(usermeta: {key: ['first_name','last_name']}).where("usermeta.value LIKE ?","%#{params[:c]}%").pluck(:id))
       orders = orders.joins(:details).where("plugins_order_details.customer LIKE ?", "%#{params[:c]}%")
     end
     if params[:e].present?
@@ -28,7 +26,6 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
     if params[:s].present?
       orders = orders.where(status: params[:s])
     end
-
     @orders = orders.paginate(:page => params[:page], :per_page => current_site.admin_per_page)
   end
 

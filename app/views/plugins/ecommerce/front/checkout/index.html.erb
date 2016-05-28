@@ -1,166 +1,150 @@
-<%= render layout: 'plugins/ecommerce/layouts/ecommerce', locals: {} do %>
-<%
-   warning = []
-   warning << "Not Found Product" if @products.size == 0
-
-%>
-<div id="checkout" class="row">
-  <h1 class="col-md-12"><%= t('.titles') %> Checkout</h1>
-
-  <%= form_tag(plugins_ecommerce_checkout_processing_path, :method => "post", :class => "form form-validate-ec") do %>
-
-    <div id="user_details" class="col-md-12">
-      <h3>User Details</h3>
-      <p><strong>Name: </strong> <%= current_user.fullname %></p>
-      <input class="form-control" type="hidden" name="order[details][customer]" value="<%= current_user.fullname %>">
-      <div class="form-group">
-        <label for="">Email</label>
-        <input class="form-control required" type="email" name="order[details][email]" id="">
-      </div>
-      <div class="form-group">
-        <label for="">Phone</label>
-        <input class="form-control required" type="text" name="order[details][phone]" id="">
-      </div>
-    </div>
-
-    <%= render partial: 'plugins/ecommerce/partials/form_address' %>
-
-  <div class="clearfix"></div>
-
-    <div id="add_details" class="col-md-6">
-      <div id="coupon">
-        <h3>Coupon</h3>
-        <div id="e_coupon_apply_box" data-href="<%= plugins_ecommerce_res_coupon_path %>" data-token="<%= form_authenticity_token %>">
-          <div class="input-group">
-            <input type="text" class="form-control coupon-text" >
-            <span class="input-group-btn">
-              <button class="btn btn-default" type="button">Apply</button>
-            </span>
-          </div><!-- /input-group -->
-          <input type="hidden" name="order[payment][coupon_code]" id="coupon_code" value="">
-
+<% warning = []; warning << "Not Found Product" if @products.size == 0 %>
+<div id="cama_checkout_view" class="row checkout_view">
+    <%= render plugin_view('partials/cart_widget') %>
+    <h1 class="col-md-12"><%= t('.title', default: 'Checkout') %></h1>
+    <%= form_tag(plugins_ecommerce_checkout_processing_path, :method => "post", :class => "col-md-12", id: 'checkout_form') do %>
+        <div id="user_details">
+            <h3><%= t('.user_details', default: 'User Details') %></h3>
+            <p><strong><%= t('.name', default: 'Name') %>: </strong> <%= current_user.fullname %></p>
+            <input class="form-control" type="hidden" name="order[details][customer]" value="<%= current_user.fullname %>">
+            <div class="form-group">
+                <label for=""><%= t('.email', default: 'Email') %></label>
+                <input class="form-control required" type="email" name="order[details][email]" value="<%= current_user.email %>">
+            </div>
+            <div class="form-group">
+                <label for=""><%= t('.phone', default: 'Phone') %></label>
+                <input class="form-control required" type="text" name="order[details][phone]" id="">
+            </div>
         </div>
 
+        <%= render partial: 'plugins/ecommerce/partials/form_address' %>
 
-      </div>
-      <div id="shipping" data-no-turbolink="">
-        <h3>Shipping Option</h3>
+        <div class="clearfix"></div>
+        <div class="row">
+          <div id="add_details" class="col-md-6">
+              <div id="coupon">
+                  <h3><%= t('.coupon', default: 'Discount Coupon') %></h3>
+                  <div id="e_coupon_apply_box" data-href="<%= plugins_ecommerce_res_coupon_path %>" data-token="<%= form_authenticity_token %>">
+                      <div class="input-group">
+                          <input type="text" class="form-control coupon-text" autocomplete="off" placeholder="<%= t('.coupon_msg', default: 'Enter your code here') %>" >
+                          <span class="input-group-btn"><button class="btn btn-default" type="button"><%= t('.apply', default: 'Apply') %></button></span>
+                          <span class="input-group-addon hidden"><i class='glyphicon glyphicon-ok'></i></span>
+                      </div><!-- /input-group -->
+                      <input type="hidden" name="order[payment][coupon_code]" id="coupon_code" value="">
+                  </div>
+              </div>
 
-        <div class="form-group">
-          <label for="">Shipping method</label>
-          <%
-             total_weight = 0
-             weight_price = 0
-             exist_shipping_method = false
-             @products.each do |product|
-               product_options = @cart.get_option("product_#{product.id}")
-               total_weight += product_options[:weight].to_f * product_options[:qty].to_f
-              end  %>
-          <select class="form-control" name="order[payment][shipping_method]" id="shipping_methods" >
-            <% current_site.shipping_methods.each do |m|
-              price = m.get_price_from_weight(total_weight)
-              if price.to_i >= 0
-                exist_shipping_method = true
-                weight_price = price unless weight_price.to_i > 0
-            %>
-                <option value="<%= m.id %>" data-price="<%= price %>"><%= m.name %> <%= current_site.current_unit %> <%= price %></option>
-            <% end
-               end %>
-          </select>
-          <% warning << "Not Found Shipping Methods by Products" unless exist_shipping_method  %>
+              <div id="shipping" data-no-turbolink="">
+                  <h3><%= t('.shipping_options', default: 'Shipping Options') %></h3>
 
+                  <div class="form-group">
+                      <label for=""><%= t('.shipping_method', default: 'Shipping method') %></label>
+                      <%
+                        total_weight = 0
+                        weight_price = 0
+                        exist_shipping_method = false
+                        @products.each do |product|
+                          product_options = @cart.get_option("product_#{product.id}")
+                          total_weight += product_options[:weight].to_f * product_options[:qty].to_f
+                        end  %>
+                      <select class="form-control" name="order[payment][shipping_method]" id="shipping_methods" >
+                          <% current_site.shipping_methods.each do |m|
+                            price = m.get_price_from_weight(total_weight)
+                            if price.to_i >= 0
+                              exist_shipping_method = true
+                              weight_price = price unless weight_price.to_i > 0
+                          %>
+                                  <option value="<%= m.id %>" data-price="<%= price %>"><%= m.name %> <%= current_site.current_unit %> <%= price %></option>
+                              <% end
+                                 end %>
+                      </select>
+                      <% warning << t('.no_shipping_methods', default: 'Not Found Shipping Methods by Products') unless exist_shipping_method  %>
+                  </div>
+              </div>
+
+              <% if warning.present? %>
+                  <div class="alert alert-danger"><%= raw warning.join("<br>") %></div>
+              <% else %>
+                  <div id="submit" class="text-right">
+                      <button type="submit" name="commit" class="btn btn-default"><%= t('.create_order', default: 'Create Order') %></button>
+                  </div>
+              <% end %>
+          </div>
+          <div id="totals_section" class="col-md-6">
+              <h3><%= t('.total', default: 'Total') %></h3>
+              <table class="table table-bordered">
+                  <tbody>
+                  <tr>
+                      <th id="quantity_col"><%= t('.qty', default: 'Quantity') %></th>
+                      <th id="item_col"><%= t('.item', default: 'Item') %></th>
+                      <th id="price_col"><%= t('.price', default: 'Price') %></th>
+
+                      <th id="tax_col"><%= t('.tax', default: 'Tax') %></th>
+                      <th id="subtotal_col"><%= t('.subtotal', default: 'Sub Total') %></th>
+                  </tr>
+                  <%
+                    total = 0
+                    tax_total = 0
+                    @products.each do |product|
+                      product = product.decorate
+                      product_options = @cart.get_option("product_#{product.id}")
+                      price = product_options[:price].to_f
+                      qty = product_options[:qty].to_f
+                      tax_product = product_options[:tax].to_f
+                      tax_total_product = tax_product * qty
+                      tax_total += tax_total_product
+                      sub_total = price * qty
+                      total += sub_total
+                  %>
+                      <tr>
+                          <td><%= qty.to_i %></td>
+                          <td><%= product.the_title %></td>
+                          <td><%= current_site.current_unit %> <%= price %></td>
+
+                          <td><%= current_site.current_unit %> <%= tax_product %></td>
+                          <td><%= current_site.current_unit %> <%= sub_total + tax_total_product %></td>
+                      </tr>
+                  <% end %>
+                  <tr>
+                      <td colspan="2"></td>
+                      <td colspan="2" class="text-right"><%= t('.total_excl', default: 'Total (excluding Tax)') %> </td>
+                      <td id="subtotal_total" data-subtotal="<%= total %>">
+                          <%= current_site.current_unit %> <%= total %>
+                      </td>
+                  </tr>
+                  <tr >
+                      <td colspan="2"></td>
+                      <td colspan="2" class="text-right"><%= t('.tax', default: 'Tax') %></td>
+                      <td id="tax_total">
+                          <%= current_site.current_unit %> <%= tax_total %>
+                      </td>
+                  </tr>
+                  <% total += tax_total %>
+
+                  <tr id="coupon_application_row" style="display:none;">
+                      <td colspan="2"></td>
+                      <td colspan="2" class="text-right"><%= t('.discount', default: 'Discount') %></td>
+                      <td class="extra_totals reduce_tax_subtotal" id="coupon_application_total" data-amount="0">
+                          <span></span>
+                      </td>
+                  </tr>
+                  <tr>
+                      <td colspan="2"></td>
+                      <td colspan="2" class="text-right"><%= t('.total_shipping', default: 'Total shipping') %></td>
+                      <td id="shipping_total"><%= current_site.current_unit %> <span><%= weight_price %></span></td>
+                  </tr>
+                  <tr>
+                      <td colspan="2"></td>
+                      <td colspan="2" class="text-right"><%= t('.total_price', default: 'Total Price') %></td>
+                      <td id="order_total" data-total="<%= total %>">
+                          <% total += weight_price %>
+                          <%= current_site.current_unit %> <span><%= total %></span>
+                      </td>
+                  </tr>
+                  </tbody>
+              </table>
+          </div>
         </div>
-      </div>
-
-      <% if warning.present? %>
-        <div class="alert alert-danger"><%= raw warning.join("<br>") %></div>
-      <% else %>
-        <div id="submit" class="text-right">
-          <input type="submit" name="commit" value="Create Order" class="btn btn-default">
-        </div>
-      <% end %>
-    </div>
-  <div id="totals_section" class="col-md-6">
-    <h3>Total</h3>
-    <table class="table table-bordered">
-      <tbody>
-      <tr>
-        <th id="quantity_col">Quantity</th>
-        <th id="item_col">Item</th>
-        <th id="price_col">Price</th>
-
-        <th id="tax_col">Tax</th>
-        <th id="subtotal_col">Subtotal</th>
-      </tr>
-
-      <%
-         total = 0
-         tax_total = 0
-
-         @products.each do |product|
-           product = product.decorate
-           product_options = @cart.get_option("product_#{product.id}")
-           price = product_options[:price].to_f
-           qty = product_options[:qty].to_f
-           tax_product = product_options[:tax].to_f
-           tax_total_product = tax_product * qty
-           tax_total += tax_total_product
-           sub_total = price * qty
-           total += sub_total
-      %>
-          <tr>
-            <td><%= qty.to_i %></td>
-            <td><%= product.the_title %></td>
-            <td><%= current_site.current_unit %> <%= price %></td>
-
-            <td><%= current_site.current_unit %> <%= tax_product %></td>
-            <td><%= current_site.current_unit %> <%= sub_total + tax_total_product %></td>
-          </tr>
-      <% end
-
-      %>
-
-
-
-      <tr>
-        <td colspan="2"></td>
-        <td colspan="2" class="text-right">Total (excluding Tax)</td>
-        <td id="subtotal_total" data-subtotal="<%= total %>">
-          <%= current_site.current_unit %> <%= total %>
-        </td>
-      </tr>
-      <tr >
-        <td colspan="2"></td>
-        <td colspan="2" class="text-right">Tax</td>
-        <td id="tax_total">
-          <%= current_site.current_unit %> <%= tax_total %>
-        </td>
-      </tr>
-      <% total += tax_total %>
-
-      <tr id="coupon_application_row" style="display:none;">
-        <td colspan="2"></td>
-        <td colspan="2" class="text-right">Discount</td>
-        <td class="extra_totals reduce_tax_subtotal" id="coupon_application_total" data-amount="0">
-          <span></span>
-        </td>
-      </tr>
-      <tr>
-        <td colspan="2"></td>
-        <td colspan="2" class="text-right">Shipping</td>
-        <td id="shipping_total"><%= current_site.current_unit %> <span><%= weight_price %></span></td>
-      </tr>
-      <tr>
-        <td colspan="2"></td>
-        <td colspan="2" class="text-right">Total</td>
-        <td id="order_total" data-total="<%= total %>">
-          <% total += weight_price %>
-          <%= current_site.current_unit %> <span><%= total %></span></td>
-      </tr>
-      </tbody>
-    </table>
-
-  </div>
-  <% end %>
+    <% end %>
 </div>
-<% end %>
+<script>jQuery(function(){ cama_checkout_actions(); })</script>

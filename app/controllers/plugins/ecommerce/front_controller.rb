@@ -7,6 +7,7 @@
   See the  GNU Affero General Public License (GPLv3) for more details.
 =end
 class Plugins::Ecommerce::FrontController < CamaleonCms::Apps::PluginsFrontController
+  include Plugins::Ecommerce::EcommercePaymentHelper
   before_action :ecommerce_add_assets_in_front
   before_action :save_cache_redirect, only: [:login, :register]
   def login
@@ -19,7 +20,7 @@ class Plugins::Ecommerce::FrontController < CamaleonCms::Apps::PluginsFrontContr
       login_user(@user, false, (cookies[:return_to] || plugins_ecommerce_orders_path))
       return cookies.delete(:return_to)
     else
-      flash[:error] = "Invalid Access"
+      flash[:error] = t('plugins.ecommerce.messages.invalid_access', default: 'Invalid access')
       return login
     end
   end
@@ -33,11 +34,10 @@ class Plugins::Ecommerce::FrontController < CamaleonCms::Apps::PluginsFrontContr
   def do_register
     @user = current_site.users.new(params.require(:camaleon_cms_user).permit(:first_name, :last_name, :username, :email, :password, :password_confirmation))
     if @user.save
-      flash[:notice] = "Account created successfully"
+      flash[:notice] = t('plugins.ecommerce.messages.created_account', default: "Account created successfully")
       login_user(@user, false, (cookies[:return_to] || plugins_ecommerce_orders_path))
       return cookies.delete(:return_to)
     else
-      flash[:error] = "Errors occurred"
       return register
     end
   end

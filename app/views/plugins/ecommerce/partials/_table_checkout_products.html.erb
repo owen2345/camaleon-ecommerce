@@ -1,0 +1,71 @@
+<table class="table table-bordered">
+    <tbody>
+    <tr>
+        <th id="quantity_col"><%= t('.qty', default: 'Quantity') %></th>
+        <th id="item_col"><%= t('.item', default: 'Item') %></th>
+        <th id="price_col"><%= t('.price', default: 'Price') %></th>
+
+        <th id="tax_col"><%= t('.tax', default: 'Tax') %></th>
+        <th id="subtotal_col"><%= t('.subtotal', default: 'Sub Total') %></th>
+    </tr>
+    <%
+        total = 0
+        tax_total = 0
+        cart.products.each do |product|
+          product = product.decorate
+          product_options = @cart.get_option("product_#{product.id}")
+          price = product_options[:price].to_f
+          qty = product_options[:qty].to_f
+          tax_product = product_options[:tax].to_f
+          tax_total_product = tax_product * qty
+          tax_total += tax_total_product
+          sub_total = price * qty
+          total += sub_total
+    %>
+        <tr>
+            <td><%= qty.to_i %></td>
+            <td><%= product.the_title %></td>
+            <td><%= current_site.current_unit %> <%= price %></td>
+
+            <td><%= current_site.current_unit %> <%= tax_product %></td>
+            <td><%= current_site.current_unit %> <%= sub_total + tax_total_product %></td>
+        </tr>
+    <% end %>
+    <tr>
+        <td colspan="2"></td>
+        <td colspan="2" class="text-right"><%= t('.total_excl', default: 'Total (excluding Tax)') %> </td>
+        <td id="subtotal_total" data-subtotal="<%= total %>">
+            <%= current_site.current_unit %> <%= total %>
+        </td>
+    </tr>
+    <tr >
+        <td colspan="2"></td>
+        <td colspan="2" class="text-right"><%= t('.tax', default: 'Tax') %></td>
+        <td id="tax_total">
+            <%= current_site.current_unit %> <%= tax_total %>
+        </td>
+    </tr>
+    <% total += tax_total %>
+
+    <tr id="coupon_application_row" style="display:none;">
+        <td colspan="2"></td>
+        <td colspan="2" class="text-right"><%= t('.discount', default: 'Discount') %></td>
+        <td class="extra_totals reduce_tax_subtotal" id="coupon_application_total" data-amount="0">
+            <span></span>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"></td>
+        <td colspan="2" class="text-right"><%= t('.total_shipping', default: 'Total shipping') %></td>
+        <td id="shipping_total"><%= current_site.current_unit %> <span><%= weight_price %></span></td>
+    </tr>
+    <tr>
+        <td colspan="2"></td>
+        <td colspan="2" class="text-right"><%= t('.total_price', default: 'Total Price') %></td>
+        <td id="order_total" data-total="<%= total %>">
+            <% total += weight_price %>
+            <%= current_site.current_unit %> <span><%= total %></span>
+        </td>
+    </tr>
+    </tbody>
+</table>

@@ -1,0 +1,38 @@
+<div class="row" style="min-height: 64px">
+    <div class="col-md-9">
+        <ol class="breadcrumb" style="margin: 0;">
+            <% @ecommerce_bredcrumb.each_with_index do |m, index| %>
+                <% if m[1].present? %>
+                    <li class="<%= "active" if @ecommerce_bredcrumb.size == index+1 %>">
+                        <a href="<%= m[1] %>"><%= m[0] %></a></li>
+                <% else %>
+                    <li class="<%= "active" if @ecommerce_bredcrumb.size == index+1 %>"><span><%= m[0] %></span></li>
+                <% end %>
+            <% end %>
+        </ol>
+    </div>
+
+    <div class="col-md-3">
+        <% if signin? %>
+            <div class="well shopping_cart_box">
+                <% @cart = current_site.carts.set_user(current_user).first_or_create(name: "Cart by #{current_user.id}") %>
+                <h4><%= t('.shopping_cart', default: 'Shopping Cart') %></h4>
+                <p><%= t('.total_items', default: '(%{qty}) items', qty: @cart.the_items_count) %>, <%= t('.total', default: 'Total') %>: <%= @cart.the_price %></p>
+                <span>
+                    <a href="<%= @ecommerce_post_type.the_url %>" class="btn btn-default btn-xs"><%= t('.products_list', default: 'Products list') %></a>
+                    <% if (@cart.the_items_count.to_i > 0) %>
+                        <a href="<%= plugins_ecommerce_checkout_cart_path %>" class="btn btn-warning btn-xs"><%= t('.purchase', default: 'Purchase') %></a>
+                    <% end %>
+                    <a href="<%= plugins_ecommerce_orders_path %>" class="btn btn-success btn-xs"><%= t('.my_orders', default: 'My Orders') %></a>
+                </span>
+            </div>
+        <% else %>
+            <div class=" text-right">
+                <a href="<%= @ecommerce_post_type.the_url %>" class="btn btn-default"><%= t('.products_list', default: 'Products list') %></a>
+            </div>
+        <% end %>
+    </div>
+</div>
+<div class="clearfix">
+    <%= render partial: "/camaleon_cms/flash_messages.html.erb" %>
+</div>

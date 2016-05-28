@@ -34,7 +34,7 @@
               <td><%= options[:min_cart_total] %></td>
               <td><%= options[:expirate_date] %></td>
               <td><%= options[:allowed_applications] %></td>
-              <td><%= options[:used_applications] || 0 %></td>
+              <td><%= row.used_applications %></td>
               <td>
                 <%= link_to raw('<i class="fa fa-edit"></i>'), {action: :edit, id: row.id}, class: "btn btn-default btn-xs", title: "#{t('camaleon_cms.admin.button.edit')}" %>
               </td>

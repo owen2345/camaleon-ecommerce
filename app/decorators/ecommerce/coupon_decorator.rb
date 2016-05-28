@@ -28,7 +28,7 @@ class Plugins::Ecommerce::CouponDecorator < CamaleonCms::TermTaxonomyDecorator
       when 'percent'
         "#{opts[:amount].to_f}%"
       when 'money'
-        "#{the_symbol} #{opts[:amount].to_f}"
+        "#{h.current_site.current_unit}#{opts[:amount].to_f}"
       else
         "Free"
     end

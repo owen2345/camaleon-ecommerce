@@ -4,8 +4,7 @@
   </div>
 
   <div class="panel-body">
-    <div class="box-adv-search pull-right">
-
+    <div class="box-adv-search pull-right" id="orders-box-adv-search">
       <div class="input-group" id="adv-search">
         <input type="text" class="form-control" placeholder="<%= t('plugin.ecommerce.search_order_number') %>" name="q" value="<%= params[:q] %>"/>
 
@@ -88,3 +87,15 @@
     <%= will_paginate @orders, renderer: BootstrapPagination::Rails %>
   </div>
 </div>
+<script>
+    jQuery(function(){
+        var cont = $('#orders-box-adv-search');
+        var rnd = "input_"+Math.floor((Math.random() * 1000000) + 1);
+        cont.find('#adv-search > input').change(function(){
+            cont.find('form  .' + rnd).val($(this).val());
+        }).clone().attr('type','hidden').addClass(rnd).appendTo(cont.find('form'));
+        cont.find('#adv-search .btn-group > button').click(function(){
+            cont.find('form').submit();
+        });
+    });
+</script>

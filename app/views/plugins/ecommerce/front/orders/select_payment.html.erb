@@ -1,69 +1,129 @@
-<%= render layout: 'plugins/ecommerce/layouts/ecommerce', locals: {} do %>
+<div class="select_payment_view" id="select_payment_view">
+    <%= render plugin_view('partials/cart_widget') %>
+    <div class="row">
+        <div id="payment" class="col-md-5">
+            <h3><%= t('.title', default: 'Payment Method') %></h3>
+            <div id="e-payments-types" role="tabpanel">
+                <ul class="nav nav-tabs" role="tablist">
+                    <% (payment_methods = current_site.payment_methods.actives.all).each_with_index do |payment, index| %>
+                        <li role="presentation" class="<%= "active" if index == 0 %>">
+                            <a href="#<%= payment.slug %>" aria-controls="<%= payment.slug %>" role="tab" data-toggle="tab"><%= t(".#{payment.options[:type]}", default: payment.options[:type].titleize) %></a>
+                        </li>
+                    <% end %>
+                </ul>
 
-    <%= form_tag(plugins_ecommerce_order_set_select_payment_path(order: @order.slug), :method => "post", :class => "form row") do %>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <% payment_methods.each_with_index do |payment, index| %>
+                        <% inputs = content_tag :div do %>
+                            <input type="hidden" name="payment[payment_id]" value="<%= payment.id %>">
+                            <input type="hidden" name="payment[type]" value="<%= payment.options[:type] %>">
+                            <div class="form-group text-center">
+                                <button class="btn btn-default col-md-4" type="submit"><i class="fa fa-money"></i> <%= t('.order_now', default: 'Buy') %></button>
+                            </div>
+                        <% end %>
 
-        <div id="payment" class="col-md-6">
-          <h3>Payment</h3>
-          <% @payment_methods = current_site.payment_methods.actives.all %>
+                        <div role="tabpanel" class="tab-pane <%= "active" if index == 0 %>" id="<%= payment.slug %>">
+                            <p><%= payment.description.translate %></p>
+                            <% if payment.options[:type] == 'paypal' %>
+                                <div class="type-paypal">
+                                    <img src="https://www.paypalobjects.com/webstatic/mktg/logo/bdg_payments_by_pp_2line.png" alt="Buy now with PayPal"/>
+                                    <%= form_tag(plugins_ecommerce_order_pay_by_paypal_path(order: @order.slug), :method => "post") do %>
+                                      <%= inputs %>
+                                    <% end %>
+                                </div>
+                            <% end %>
 
-          <div id="e-payments-types" role="tabpanel">
+                            <% if payment.options[:type] == 'bank_transfer' %>
+                                <%= form_tag(plugins_ecommerce_order_pay_by_bank_transfer_path(order: @order.slug), :method => "post") do %>
+                                    <ul class="ec-list-orders-address">
+                                        <li><strong><%= t('.account_number', default: 'Account Number') %>: </strong><span> <%= payment.options[:bank_transfer_number_account] %></span></li>
+                                        <li><strong><%= t('.details_transfer', default: 'Details') %>: </strong><span> <%= payment.options[:bank_transfer_detail] %></span></li>
+                                    </ul>
+                                    <div class="form-group">
+                                        <label><%= t('.bank_name', default: 'Bank name') %></label>
+                                        <input class="form-control required" type="text" name="details[bank_name]">
+                                    </div>
+                                    <div class="form-group">
+                                        <label><%= t('.bank_owner', default: 'Owner name of bank account') %></label>
+                                        <input class="form-control required" type="text" name="details[owner_name]">
+                                    </div>
+                                    <div class="form-group">
+                                        <label><%= t('.cod_key', default: 'CODE / ID / KEY / TICKET') %></label>
+                                        <input class="form-control required" type="text" name="details[code]">
+                                    </div>
+                                    <div class="form-group">
+                                        <label><%= t('.descr', default: 'Description') %></label>
+                                        <textarea name="details[description]" rows="4" class="form-control required" ></textarea>
+                                    </div>
+                                    <%= inputs %>
+                                <% end %>
+                            <% end %>
 
-            <!-- Nav tabs -->
-            <ul class="nav nav-tabs" role="tablist">
-              <% @payment_methods.each_with_index do |payment, index| %>
-                  <li role="presentation" class="<%= "active" if index == 0 %>"><a href="#<%= payment.slug %>" aria-controls="<%= payment.slug %>" role="tab" data-toggle="tab"><%= payment.name %></a></li>
-              <% end %>
-            </ul>
+                            <% if payment.options[:type] == 'credit_card' %>
+                                <img src="http://i76.imgup.net/accepted_c22e0.png" alt="Buy now with Credit Card"/>
+                            <% end %>
 
-            <!-- Tab panes -->
-            <div class="tab-content">
-              <% @payment_methods.each_with_index do |payment, index|  %>
-                  <div role="tabpanel" class="tab-pane <%= "active" if index == 0 %>" id="<%= payment.slug %>">
+                            <% if payment.options[:type] == 'authorize_net' %>
+                                <img src="http://i76.imgup.net/accepted_c22e0.png" alt="Buy now with Authorize.net"/>
+                                <%= form_tag(plugins_ecommerce_order_pay_by_authorize_net_path(order: @order.slug), :method => "post") do %>
+                                    <div class="form-group">
+                                        <label for="firstName"><%= t('.first_name', default: 'First Name') %></label>
+                                        <input type="text" class="form-control required" name="firstName" value="<%= params[:firstName] %>" required autocomplete="off"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="lastName"><%= t('.last_name', default: 'Last Name') %></label>
+                                        <input type="text" class="form-control required" name="lastName" autocomplete="off"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label><%= t('.card_number', default: 'Card Number') %></label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control required" name="cardNumber" autocomplete="off"/>
+                                            <span class="input-group-addon"><i class="fa fa-credit-card"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="expMonth"><%= t('.exp_date', default: 'EXPIRATION DATE') %></label>
+                                        <div class="row">
+                                            <div class="col-xs-6 col-lg-6">
+                                                <input type="text" class="form-control required" name="expMonth" placeholder="MM" autocomplete="off"/>
+                                            </div>
+                                            <div class="col-xs-6 col-lg-6">
+                                                <input type="text" class="form-control required" name="expYear" placeholder="YY" autocomplete="off"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cvCode"><%= t('.cvv', default: 'Cvv CODE') %></label>
+                                        <input type="text" class="form-control required" name="cvCode" placeholder="cvv" autocomplete="off"/>
+                                    </div>
+                                    <%= inputs %>
+                                <% end %>
+                            <% end %>
 
-                    <input type="hidden" name="payment[payment_id]" value="<%= payment.id  %>">
-                    <% if payment.options[:type] == 'paypal' %>
-                        <h3>Method by Paypal</h3>
-                        <p><%= payment.description %></p>
-                        <input type="hidden" name="payment[type]" value="paypal">
-                        <div class="type-paypal">
-                          <img src="https://www.paypalobjects.com/webstatic/mktg/logo/bdg_payments_by_pp_2line.png" alt="Buy now with PayPal" />
+                            <% if payment.options[:type] == 'stripe' %>
+                                <%= form_tag(plugins_ecommerce_order_pay_by_stripe_path(order: @order.slug), :method => "post") do %>
+                                    <input type="hidden" name="payment[payment_id]" value="<%= payment.id %>">
+                                    <input type="hidden" name="payment[type]" value="<%= payment.options[:type] %>">
+                                    <img src="http://i76.imgup.net/accepted_c22e0.png" alt="Buy now with Authorize.net"/><br>
+                                    <hr>
+                                    <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                            data-key="<%= payment.options[:stripe_key] %>"
+                                            data-description="Payment Products: <%= @order.products_list.join(', ') %>"
+                                            data-amount="<%= commerce_to_cents(@order.total_price) %>"
+                                            data-locale="<%= I18n.locale %>"></script>
+                                <% end %>
+                            <% end %>
                         </div>
-                    <% end  %>
-                    <% if payment.options[:type] == 'bank_transfer' %>
-                        <h3>Method Bank Transfer</h3>
-                        <p><%= payment.description %></p>
-                        <input type="hidden" name="payment[type]" value="bank_transfer">
-                        <ul class="ec-list-orders-address">
-                          <li><strong>Number Account:</strong> <span> <%= payment.options[:bank_transfer_number_account] %></span></li>
-                          <li><strong>Details:</strong> <span> <%= payment.options[:bank_transfer_detail] %></span></li>
-                        </ul>
-                    <% end  %>
-                    <% if payment.options[:type] == 'credit_card' %>
-                        <h3>Method Credit Card</h3>
-                        <p><%= payment.description %></p>
-                        <input type="hidden" name="payment[type]" value="credit_card">
-                        <img src="http://i76.imgup.net/accepted_c22e0.png" alt="Buy now with Credit Card" />
-                    <% end  %>
-                    <% if payment.options[:type] == 'authorize_net' %>
-                        <h3>Method by Authorize.net</h3>
-                        <p><%= payment.description %></p>
-                        <input type="hidden" name="payment[type]" value="authorize_net">
-                        <img src="http://i76.imgup.net/accepted_c22e0.png" alt="Buy now with Authorize.net" />
-                    <% end  %>
-                  </div>
-              <% end %>
+                    <% end %>
+                </div>
             </div>
-          </div>
-          <hr/>
-          <div class="text-center">
-            <button class="btn btn-default btn-lg col-md-6">Pay</button>
-          </div>
         </div>
 
-        <div class="col-md-6">
-          <h3>Products and Payments</h3>
-          <%= render partial: 'plugins/ecommerce/partials/table_order_products', locals: {order: @order} %>
+        <div class="col-md-7">
+            <h3><%= t('.order_details', default: 'Order Details') %></h3>
+            <%= render partial: 'plugins/ecommerce/partials/table_order_products', locals: {order: @order} %>
         </div>
-    <% end %>
-
-<% end %>
+    </div>
+</div>
+<script>jQuery(function(){ cama_ecommerce_payments(); })</script>

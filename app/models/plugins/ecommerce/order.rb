@@ -6,32 +6,17 @@
   This program is distributed in the hope that it will be useful,  but WITHOUT ANY WARRANTY; without even the implied warranty of  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
   See the  GNU Affero General Public License (GPLv3) for more details.
 =end
-class Plugins::Ecommerce::Order < CamaleonCms::TermTaxonomy
-  default_scope { where(taxonomy: :ecommerce_order) }
-  has_one :details, class_name: "Plugins::Ecommerce::OrderDetail", foreign_key: :order_id, dependent: :destroy
-  has_many :products, foreign_key: :objectid, through: :term_relationships, :source => :objects
-  belongs_to :customer, class_name: "CamaleonCms::User", foreign_key: :user_id
-
-  def add_product(object)
-    post_id = defined?(object.id) ? object.id : object.to_i
-    term_relationships.where(objectid: post_id).first_or_create if post_id > 0
-  end
-  def remove_product(object)
-    post_id = defined?(object.id) ? object.id : object.to_i
-    term_relationships.where(objectid: post_id).destroy_all if post_id > 0
-  end
+class Plugins::Ecommerce::Order < Plugins::Ecommerce::Cart
+  self.table_name = 'plugins_ecommerce_orders'
+  default_scope { where(kind: 'order') }
 
   def payment_method
-    Plugins::Ecommerce::PaymentMethod.find_by_id get_meta("payment")[:payment_id]
+    Plugins::Ecommerce::PaymentMethod.find_by_id(self.payment_method_id)
   end
 
   def payment
     payment = get_meta("payment")
     get_meta("pay_#{payment[:type]}".to_sym)
-  end
-
-  def shipping_method
-    Plugins::Ecommerce::ShippingMethod.find_by_id get_meta("payment", {})[:shipping_method]
   end
 
   def canceled?
@@ -45,13 +30,24 @@ class Plugins::Ecommerce::Order < CamaleonCms::TermTaxonomy
     payment.present?
   end
 
-
-  # set user in filter
-  def self.set_user(user)
-    user_id = defined?(user.id) ? user.id : user.to_i
-    self.where(user_id: user_id)
+  def total_price
+    self.amount
   end
 
+  # return the product titles in array format
+  def products_list
+    product_items.pluck(:the_title)
+  end
 
+  def make_paid!
+    total_without_coupon = total_to_pay_without_discounts
+    if self.coupon.present?
+      res_coupon = self.discount_for(self.coupon, total_to_pay_without_discounts)
+      unless res_coupon[:error].present?
+        update_columns(the_coupon_amount: res[:coupon].decorate.the_amount, coupon_amount: res[:discount])
+        res[:coupon].mark_as_used(user)
+      end
+    end
+    self.update_columns(status: 'received', paid_at: Time.current, tax_total: the_tax_total, weight_price: the_weight_total, total: total_without_coupon, sub_total: the_amount_total, amount: total_to_pay, currency_code: site.decorate.currency_code)
+  end
 end
-#Cart = Plugins::Ecommerce::Cart

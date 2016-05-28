@@ -1,14 +1,13 @@
 <table class="table table-bordered">
   <tbody>
   <tr>
-    <th id="quantity_col"><%= t('plugin.ecommerce.product.qty') %></th>
-    <th id="item_col"><%= t('plugin.ecommerce.product.item') %></th>
-    <th id="price_col"><%= t('plugin.ecommerce.product.price') %></th>
+    <th id="quantity_col"><%= t('.qty', default: 'Quantity') %></th>
+    <th id="item_col"><%= t('.item', default: 'Item') %></th>
+    <th id="price_col"><%= t('.price', default: 'Price') %></th>
 
-    <th id="tax_col"><%= t('plugin.ecommerce.product.tax') %></th>
-    <th id="subtotal_col"><%= t('plugin.ecommerce.table.sub_total') %></th>
+    <th id="tax_col"><%= t('.tax', default: 'Tax') %></th>
+    <th id="subtotal_col"><%= t('.sub_total', default: 'Sub Total') %></th>
   </tr>
-
   <%
      current_unit = '$'
      order.get_meta("products", {}).each do |key, product|
@@ -27,48 +26,41 @@
         <td><%= current_unit %> <%= price %></td>
 
         <td><%= current_unit %> <%= tax_product %></td>
-        <td><%= current_unit %> <%= sub_total + tax_total_product %></td>
+        <td><%= current_unit %> <%= (sub_total + tax_total_product).round(2) %></td>
       </tr>
-  <% end
-
-  %>
-
-
-
+  <% end %>
   <tr>
     <td colspan="2"></td>
-    <td colspan="2" class="text-right"><%= t('plugin.ecommerce.product.total_excluding_tax') %></td>
+    <td colspan="2" class="text-right"><%= t('.total_excluding_tax', default: 'Total (excluding taxes)') %></td>
     <td id="subtotal_total">
-      <%= current_unit %> <%= order.get_meta("payment")[:sub_total] %>
+      <%= current_unit %> <%= order.get_meta("payment")[:sub_total].round(2) %>
     </td>
   </tr>
   <tr >
     <td colspan="2"></td>
-    <td colspan="2" class="text-right"><%= t('plugin.ecommerce.product.tax') %></td>
+    <td colspan="2" class="text-right"><%= t('.tax') %></td>
     <td id="tax_total">
       <%= current_unit %> <%= order.get_meta("payment")[:tax_total] %>
     </td>
   </tr>
 
-
   <tr>
     <td colspan="2"></td>
-    <td colspan="2" class="text-right"><%= t('plugin.ecommerce.table.shipping') %></td>
+    <td colspan="2" class="text-right"><%= t('.shipping', default: 'Total Shipping') %></td>
     <td id="shipping_total"><%= current_unit %> <span><%= order.get_meta("payment")[:weight_price] %></span></td>
   </tr>
 
   <tr>
     <td colspan="2"></td>
-    <td colspan="2" class="text-right">Sub <%= t('plugin.ecommerce.table.total') %></td>
+    <td colspan="2" class="text-right"><%= t('.sub_total', default: 'Sub Total') %></td>
     <td id="order_total">
-
-      <%= current_unit %> <span><%= order.get_meta("payment")[:total] %></span></td>
+      <%= current_unit %> <span><%= order.get_meta("payment")[:total].round(2) %></span></td>
   </tr>
 
   <% if order.get_meta("payment")[:coupon_amount].to_i > 0 %>
       <tr id="coupon_application_row" >
         <td colspan="2"></td>
-        <td colspan="2" class="text-right"><%= t('plugin.ecommerce.table.discount') %></td>
+        <td colspan="2" class="text-right"><%= t('.discounts', default: 'Discounts') %></td>
         <td class="extra_totals reduce_tax_subtotal" id="coupon_application_total">
           - <%= current_unit %> <span><%= order.get_meta("payment")[:coupon_amount] %></span> <strong>(<%= order.get_meta("payment")[:coupon] %>)</strong>
         </td>
@@ -76,10 +68,9 @@
   <% end  %>
   <tr>
     <td colspan="2"></td>
-    <td colspan="2" class="text-right"><%= t('plugin.ecommerce.table.total') %></td>
+    <td colspan="2" class="text-right"><%= t('.total_price', default: 'Total Price') %></td>
     <td id="order_total">
-
-      <%= current_unit %> <span><%= order.get_meta("payment")[:amount] %></span></td>
+      <%= current_unit %> <span><%= order.total_price %></span></td>
   </tr>
   </tbody>
 </table>

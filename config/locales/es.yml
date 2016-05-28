@@ -87,6 +87,7 @@ es:
         stock_tatus: "Cantidad de Productos"
         stock: "Control de Cantidad de Productos?"
         qty: "Cantidad"
+        files: 'Archivos del producto'
         in_stock: "Disponible"
         not_in_tock: "No Disponible"
         total_excluding_tax: "Total (impuestos excluidos)"
@@ -194,23 +195,180 @@ es:
         order_received_admin:
           subject: "Nueva Compra"
 
-en:
   plugins:
     ecommerce:
-      layouts:
-        ecommerce:
-          item: 'Item'
-          tax: 'Impuesto'
-          price: 'Precio'
-          subtotal: 'Sub Total'
-          quantity: 'Cantidad'
-          delete: 'Eliminar'
-          update: 'Actualizar'
-          proceed: 'Realizar Compra'
-          title: 'Carro de Compras'
+      messages:
+        cart_no_products: 'No existen productos en su carro'
+        checkout: 'Pago'
+        saved_order: 'Orden guardado'
+        not_enough_product_qty: 'No existen suficientes productos "%{product}" (%{qty})'
+        added_product_in_cart: 'Producto agregado al carrito'
+        cart_updated: 'Carro de compras actualizado'
+        cart_deleted: 'Producto eliminado de su carro de compras'
+        shopping_cart: 'Carro de compras'
+        invalid_access: 'Acceso no válido'
+        created_account: 'Cuenta creada satisfactoriamente'
+        my_orders: 'Mis Ordenes'
+        detail_order: 'Detalles de orden: #%{order}'
+        coupon_not_found: 'Cupón no encontrado'
+        coupon_expired: 'Cupón expirado'
+        inactive_coupon: 'Cupón deshabilitado'
+        canceled_order: 'Orden cancelado'
+        payment_completed: 'Compra realizada satisfactoriamente'
+        processing_order: 'Pago por orden #%{order}'
+        times_exceeded: 'Cantidad de usos excedido'
+        required_minimum_price: 'El monto de tu compra debe ser superior a %{min_amount}'
+
+      single:
+        available_items: 'Items Disponibles'
+        qty: 'Cantidad'
+        add_to_cart: 'Agregar al Carro'
+        descr: 'Descripción'
+        attrs: 'Atributos'
+        sku: 'SKU'
+        noavailable_items: 'No hay items disponibles'
+
       front:
         checkout:
+          cart_index:
+            item: 'Item'
+            tax: 'Impuesto'
+            price: 'Precio'
+            subtotal: 'Sub Total'
+            quantity: 'Cantidad'
+            delete: 'Eliminar'
+            update: 'Actualizar'
+            proceed: 'Realizar Compra'
+            title: 'Carro de Compras'
           cart_update:
             updated_products: 'Carro de compras actualizado'
 
-            translation missing: en.plugins.ecommerce.layouts.ecommerce.titles
+          index:
+            title: 'Información de Pedido'
+            user_details: 'Detalles de Comprador'
+            name: 'Nombre'
+            email: 'Correo Electrónico'
+            phone: 'Teléfono'
+            coupon: 'Cupón de descuento'
+            coupon_msg: 'Ingrese aquí su código'
+            apply: 'Aplicar'
+            shipping_options: 'Opciones de Envío'
+            shipping_method: 'Método de envío'
+            no_shipping_methods: 'No se han definido los métodos de envío'
+            create_order: 'Crear Orden de Compra'
+            total: 'Total'
+            qty: 'Cantidad'
+            item: 'Item'
+            price: 'Precio'
+            tax: 'Impuestos'
+            subtotal: 'Sub Total'
+            total_excl: 'Total (excluyendo impuestos)'
+            discount: 'Descuento'
+            total_shipping: 'Total envío'
+            total_price: 'Precio Total'
+        orders:
+          select_payment:
+            title: 'Método de Pago'
+            paypal: 'Paypal'
+            bank_transfer: 'Transferencia Bancaria'
+            account_number: 'Número de Cuenta'
+            details_transfer: 'Detalles'
+            credit_card: 'Tarjeta de Crédito'
+            authorize_net: 'Authorize.net'
+            stripe: 'Stripe'
+            order_now: 'Comprar'
+            order_details: 'Detalles de Orden'
+            first_name: 'Nombre'
+            last_name: 'Apellidos'
+            card_number: 'Tarjeta de Crédito'
+            exp_date: 'Fecha de expiración'
+            cvv: 'Código CVV'
+            code_key: 'Código / ID / KEY / TICKET'
+            bank_owner: 'Nombre de Cuenta en el banco'
+            bank_name: 'Nombre del banco'
+            descr: 'Descripción'
+          index:
+            title: 'Mis Ordenes'
+            id: 'ID'
+            status: 'Estado'
+            products: 'Productos'
+            total_amount: 'Monto Total'
+            coupon: 'Cupón'
+            paid_amount: 'Monto Pagado'
+            order_date: 'Fecha de Orden'
+            method: 'Método de Pago'
+            view: 'Ver Detalles'
+            buy: 'Comprar'
+
+          show:
+            title: 'Detalles de Orden'
+            customer_info: 'Información de Comprador'
+            name: 'Nombre'
+            email: 'Correo Electrónico'
+            phone: 'Teléfono'
+            billing_address: 'Dirección de factura'
+            address: 'Dirección'
+            details: 'Detalles'
+            shipping_address: 'Dirección de envío'
+            city: 'Ciudad'
+            state: 'Estado'
+            zip_code: 'Código zip'
+            country: 'País'
+            title_products: 'Productos y Pagos'
+            payment_type: 'Tipo de Pago'
+            buy_now: 'Comprar ahora'
+            cancel_order: 'Cancelar Orden'
+            shipping_method: 'Tipo de envío'
+            date_shipped: 'Fecha de Envío'
+            track_url: 'Url de seguimiento'
+            no_shipping: 'Metodo de envío no asignado'
+            no_shipped: 'No enviado'
+        login:
+          login: 'Acceder'
+          register: 'Registro'
+          username: 'Nombre de usuario'
+          forgot: 'Olvidó contraseña?'
+          pass: 'Password'
+          email: 'Correo Electrónico'
+          full_name: 'Nombre Completo'
+          confirm_pass: 'Confirme Password'
+          create_account: 'Create cuenta'
+
+
+      partials:
+        form_address:
+          firstname: 'Nombre(s)'
+          lastname: 'Apellido'
+          address: 'Dirección'
+          city: 'Ciudad'
+          country: 'País'
+          state: 'Estado'
+          code_zip: 'Código Zip'
+          shipping_address: 'Dirección de envío'
+          copy_address: 'Copiar mis datos de envío'
+        cart_widget:
+          shopping_cart: 'Carro de compras'
+          products_list: 'Lista de productos'
+          purchase: 'Comprar'
+          my_orders: 'Mis Ordenes'
+          total_items: '(%{qty}) items'
+          total: 'Total'
+
+
+        table_order_products:
+          qty: 'Cantidad'
+          item: 'Item'
+          price: 'Precio'
+          tax: 'Impuesto'
+          sub_total: 'Sub Total'
+          total_excluding_tax: 'Total (excluyendo impuestos)'
+          shipping: 'Total Envio'
+          total_price: 'Precio Total'
+          discounts: 'Descuentos'
+          sub_total: 'Sub Total'
+
+
+
+
+
+

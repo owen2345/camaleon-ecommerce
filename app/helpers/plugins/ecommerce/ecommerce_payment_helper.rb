@@ -1,18 +1,11 @@
 module Plugins::Ecommerce::EcommercePaymentHelper
   include Plugins::Ecommerce::EcommerceHelper
 
-  def payment_pay_by_credit_card_authorize_net(order)
-    payment = order.get_meta("payment")
+  def payment_pay_by_credit_card_authorize_net(order, payment_method)
     billing_address = order.get_meta("billing_address")
     details = order.get_meta("details")
-    if payment[:payment_id].nil?
-      payment_method = current_site.payment_methods.find_by_slug('authorizenet')
-    else
-      payment_method = current_site.payment_methods.find(payment[:payment_id])
-    end
-    amount = to_cents(payment[:amount].to_f)
-
-    @payment_params = {
+    amount = commerce_to_cents(order.total_price.to_f)
+    payment_params = {
       :order_id => order.slug,
       :currency => current_site.currency_code,
       :email => details[:email],
@@ -43,25 +36,26 @@ module Plugins::Ecommerce::EcommercePaymentHelper
       :year => "20#{params[:expYear]}",
       :verification_value => params[:cvCode]
     )
-
     if credit_card.validate.empty?
       gateway = ActiveMerchant::Billing::AuthorizeNetGateway.new(authorize_net_options)
-      response = gateway.purchase(amount, credit_card, @payment_params)
+      response = gateway.purchase(amount, credit_card, payment_params)
       if response.success?
-        order.set_meta('pay_authorize_net', @payment_params)
-        mark_order_like_received(order)
-        return {success: 'Paid Correct'}
+        order.set_meta('pay_authorize_net', payment_params)
+        return {}
       else
         return {error: response.message}
       end
     else
-      return {error: 'Credit Card Invalid'}
+      return {error: credit_card.validate.map{|k, v| "#{k}: #{v.join(', ')}"}.join('<br>')}
     end
-
   end
 
-  def to_cents(money)
+  def commerce_to_cents(money)
     (money*100).round
+  end
+
+  def commerce_current_currency
+    current_site.get_meta("_setting_ecommerce", {})[:current_unit] || 'USD'
   end
 
 end

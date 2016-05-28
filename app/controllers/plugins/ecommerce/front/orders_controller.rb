@@ -7,207 +7,105 @@
   See the  GNU Affero General Public License (GPLv3) for more details.
 =end
 class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontController
-
-
+  before_action :set_payment, only: [:pay_by_stripe, :pay_by_bank_transfer, :pay_by_credit_card, :pay_by_authorize_net, :pay_by_paypal]
+  before_action :set_bread
   def index
-    @ecommerce_bredcrumb << ["Orders"]
     @orders = current_site.orders.set_user(current_user).all
     render "index"
   end
 
-  def show
-    @order = current_site.orders.find_by_slug(params[:order]).decorate
-    @ecommerce_bredcrumb << ["Orders", url_for(action: :index)]
-    @ecommerce_bredcrumb << ["Detail Order: #{params[:order]}"]
-  end
-
-  def res_coupon
-    coupon = current_site.coupons.find_by_slug(params[:code].to_s.parameterize)
-    error = false
-    if coupon.nil?
-      error = 'Not Found Coupon'
-    elsif "#{coupon.options[:expirate_date]} 23:59:59".to_time.to_i < Time.now.to_i
-      error = 'Coupon Expired'
-    elsif coupon.status != '1'
-      error = 'Coupon not active'
-    end
-    if error
-      render json: {error: error}
-    else
-      coupon = coupon.decorate
-      render json: {data: {text: "#{coupon.the_amount}", options: coupon.options, code: coupon.slug, current_unit: current_site.current_unit}}
-    end
-  end
-
   def select_payment
     @order = current_site.orders.find_by_slug(params[:order])
+    errors = ecommerce_verify_cart_errors(@order)
+    flash.now[:error] = errors.join('<br>') if errors.present?
     if params[:cancel].present?
       @order.update({status: 'canceled'})
       @order.details.update({closed_at: Time.now})
-      flash[:notice] = "Canceled Order"
+      flash[:notice] = t('plugins.ecommerce.messages.canceled_order', default: 'Order canceled')
       redirect_to action: :index
     end
-    @ecommerce_bredcrumb << ["Orders", url_for(action: :index)]
-    @ecommerce_bredcrumb << ["Payment Order: #{params[:order]}"]
+    @ecommerce_bredcrumb << [t('plugins.ecommerce.messages.processing_order', default: 'Payment order #%{order}', order: params[:order])]
   end
 
-  def set_select_payment
-    @order = current_site.orders.find_by_slug(params[:order])
-    @order.set_meta("payment", @order.get_meta("payment", {}).merge(params[:payment] || {}))
-    redirect_to plugins_ecommerce_order_pay_path(order: @order.slug)
+  def show
+    @order = current_site.orders.find_by_slug(params[:order]).decorate
+    @ecommerce_bredcrumb << [t('plugins.ecommerce.messages.detail_order', default: "Detail order: #%{order}", order: params[:order])]
   end
 
-  def pay
+  def cancel_order
     @order = current_site.orders.find_by_slug(params[:order])
-    @ecommerce_bredcrumb << ["Orders", url_for(action: :index)]
-    if @order.get_meta("payment", {})[:type] == 'paypal'
-      pay_by_paypal
-    elsif @order.get_meta("payment", {})[:type] == 'credit_card'
-      @payment_methods = current_site.payment_methods.find(@order.get_meta("payment", {})[:payment_id])
-      @ecommerce_bredcrumb << ["Payment by Credit Card"]
-      render 'pay_by_credit_card'
-    elsif @order.get_meta("payment", {})[:type] == 'authorize_net'
-      @payment_methods = current_site.payment_methods.find(@order.get_meta("payment", {})[:payment_id])
-      @ecommerce_bredcrumb << ['Payment by Credit Card']
-      render 'pay_by_credit_card_authorize_net'
-    else
-      @payment_methods = current_site.payment_methods.find(@order.get_meta("payment", {})[:payment_id])
-      @ecommerce_bredcrumb << ["Payment by Bank Transfer"]
-      render 'pay_by_bank_transfer'
+    @order.update({status: 'canceled'})
+    @order.details.update({closed_at: Time.now})
+    flash[:notice] = t('plugins.ecommerce.messages.canceled_order', default: "Canceled Order")
+    redirect_to action: :index
+  end
+
+  # pay by stripe
+  def pay_by_stripe
+    require 'stripe'
+    Stripe.api_key = @payment.options[:stripe_id]
+    customer = Stripe::Customer.create(:email => params[:stripeEmail], :source  => params[:stripeToken])
+    begin
+      charge = Stripe::Charge.create(
+        :customer    => customer.id,
+        :amount      => commerce_to_cents(@order.total_price),
+        :description => "Payment Products: #{@order.products_list.join(', ')}",
+        :currency    => commerce_current_currency
+      )
+      @order.set_meta("pay_stripe", params)
+      mark_order_like_received(@order)
+      redirect_to action: :index
+    rescue Stripe::CardError => e
+      flash[:error] = e.message
+      redirect_to :back
+    rescue => e
+      flash[:error] = e.message
+      redirect_to :back
     end
   end
 
   def pay_by_bank_transfer
-    @order = current_site.orders.find_by_slug(params[:order])
     @order.set_meta("pay_bank_transfer", params[:details])
     mark_order_like_received(@order)
-    flash[:notice] = "Updated Pay"
     redirect_to action: :index
   end
 
-  def pay_by_credit_card
-    @order = current_site.orders.find_by_slug(params[:order])
-    res = pay_by_credit_card_run
+  def pay_by_authorize_net
+    res = payment_pay_by_credit_card_authorize_net(@order, @payment)
     if res[:error].present?
-      @error = res[:error]
-      @payment_methods = current_site.payment_methods.find(@order.get_meta("payment", {})[:payment_id])
-      render 'pay_by_credit_card'
+      flash[:error] = res[:error]
+      redirect_to :back
     else
-      @order.set_meta('pay_credit_card', params)
       mark_order_like_received(@order)
-      flash[:notice] = 'Updated Pay'
       redirect_to action: :index
     end
   end
 
-  def pay_by_credit_card_authorize_net
-    @order = current_site.orders.find_by_slug(params[:order])
-    res = payment_pay_by_credit_card_authorize_net(@order)
-    if res[:error].present?
-      @error = res[:error]
-      @payment_methods = current_site.payment_methods.find(@order.get_meta("payment", {})[:payment_id])
-      render 'pay_by_credit_card_authorize_net'
-    else
-      flash[:notice] = 'Updated Pay'
-      redirect_to action: :index
-    end
-  end
-
-  def success
+  def success_paypal
     @order = current_site.orders.find_by_slug(params[:order])
     @order.set_meta('pay_paypal', {token: params[:token], PayerID: params[:PayerID]})
     mark_order_like_received(@order)
-    flash[:notice] = 'Updated Pay'
     redirect_to action: :index
   end
 
-  def cancel
-    #@order = current_site.orders.find_by_slug(params[:order])
-    flash[:notice] = 'Cancel Pay by Paypal'
+  def cancel_paypal
+    @order = current_site.orders.find_by_slug(params[:order])
     redirect_to action: :index
-  end
-
-  private
-
-
-  def pay_by_credit_card_run
-    payment = @order.get_meta("payment", {})
-    billing_address = @order.get_meta("billing_address")
-    details = @order.get_meta("details")
-    @payment_method = current_site.payment_methods.find(payment[:payment_id])
-
-    @params = {
-      :order_id => @order.slug,
-      :currency => current_site.currency_code,
-      :email => details[:email],
-      :billing_address => {:name => "#{billing_address[:first_name]} #{billing_address[:last_name]}",
-                           :address1 => billing_address[:address1],
-                           :address2 => billing_address[:address2],
-                           :city => billing_address[:city],
-                           :state => billing_address[:state],
-                           :country => billing_address[:country],
-                           :zip => billing_address[:zip]
-      },
-      :description => 'Buy Products',
-      :ip => request.remote_ip
-    }
-
-    @amount = to_cents(payment[:amount].to_f)
-
-    paypal_options = {
-      :login => @payment_method.options[:cc_paypal_login],
-      :password => @payment_method.options[:cc_paypal_password],
-      :signature => @payment_method.options[:cc_paypal_signature]
-    }
-
-    ActiveMerchant::Billing::Base.mode = @payment_method.options[:cc_paypal_sandbox].to_s.to_bool ? :test : :production
-    @gateway = ActiveMerchant::Billing::PaypalGateway.new(paypal_options)
-
-    @credit_card = ActiveMerchant::Billing::CreditCard.new(
-      :first_name => params[:firstName],
-      :last_name => params[:lastName],
-      :number => params[:cardNumber],
-      :month => params[:expMonth],
-      :year => "20#{params[:expYear]}",
-      :verification_value => params[:cvCode])
-
-    if @credit_card.validate.empty?
-      puts "--#{@params.inspect}--"
-      response = @gateway.verify(@credit_card, @params)
-      #response = @gateway.purchase(@amount, @credit_card, @params)
-      if response.success?
-        return {success: 'Paid Correct'} #puts "Successfully charged $#{sprintf("%.2f", @amount / 100)} to the credit card #{@credit_card.display_number}"
-      else
-        return {error: response.message} #raise StandardError, response.message
-      end
-    else
-      return {error: "Credit Card Invalid"}
-    end
   end
 
   def pay_by_paypal
-    payment = @order.get_meta("payment", {})
     billing_address = @order.get_meta("billing_address")
     details = @order.get_meta("details")
-    @payment_method = current_site.payment_methods.find(payment[:payment_id])
-
-    ActiveMerchant::Billing::Base.mode = @payment_method.options[:paypal_sandbox].to_s.to_bool ? :test : :production
+    ActiveMerchant::Billing::Base.mode = @payment.options[:paypal_sandbox].to_s.to_bool ? :test : :production
     paypal_options = {
-      :login => @payment_method.options[:paypal_login],
-      :password => @payment_method.options[:paypal_password],
-      :signature => @payment_method.options[:paypal_signature]
+      :login => @payment.options[:paypal_login],
+      :password => @payment.options[:paypal_password],
+      :signature => @payment.options[:paypal_signature]
     }
-
     @gateway = ActiveMerchant::Billing::PaypalExpressGateway.new(paypal_options)
-
-    #subtotal, shipping, total, tax = get_totals(payment)
     @options = {
       brand_name: current_site.name,
-
-      #allow_guest_checkout: true,
-      #items: get_items(@order.meta[:products]),
-
-      items: [{number: @order.slug, name: 'Buy Products', amount: to_cents(payment[:amount].to_f)}],
+      items: [{number: @order.slug, name: "Buy Products from #{current_site.the_title}: #{@order.products_list.join(',')}", amount: commerce_to_cents(@order.total_price)}],
       :order_id => @order.slug,
       :currency => current_site.currency_code,
       :email => details[:email],
@@ -219,24 +117,23 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
                            :country => billing_address[:country],
                            :zip => billing_address[:zip]
       },
-      :description => 'Buy Products',
+      :description => "Buy Products from #{current_site.the_title}: #{@order.products_list.join(',')}",
       :ip => request.remote_ip,
-      :return_url => plugins_ecommerce_order_success_url(order: @order.slug),
-      :cancel_return_url => plugins_ecommerce_order_cancel_url(order: @order.slug)
+      :return_url => plugins_ecommerce_order_success_paypal_url(order: @order.slug),
+      :cancel_return_url => plugins_ecommerce_order_cancel_paypal_url(order: @order.slug)
     }
-
-    response = @gateway.setup_purchase(to_cents(payment[:amount].to_f), @options)
-
+    response = @gateway.setup_purchase(commerce_to_cents(@order.total_price.to_f), @options)
     redirect_to @gateway.redirect_url_for(response.token)
   end
 
+  private
   def get_items(products)
     products.collect do |key, product|
       {
         :name => product[:product_title],
         :number => product[:product_id],
         :quantity => product[:qty],
-        :amount => to_cents(product[:price].to_f),
+        :amount => commerce_to_cents(product[:price].to_f),
       }
     end
   end
@@ -249,8 +146,17 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
     return subtotal, shipping, total, tax
   end
 
-  def to_cents(money)
+  def commerce_to_cents(money)
     (money*100).round
   end
 
+  def set_payment
+    @payment = current_site.payment_methods.actives.where(id: params[:payment][:payment_id]).first
+    @order = current_site.orders.find_by_slug(params[:order])
+    @order.set_meta('payment_method_id', @payment.id)
+  end
+
+  def set_bread
+    @ecommerce_bredcrumb << [t('plugins.ecommerce.messages.my_orders', default: 'My Orders'), url_for(action: :index)]
+  end
 end

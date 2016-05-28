@@ -25,7 +25,6 @@ module Plugins::Ecommerce::EcommerceHelper
     if d[:post_type].slug == 'commerce'
       append_asset_libraries({ecommerce: {css: [], js: [plugin_gem_asset('fix_form')]}})
     end
-    d
   end
 
   def ecommerce_front_before_load
@@ -59,7 +58,7 @@ module Plugins::Ecommerce::EcommerceHelper
     end
 
     # add assets admin
-    append_asset_libraries({ecommerce: {css: [plugin_gem_asset('admin')], js: [plugin_gem_asset('admin')]}})
+    append_asset_libraries({ecommerce: {css: [plugin_gem_asset('admin')], js: []}})
 
   end
 
@@ -115,14 +114,6 @@ module Plugins::Ecommerce::EcommerceHelper
     append_asset_libraries({ecommerce_front: {css: [plugin_gem_asset('front')], js: [plugin_gem_asset('cart')]}})
   end
 
-  def mark_order_like_received(order)
-    order.update({status: 'received'})
-    order.details.update({received_at: Time.now})
-    send_order_received_email(order)
-    # Send email to admins
-    send_order_received_admin_notice(order)
-  end
-
   private
   def generate_custom_field_products
     get_commerce_post_type
@@ -137,8 +128,7 @@ module Plugins::Ecommerce::EcommerceHelper
       group.add_manual_field({"name" => "t('plugin.ecommerce.product.weight', default: 'Weight')", "slug" => "ecommerce_weight", "description" => "t('plugin.ecommerce.product.current_weight', default: 'Current weight: %{weight}', weight: current_site.current_weight.to_s)"}, {field_key: "text_box", required: true, label_eval: true})
       group.add_manual_field({"name" => "t('plugin.ecommerce.product.stock', default: 'Stock')", "slug" => "ecommerce_stock"}, {field_key: "checkbox", default: true, label_eval: true})
       group.add_manual_field({"name" => "t('plugin.ecommerce.product.qty', default: 'Quantity')", "slug" => "ecommerce_qty"}, {field_key: "numeric", required: true, label_eval: true})
-      # group.add_manual_field({"name" => "t('plugin.ecommerce.product.featured', default: 'Is Featured?')", "slug" => "ecommerce_featured"}, {field_key: "checkbox", default: true, label_eval: true})
+      group.add_manual_field({"name" => "t('plugin.ecommerce.product.files', default: 'Product files')", "slug" => "ecommerce_files"}, {field_key: "private_file", multiple: true, required: false, label_eval: true})
     end
   end
-
 end

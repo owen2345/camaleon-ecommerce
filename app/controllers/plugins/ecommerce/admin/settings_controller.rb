@@ -17,6 +17,4 @@ class Plugins::Ecommerce::Admin::SettingsController < Plugins::Ecommerce::AdminC
     flash[:notice] = t('camaleon_cms.admin.post_type.message.updated')
     redirect_to action: :index
   end
-
-  #  http://finance.yahoo.com/d/quotes.csv?e=.csv&f=c4l1&s=EURUSD=X
 end

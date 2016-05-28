@@ -11,139 +11,82 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
   before_action :set_cart
 
   def index
-    if @cart.products.size > 0
-      @products = @cart.products
-    else
-      flash[:notice] = "Not found products."
-      redirect_to action: :cart_index
+    @products = @cart.product_items
+    unless @products.size > 0
+      flash[:notice] = t('plugins.ecommerce.messages.cart_no_products', default: 'Not exist products in your cart')
+      return redirect_to action: :cart_index
     end
-    @ecommerce_bredcrumb << ["Checkout"]
+    @ecommerce_bredcrumb << [t('plugins.ecommerce.messages.checkout', default: 'Checkout')]
   end
 
   def processing
-    @products = @cart.products
-    total_weight = 0
-    tax_total = 0
-    sub_total = 0
-
-    pay_status = 'unpaid'
-
-    @products.each do |product|
-      product = product.decorate
-      product_options = @cart.get_option("product_#{product.id}")
-      price = product_options[:price].to_f
-      qty = product_options[:qty].to_f
-      qty_real = product.get_field_value('ecommerce_qty').to_f
-      if qty_real < 1
-        @cart.delete_option("product_#{product.id}") if qty < 1
-      else
-        qty = qty_real if qty > qty_real
-        tax_product = product_options[:tax].to_f
-        tax_total += tax_product * qty
-        total_weight += product_options[:weight].to_f * product_options[:qty].to_f
-        sub_total += price * qty
-        product.update_field_value('ecommerce_qty', (qty_real - qty).to_i)
-      end
-    end
-
-    shipping_method = current_site.shipping_methods.find(params[:order][:payment][:shipping_method])
-    weight_price = shipping_method.get_price_from_weight(total_weight)
-
-    total = sub_total + tax_total + weight_price
-
-    payment_amount = total
-
-    coupon_total = ''
-    coupon_amount = 0
-    if params[:order][:payment][:coupon_code].present?
-      coupon = current_site.coupons.find_valid_by_code(params[:order][:payment][:coupon_code])
-      if coupon.present?
-        coupon = coupon.decorate
-        coupon_total = coupon.the_amount
-        opts = coupon.options
-
-        case opts[:discount_type]
-          when 'free_ship'
-            pay_status = 'received'
-            coupon_amount = payment_amount
-          when 'percent'
-            coupon_amount = sub_total * opts[:amount].to_f / 100
-          when 'money'
-            coupon_amount = opts[:amount].to_f
-        end
-        payment_amount = payment_amount - coupon_amount
-      end
-    end
-
-    payment_amount = 0 if payment_amount < 0
-
-    order_id = Time.now.to_i
-    @order = current_site.orders.set_user(current_user).create(name: "Order #{order_id}", slug: order_id, status: pay_status)
-    details = params[:order][:details]
-    details[:received_at] = Time.now
-    @order.create_details(details)
-    @order.set_meta("products", @cart.options)
-    @order.set_meta("details", params[:order][:details])
-    @order.set_meta("billing_address", params[:order][:billing_address])
-    @order.set_meta("shipping_address", params[:order][:shipping_address])
-    total = sub_total + tax_total + weight_price
-    @order.set_meta("payment", params[:order][:payment].merge({
-                                                                amount: payment_amount,
-                                                                currency_code: current_site.currency_code,
-                                                                total: total,
-                                                                sub_total: sub_total,
-                                                                tax_total: tax_total,
-                                                                weight_price: weight_price,
-                                                                coupon: coupon_total,
-                                                                coupon_amount: coupon_amount
-                                                              }))
-
-    @cart.destroy
-
+    @cart.update_column(:shipping_method_id, params[:order][:payment][:shipping_method])
+    payment_amount = @cart.total_to_pay
+    @cart.set_meta("billing_address", params[:order][:billing_address])
+    @cart.set_meta("shipping_address", params[:order][:shipping_address])
+    order = @cart.make_order
     if payment_amount > 0
-      redirect_to plugins_ecommerce_order_select_payment_path(order: @order.slug)
-    else
-      flash[:notice] = "Saved Orders."
-      redirect_to plugins_ecommerce_orders_path
+      redirect_to plugins_ecommerce_order_select_payment_path(order: order.slug)
+    else # free cart
+      errors = ecommerce_verify_cart_errors(order)
+      if errors.present?
+        flash[:error] = errors.join('<br>')
+        redirect_to :back
+      else
+        mark_order_like_received(order)
+        flash[:notice] = t('plugins.ecommerce.messages.saved_order', default: 'Saved Order')
+        redirect_to plugins_ecommerce_orders_path
+      end
     end
   end
 
   def cart_index
-    @products = @cart.products
-    @ecommerce_bredcrumb << ["Shopping Cart"]
+    @products = @cart.product_items
+    @ecommerce_bredcrumb << [t('plugins.ecommerce.messages.shopping_cart', default: 'Shopping cart')]
+  end
+
+  def res_coupon
+    res = @cart.discount_for(params[:code].to_s.parameterize)
+    if res[:error].present?
+      render inline: commerce_coupon_error_message(res[:error], res[:coupon]), status: 500
+    else
+      render json: {code: params[:code], discount_type: res[:coupon].get_option('discount_type'), discount: res[:discount], text: "#{res[:coupon].decorate.the_amount}"}
+    end
   end
 
   # params[cart]: product_id,  qty
   def cart_add
     data = params[:cart]
-    product_id = data[:product_id]
-    product = current_site.products.find(product_id).decorate
-    if data[:qty].to_f > product.the_qty_real
-      flash[:error] =  t('.not_enough_product_qty', product: product.the_title, qty: product.the_qty_real)
-      redirect_to :back
-      return
+    qty = data[:qty].to_f rescue 0
+    product = current_site.products.find(data[:product_id]).decorate
+    unless product.can_added?(qty)
+      flash[:error] =  t('plugins.ecommerce.messages.not_enough_product_qty', product: product.the_title, qty: product.the_qty_real, default: 'There is not enough products "%{product}" (%{qty})')
+      return redirect_to :back
     end
-    @cart.add_product(product_id)
-    @cart.set_option("product_#{product_id}", e_add_data_product(data, product_id))
-    flash[:notice] = t('plugin.ecommerce.msg.added_product_in_cart')
-    redirect_to action: :cart_index
+    @cart.add_product(product)
+    flash[:notice] = t('plugins.ecommerce.messages.added_product_in_cart', default: 'Product added into cart')
+    redirect_to action: :index
   end
 
   def cart_update
     errors = []
     params[:products].each do |data|
       product = @cart.products.find(data[:product_id]).decorate
-      errors << t('.not_enough_product_qty', product: product.the_title, qty: product.the_qty_real) unless @cart.set_product_qty(product, data[:qty])
+      qty = data[:qty].to_f
+      if product.can_added?(qty)
+        @cart.add_product(product, qty)
+      else
+        errors << t('plugins.ecommerce.messages.not_enough_product_qty', product: product.the_title, qty: product.the_qty_real, default: 'There is not enough products "%{product}" (%{qty})')
+      end
     end
     flash[:error] = errors.join('<br>') if errors.present?
-    flash[:notice] = t('.updated_products', default: 'Shopping Cart Updated') unless errors.present?
+    flash[:notice] = t('plugins.ecommerce.messages.cart_updated', default: 'Shopping cart updated') unless errors.present?
     redirect_to action: :cart_index
   end
 
   def cart_remove
     @cart.remove_product(params[:product_id])
-    @cart.delete_option("product_#{params[:product_id]}")
-    flash[:notice] = "Deleted product from the Cart."
+    flash[:notice] = t('plugins.ecommerce.messages.cart_deleted', default: 'Product removed from your shopping cart')
     redirect_to action: :cart_index
   end
 
@@ -160,12 +103,4 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
       redirect_to plugins_ecommerce_login_path
     end
   end
-
-
-  def process_pay(data = {})
-
-
-  end
-
-
 end

@@ -6,9 +6,19 @@
   This program is distributed in the hope that it will be useful,  but WITHOUT ANY WARRANTY; without even the implied warranty of  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
   See the  GNU Affero General Public License (GPLv3) for more details.
 =end
-class Plugins::Ecommerce::Product < CamaleonCms::Post
-    # attrs:
-  #   slug => plugin key
-  #default_scope { where(taxonomy: :e_commerce_product) }
+class Plugins::Ecommerce::ProductItems < ActiveRecord::Base
+  self.table_name = 'plugins_ecommerce_products'
+  belongs_to :cart, class_name: 'Plugins::Ecommerce::Cart'
+  belongs_to :order, class_name: 'Plugins::Ecommerce::Order'
+  belongs_to :product, foreign_key: :product_id, class_name: 'CamaleonCms::Post'
+
+  def the_sub_total
+    puts "@@@@@@@@@@@@@@@@@@: #{self.cart.inspect}"
+    "#{(self.cart || self.order).site.decorate.current_unit}#{sprintf('%.2f', sub_total)}"
+  end
+
+  def sub_total
+    product = product.decorate
+    (product.price + product.tax) * self.qty
+  end
 end
-Product = Plugins::Ecommerce::Product

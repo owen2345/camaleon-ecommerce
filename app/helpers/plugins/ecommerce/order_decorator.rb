@@ -49,6 +49,6 @@ class Plugins::Ecommerce::OrderDecorator < CamaleonCms::TermTaxonomyDecorator
 
   def the_url_tracking
     consignment_number = object.get_meta("payment")[:consignment_number] rescue 'none'
-    object.shipping_method.options[:url_tracking].gsub("{{consignment_number}}", consignment_number) rescue "#{I18n.t('plugin.ecommerce.message.not_shipped')}"
+    _url = object.shipping_method.options[:url_tracking].gsub("{{consignment_number}}", consignment_number) rescue ''
   end
 end
