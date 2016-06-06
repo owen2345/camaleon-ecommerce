@@ -1,0 +1,49 @@
+<div id="totals_section">
+    <h3><%= t('.total', default: 'Total') %></h3>
+    <table class="table table-bordered">
+        <tbody>
+        <tr>
+            <th id="quantity_col"><%= t('.qty', default: 'Quantity') %></th>
+            <th id="item_col"><%= t('.item', default: 'Item') %></th>
+            <th id="price_col"><%= t('.price', default: 'Price') %></th>
+
+            <th id="tax_col"><%= t('.tax', default: 'Tax') %></th>
+            <th id="subtotal_col"><%= t('.subtotal', default: 'Sub Total') %></th>
+        </tr>
+        <% @cart.product_items.decorate.each do |item| product = item.product.decorate %>
+            <tr>
+                <td><%= item.qty %></td>
+                <td><%= product.the_title %></td>
+                <td><%= item.the_price %></td>
+                <td><%= item.the_tax %></td>
+                <td><%= item.the_sub_total %></td>
+            </tr>
+        <% end %>
+        <tr>
+            <td colspan="2"></td>
+            <td colspan="2" class="text-right"><%= t('.total_excl', default: 'Total (excluding Tax)') %> </td>
+            <td><%= @cart.the_sub_total %></td>
+        </tr>
+        <tr>
+            <td colspan="2"></td>
+            <td colspan="2" class="text-right"><%= t('.tax', default: 'Tax') %></td>
+            <td id="tax_total"><%= @cart.the_tax_total %></td>
+        </tr>
+        <tr id="coupon_application_row">
+            <td colspan="2"></td>
+            <td colspan="2" class="text-right"><%= t('.discount', default: 'Discount') %></td>
+            <td><%= @cart.the_total_discounts %></td>
+        </tr>
+        <tr>
+            <td colspan="2"></td>
+            <td colspan="2" class="text-right"><%= t('.total_shipping', default: 'Total shipping') %></td>
+            <td id="shipping_total"><%= @cart.the_total_shipping %></td>
+        </tr>
+        <tr>
+            <td colspan="2"></td>
+            <td colspan="2" class="text-right"><%= t('.total_price', default: 'Total Price') %></td>
+            <td><%= @cart.the_price %></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
