@@ -1,8 +1,8 @@
 module Plugins::Ecommerce::EcommerceEmailHelper
   include CamaleonCms::EmailHelper
 
-  def mark_order_like_received(order)
-    order.make_paid!
+  def mark_order_like_received(cart, status = 'paid')
+    order = cart.make_paid!(status)
 
     # send email to buyer
     commerce_send_order_received_email(order)
@@ -14,9 +14,14 @@ module Plugins::Ecommerce::EcommerceEmailHelper
     args = {order: order}; hooks_run("commerce_after_payment_completed", args)
   end
 
-  def commerce_send_order_received_email(order)
+  def commerce_send_order_received_email(order, is_after_bank_confirmation = false)
     data = _commerce_prepare_send_order_email_data(order)
-    cama_send_email(order.customer.email, t('plugin.ecommerce.email.order_received.subject'), {template_name: 'order_received', extra_data: data[:extra_data], attachs: data[:files]})
+    if is_after_bank_confirmation
+      cama_send_email(order.user.email, t('plugin.ecommerce.mail.order_confirmed.subject'), {template_name: 'order_confirmed', extra_data: data[:extra_data], attachs: data[:files]})
+    else
+      data.delete(:files) unless order.paid?
+      cama_send_email(order.user.email, t('plugin.ecommerce.email.order_received.subject'), {template_name: 'order_received', extra_data: data[:extra_data], attachs: data[:files]})
+    end
   end
 
   def commerce_send_order_received_admin_notice(order)
@@ -29,11 +34,11 @@ module Plugins::Ecommerce::EcommerceEmailHelper
 
   def send_recovery_cart_email(order)
     extra_data = {
-      :fullname => order.customer.fullname,
+      :fullname => order.user.fullname,
       :order => order
     }
-    send_email(order.customer.email, t('plugin.ecommerce.email.recovery_cart.subject'), '', nil, [], 'recovery_cart', nil, extra_data)
-    Rails.logger.info "Send recovery to #{order.customer.email} with order #{order.slug}"
+    send_email(order.user.email, t('plugin.ecommerce.email.recovery_cart.subject'), '', nil, [], 'recovery_cart', nil, extra_data)
+    Rails.logger.info "Send recovery to #{order.user.email} with order #{order.slug}"
   end
 
   # return translated message
@@ -56,11 +61,10 @@ module Plugins::Ecommerce::EcommerceEmailHelper
 
   # verify all products and qty, coupons availability
   # return an array of errors
-  def ecommerce_verify_cart_errors(order)
+  def ecommerce_verify_cart_errors(cart)
     errors = []
-
     # products verification
-    order.product_items.each do |item|
+    cart.product_items.each do |item|
       product = item.product.decorate
       unless product.decrement_qty(item.qty)
         errors << t('plugins.ecommerce.messages.not_enough_product_qty', product: product.the_title, qty: product.the_qty_real, default: 'There is not enough products "%{product}" (%{qty})')
@@ -68,10 +72,13 @@ module Plugins::Ecommerce::EcommerceEmailHelper
     end
 
     # coupon verification
-    res = order.discount_for(order.coupon)
-    errors << commerce_coupon_error_message(res[:error], res[:coupon]) if res[:error].present?
+    res = cart.discount_for(cart.coupon)
+    if res[:error].present?
+      errors << commerce_coupon_error_message(res[:error], res[:coupon])
+      cart.update_column(:coupon, '')
+    end
 
-    args = {order: order, errors: errors}; hooks_run("commerce_on_error_verifications", args)
+    args = {cart: cart, errors: errors}; hooks_run("commerce_on_error_verifications", args)
     errors
   end
 
@@ -79,13 +86,13 @@ module Plugins::Ecommerce::EcommerceEmailHelper
   def _commerce_prepare_send_order_email_data(order)
     data = {}
     data[:extra_data] = {
-      :fullname => order.customer.fullname,
+      :fullname => order.user.fullname,
       :order_slug => order.slug,
       :order_url => plugins_ecommerce_order_show_url(order: order.slug),
       :billing_information => order.get_meta('billing_address'),
       :shipping_address => order.get_meta('shipping_address'),
-      :subtotal => order.get_meta("payment")[:total],
-      :total_cost => order.get_meta("payment")[:amount],
+      :subtotal => order.cache_the_sub_total,
+      :total_cost => order.cache_the_total,
       :order => order
     }
     files = []

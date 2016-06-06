@@ -8,46 +8,74 @@
 =end
 class Plugins::Ecommerce::Order < Plugins::Ecommerce::Cart
   self.table_name = 'plugins_ecommerce_orders'
+  has_many :metas, ->{ where(object_class: 'Plugins::Ecommerce::Cart')}, :class_name => "CamaleonCms::Meta", foreign_key: :objectid, dependent: :delete_all
   default_scope { where(kind: 'order') }
+  # status: bank_pending => pending of verification for bank transfer orders
+  #         paid => paid by some method
+  #         canceled => canceled order
+  #         shipped => shipped status
+  #         accepted => received status
 
   def payment_method
-    Plugins::Ecommerce::PaymentMethod.find_by_id(self.payment_method_id)
+    Plugins::Ecommerce::PaymentMethod.find_by_id(get_meta('payment_method_id', self.payment_method_id))
   end
 
-  def payment
-    payment = get_meta("payment")
-    get_meta("pay_#{payment[:type]}".to_sym)
+  def paid?
+    status == 'paid'
+  end
+
+  def accepted?
+    status == 'accepted'
+  end
+
+  def accepted!
+    update_columns({status: 'accepted', accepted_at: Time.current})
+  end
+
+  def shipped?
+    status == 'shipped'
+  end
+
+  def shipped!(code)
+    update_columns({status: 'shipped', shipped_at: Time.current})
+    set_meta('consignment_number', code)
   end
 
   def canceled?
     status == 'canceled'
   end
-  def unpaid?
-    status == 'unpaid'
+
+  def canceled!
+    update_columns({status: 'canceled', shipped_at: Time.current})
   end
 
-  def paid?
-    payment.present?
+  def received?
+    status == 'received'
   end
 
-  def total_price
-    self.amount
+  def bank_pending?
+    status == 'bank_pending'
   end
 
-  # return the product titles in array format
-  def products_list
-    product_items.pluck(:the_title)
+  def bank_confirmed!
+    update_columns({status: 'paid', updated_at: Time.current})
   end
 
-  def make_paid!
-    total_without_coupon = total_to_pay_without_discounts
-    if self.coupon.present?
-      res_coupon = self.discount_for(self.coupon, total_to_pay_without_discounts)
-      unless res_coupon[:error].present?
-        update_columns(the_coupon_amount: res[:coupon].decorate.the_amount, coupon_amount: res[:discount])
-        res[:coupon].mark_as_used(user)
-      end
+  def payment_data
+    get_meta('payment_data', {})
+  end
+
+  # return the date of the current status
+  def action_date
+    case object.status
+      when 'paid'
+        object.created_at
+      when 'canceled'
+        object.closed_at
+      when 'shipped'
+        object.shipped_at
+      when 'accepted'
+        object.accepted_at
     end
-    self.update_columns(status: 'received', paid_at: Time.current, tax_total: the_tax_total, weight_price: the_weight_total, total: total_without_coupon, sub_total: the_amount_total, amount: total_to_pay, currency_code: site.decorate.currency_code)
   end
 end

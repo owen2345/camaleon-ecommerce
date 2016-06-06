@@ -46,4 +46,12 @@ class Plugins::Ecommerce::FrontController < CamaleonCms::Apps::PluginsFrontContr
   def save_cache_redirect
     cookies[:return_to] = params[:return_to] if params[:return_to].present?
   end
+
+  def commerce_authenticate
+    unless cama_sign_in?
+      flash[:error] = t('camaleon_cms.admin.login.please_login')
+      cookies[:return_to] = request.referer
+      redirect_to plugins_ecommerce_login_path
+    end
+  end
 end

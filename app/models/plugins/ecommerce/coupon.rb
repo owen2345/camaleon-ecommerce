@@ -12,7 +12,7 @@ class Plugins::Ecommerce::Coupon < CamaleonCms::TermTaxonomy
   scope :actives, -> {where(status: '1')}
 
   def used_times_exceeded?
-    (used_applications + 1) <= allowed_applications
+    (used_applications + 1) > allowed_applications
   end
 
   def mark_as_used(user = nil)
@@ -45,7 +45,7 @@ class Plugins::Ecommerce::Coupon < CamaleonCms::TermTaxonomy
   end
 
   def active?
-    coupon.status.to_s == '1'
+    status.to_s == '1'
   end
 
 end

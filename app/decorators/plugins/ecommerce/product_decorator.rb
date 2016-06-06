@@ -1,4 +1,4 @@
-class Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
+class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
   def the_sku
     object.get_field_value('ecommerce_sku').to_s
   end
@@ -6,7 +6,10 @@ class Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
     "#{h.current_site.current_unit}#{sprintf('%.2f', price)}"
   end
   def the_weight
-    "#{h.current_site.current_weight} #{object.get_field_value('ecommerce_weight').to_f}"
+    "#{h.current_site.current_weight} #{weight}"
+  end
+  def weight
+    object.get_field_value('ecommerce_weight').to_f || 0
   end
   def the_qty
     object.get_field_value('ecommerce_qty') || 0

@@ -15,12 +15,12 @@
     <div class="col-md-3">
         <% if signin? %>
             <div class="well shopping_cart_box">
-                <% @cart = current_site.carts.set_user(current_user).first_or_create(name: "Cart by #{current_user.id}") %>
+                <% @cart ||= current_site.carts.set_user(current_user).first_or_create(name: "Cart by #{current_user.id}").decorate %>
                 <h4><%= t('.shopping_cart', default: 'Shopping Cart') %></h4>
-                <p><%= t('.total_items', default: '(%{qty}) items', qty: @cart.the_items_count) %>, <%= t('.total', default: 'Total') %>: <%= @cart.the_price %></p>
+                <p><%= t('.total_items', default: '(%{qty}) items', qty: @cart.items_total) %>, <%= t('.total', default: 'Total') %>: <%= @cart.the_total_amount %></p>
                 <span>
                     <a href="<%= @ecommerce_post_type.the_url %>" class="btn btn-default btn-xs"><%= t('.products_list', default: 'Products list') %></a>
-                    <% if (@cart.the_items_count.to_i > 0) %>
+                    <% if (@cart.items_total > 0) %>
                         <a href="<%= plugins_ecommerce_checkout_cart_path %>" class="btn btn-warning btn-xs"><%= t('.purchase', default: 'Purchase') %></a>
                     <% end %>
                     <a href="<%= plugins_ecommerce_orders_path %>" class="btn btn-success btn-xs"><%= t('.my_orders', default: 'My Orders') %></a>

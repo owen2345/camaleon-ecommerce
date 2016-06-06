@@ -10,13 +10,13 @@ class Plugins::Ecommerce::Admin::PricesController < Plugins::Ecommerce::AdminCon
   before_action :set_shipping_method
 
   def index
-    admin_breadcrumb_add("#{t('plugin.ecommerce.product.price')}")
+    add_breadcrumb("#{t('plugin.ecommerce.product.price')}")
   end
 
   def new
     @price = {}
-    admin_breadcrumb_add("#{t('plugin.ecommerce.product.price')}", admin_plugins_ecommerce_shipping_method_prices_path( params[:shipping_method_id] ))
-    admin_breadcrumb_add("#{t('plugin.ecommerce.new')}")
+    add_breadcrumb("#{t('plugin.ecommerce.product.price')}", admin_plugins_ecommerce_shipping_method_prices_path( params[:shipping_method_id] ))
+    add_breadcrumb("#{t('plugin.ecommerce.new')}")
     render 'form'
   end
 
@@ -25,8 +25,8 @@ class Plugins::Ecommerce::Admin::PricesController < Plugins::Ecommerce::AdminCon
 
   def edit
     @price = @prices[params[:id].to_sym] || {}
-    admin_breadcrumb_add("#{t('plugin.ecommerce.product.price')}", admin_plugins_ecommerce_shipping_method_prices_path( params[:shipping_method_id] ))
-    admin_breadcrumb_add("#{t('camaleon_cms.admin.button.edit')}")
+    add_breadcrumb("#{t('plugin.ecommerce.product.price')}", admin_plugins_ecommerce_shipping_method_prices_path( params[:shipping_method_id] ))
+    add_breadcrumb("#{t('camaleon_cms.admin.button.edit')}")
     render 'form'
   end
 

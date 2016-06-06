@@ -10,25 +10,29 @@ Rails.application.routes.draw do
           post 'register' => :do_register
         end
 
+        scope :checkout, as: :checkout do
+          controller 'front/checkout' do
+            get 'success_paypal'
+            get 'cancel_paypal'
+            post 'pay_by_bank_transfer'
+            post 'pay_by_credit_card'
+            post 'pay_by_authorize_net'
+            post 'pay_by_stripe'
+            post 'pay_by_paypal'
+          end
+        end
+
         get 'checkout' => 'front/checkout#index'
-        post 'checkout/processing' => 'front/checkout#processing'
+        post 'checkout/step_address' => 'front/checkout#step_address'
+        post 'checkout/step_shipping' => 'front/checkout#step_shipping'
         get 'checkout/cart' => 'front/checkout#cart_index'
+        get 'checkout/complete_free_order' => 'front/checkout#complete_free_order'
         post 'checkout/cart/add' => 'front/checkout#cart_add'
         post 'checkout/cart/update' => 'front/checkout#cart_update'
         get 'checkout/cart/remove' => 'front/checkout#cart_remove'
         post 'res_coupon' => 'front/checkout#res_coupon'
         get 'orders' => 'front/orders#index'
         get 'orders/:order/show' => 'front/orders#show', as: :order_show
-        get 'orders/:order/select_payment' => 'front/orders#select_payment', as: :order_select_payment
-        post 'orders/:order/select_payment' => 'front/orders#set_select_payment', as: :order_set_select_payment
-        get 'orders/:order/pay' => 'front/orders#pay', as: :order_pay
-        get 'orders/:order/success_paypal' => 'front/orders#success_paypal', as: :order_success_paypal
-        get 'orders/:order/cancel_paypal' => 'front/orders#cancel_paypal', as: :order_cancel_paypal
-        post 'orders/:order/pay_by_bank_transfer' => 'front/orders#pay_by_bank_transfer', as: :order_pay_by_bank_transfer
-        post 'orders/:order/pay_by_credit_card' => 'front/orders#pay_by_credit_card', as: :order_pay_by_credit_card
-        post 'orders/:order/pay_by_authorize_net' => 'front/orders#pay_by_authorize_net', as: :order_pay_by_authorize_net
-        post 'orders/:order/pay_by_stripe' => 'front/orders#pay_by_stripe', as: :order_pay_by_stripe
-        post 'orders/:order/pay_by_paypal' => 'front/orders#pay_by_paypal', as: :order_pay_by_paypal
       end
     end
   end
@@ -39,9 +43,10 @@ Rails.application.routes.draw do
       namespace 'ecommerce' do
         get 'index' => 'admin#index'
         resources :orders, controller: 'admin/orders' do
-          post 'accepted'
-          post 'shipped'
-          get 'canceled'
+          get 'mark_accepted'
+          get 'mark_bank_confirmed'
+          post 'mark_shipped'
+          post 'mark_canceled'
         end
         resources :payment_methods, controller: 'admin/payment_methods'
         resources :shipping_methods, controller: 'admin/shipping_methods' do

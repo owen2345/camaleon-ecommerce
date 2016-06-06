@@ -101,7 +101,7 @@ module Plugins::Ecommerce::EcommerceHelper
           has_picture: true,
           has_template: false,
           has_featured: true,
-          cama_post_decorator_class: 'Ecommerce::ProductDecorator'
+          cama_post_decorator_class: 'Plugins::Ecommerce::ProductDecorator'
         })
         @ecommerce.categories.create({name: 'Uncategorized', slug: 'Uncategorized'.parameterize})
       end

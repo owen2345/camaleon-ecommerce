@@ -15,7 +15,7 @@ class Plugins::Ecommerce::Admin::TaxRatesController < Plugins::Ecommerce::AdminC
 
   def new
     @tax_rate = current_site.tax_rates.new
-    admin_breadcrumb_add("#{t('plugin.ecommerce.new')}")
+    add_breadcrumb("#{t('plugin.ecommerce.new')}")
     render 'form'
   end
 
@@ -23,7 +23,7 @@ class Plugins::Ecommerce::Admin::TaxRatesController < Plugins::Ecommerce::AdminC
   end
 
   def edit
-    admin_breadcrumb_add("#{t('camaleon_cms.admin.button.edit')}")
+    add_breadcrumb("#{t('camaleon_cms.admin.button.edit')}")
     render 'form'
   end
 

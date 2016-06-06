@@ -17,24 +17,24 @@
           <% @products.each do |item| product = item.product.decorate %>
               <tr>
                   <td><a href="<%= product.the_url %>"><%= product.the_title %></a></td>
-                  <td data-price="<%= product.price %>"><%= product.the_price %></td>
-                  <td data-tax="<%= product.tax %>"><%= product.the_tax %></td>
-                  <td data-qty="<%= item.qty %>">
+                  <td><%= item.the_price %></td>
+                  <td><%= product.the_tax %></td>
+                  <td>
                       <input name="products[][product_id]" type="hidden" value="<%= product.id %>"/>
                       <input class="text-qty" type="number" name="products[][qty]" value="<%= item.qty %>">
                   </td>
-                  <td data-subtotal="<%= @cart.sub_total %>"><%= item.the_sub_total %></td>
+                  <td><%= item.the_sub_total %></td>
                   <td>
                       <a rel="nofollow" data-method="delete" href="<%= plugins_ecommerce_checkout_cart_remove_path(product_id: product.id) %>"><%= t('.delete', default: 'Remove') %></a>
                   </td>
               </tr>
-          <% end  %>
+          <% end %>
           </tbody>
           <tfoot>
           <tr>
               <td colspan="4"></td>
               <td><%= t('.subtotal', default: 'Subtotal') %></td>
-              <td id="total" ><%= @cart.the_price %></td>
+              <td><%= @cart.the_total_amount %></td>
           </tr>
           </tfoot>
       </table>
@@ -46,4 +46,3 @@
       <% end %>
   <% end %>
 </div>
-<script>jQuery(function(){ cama_ecommerce_shopping_cart(); })</script>

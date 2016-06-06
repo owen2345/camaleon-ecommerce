@@ -1,4 +1,5 @@
 es:
+  # backend
   plugin:
     ecommerce:
       accepted: "Aceptado"
@@ -29,6 +30,8 @@ es:
       details_shipping_methods: "Detalle Método de Envío"
       details_payment_methods: "Detalle Método de Pago"
       details_order: "Detalle Pedido"
+      order_destroyed: 'Orden Eliminado'
+      order_no_destroyed: 'La orden no pudo ser eliminado '
       details_user: "Detalle Usuario"
       form_tax_rate: "Formulario Tasa de Impuesto"
       form_shipping_methods: "Formulario Método de Envío"
@@ -58,6 +61,11 @@ es:
         accepted: "Aceptado"
         shipped: "Enviado"
         updated: "Actualizado"
+        order_bank_confirmed: 'Pago Bancario Confirmado'
+        order_accepted: 'Orden aceptado'
+        order_shipped: 'Orden enviado'
+        order_canceled: 'Orden cancelado'
+        order_updated: 'Orden actualizado'
       method_paypal: "Método por Paypal"
       method_credit_card: "Método por Tarjeta de Credito"
       method_bank_transfer: "Método Transferencia Bancaria"
@@ -102,12 +110,6 @@ es:
       shipped_date: "Fecha de Envío"
       search_order_number: "Buscar número de pedido"
       select:
-        received: "Recibido"
-        unpaid: "Sin Pagar"
-        accepted: "Aceptado"
-        shipped: "Enviado"
-        closed: "Cerrado"
-        canceled: "Cancelado"
         kilogram: "kilogramo"
         pound: "libra"
         dram: "dracma"
@@ -150,6 +152,12 @@ es:
         number_account_bank: "Número Cuenta Bancaria"
         password: "Contraseña"
         paid: "A cargo?"
+        make_accepted: 'Marcar como aceptado'
+        make_shipped: 'Marcar como enviado'
+        make_canceled: 'Marcar como cancelado'
+        make_bank_confirmed: 'Marcar como Pagado'
+        confirm_mark_as_paid: 'Esta seguro de marcar como pagado?'
+        confirm_delete: 'Esta seguro de eliminar esta orden?'
         payment_method: "Forma de Pago"
         percent: "Porcentaje"
         money: "Dinero"
@@ -172,6 +180,10 @@ es:
         code_zip: "Código Postal"
         method_type: "Tipo de metodo"
         transaction_key: "Clave de transacción"
+      show_order:
+        consignment_number: 'Número de envío'
+
+
       tax_rates: "Tasas de Impuesto"
       add_to_cart: "Añadir al carro"
       msg:
@@ -179,6 +191,7 @@ es:
       shipping_prices: "Precios de envío"
       mark_shipped: "Marcar como enviado"
       mail:
+        dear: 'Estimado/a %{name}: '
         order_received:
           welcome: "Hola"
           thanks: "Gracias por su compra"
@@ -187,6 +200,16 @@ es:
         recovery_cart:
           body: "Hemos observado que usted a dejado pendiente una compra."
           reference: "Para su referencia, su número de orden es: "
+        order_confirmed:
+          message: 'Hemos revisado y confirmado su pago por transferencia bancaria de su orden #%{order}. Gracias por su preferencia.'
+          subject: 'Order Confirmed'
+        order_shipped:
+          subject: 'Orden Enviado'
+          message: 'Tu orden %{order} a sido enviado.'
+        order_canceled:
+          subject: 'Orden Cancelado'
+          message: 'Tu orden %{order} a sido cancelado por la siguiente razon: %{message}'
+
       email:
         order_received:
           subject: "Gracias por su compra"
@@ -195,6 +218,7 @@ es:
         order_received_admin:
           subject: "Nueva Compra"
 
+  # frontend
   plugins:
     ecommerce:
       messages:
@@ -218,6 +242,13 @@ es:
         processing_order: 'Pago por orden #%{order}'
         times_exceeded: 'Cantidad de usos excedido'
         required_minimum_price: 'El monto de tu compra debe ser superior a %{min_amount}'
+        order_status:
+          bank_pending: 'Pendiente de confirmación'
+          canceled: 'Cancelado'
+          paid: 'Pagado'
+          shipped: 'Enviado'
+          received: 'Recibido'
+          accepted: 'Aceptado'
 
       single:
         available_items: 'Items Disponibles'

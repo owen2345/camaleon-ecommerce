@@ -15,17 +15,17 @@ class Plugins::Ecommerce::Admin::PaymentMethodsController < Plugins::Ecommerce::
 
   def new
     @payment_method = current_site.payment_methods.new
-    admin_breadcrumb_add("#{t('plugin.ecommerce.new')}")
+    add_breadcrumb("#{t('plugin.ecommerce.new')}")
     render 'form'
   end
 
   def show
-    admin_breadcrumb_add("#{t('plugin.ecommerce.table.details')}")
+    add_breadcrumb("#{t('plugin.ecommerce.table.details')}")
     @payment_method = @payment_method.decorate
   end
 
   def edit
-    admin_breadcrumb_add("#{t('camaleon_cms.admin.button.edit')}")
+    add_breadcrumb("#{t('camaleon_cms.admin.button.edit')}")
     render 'form'
   end
 

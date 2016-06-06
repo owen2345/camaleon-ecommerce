@@ -4,12 +4,12 @@ module Plugins::Ecommerce::EcommercePaymentHelper
   def payment_pay_by_credit_card_authorize_net(order, payment_method)
     billing_address = order.get_meta("billing_address")
     details = order.get_meta("details")
-    amount = commerce_to_cents(order.total_price.to_f)
+    amount = commerce_to_cents(order.total_amount)
     payment_params = {
       :order_id => order.slug,
       :currency => current_site.currency_code,
-      :email => details[:email],
-      :billing_address => {:name => "#{billing_address[:first_name]} #{billing_address[:last_name]}",
+      :email => order.user.email,
+      :billing_address => {:name => "#{order.user.fullname}",
                            :address1 => billing_address[:address1],
                            :address2 => billing_address[:address2],
                            :city => billing_address[:city],
@@ -29,8 +29,8 @@ module Plugins::Ecommerce::EcommercePaymentHelper
     ActiveMerchant::Billing::Base.mode = payment_method.options[:authorize_net_sandbox].to_s.to_bool ? :test : :production
 
     credit_card = ActiveMerchant::Billing::CreditCard.new(
-      :first_name => params[:firstName],
-      :last_name => params[:lastName],
+      :first_name => order.user.first_name,
+      :last_name => order.user.last_name,
       :number => params[:cardNumber],
       :month => params[:expMonth],
       :year => "20#{params[:expYear]}",
