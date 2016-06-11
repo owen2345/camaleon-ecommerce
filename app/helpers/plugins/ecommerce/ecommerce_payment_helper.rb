@@ -29,8 +29,8 @@ module Plugins::Ecommerce::EcommercePaymentHelper
     ActiveMerchant::Billing::Base.mode = payment_method.options[:authorize_net_sandbox].to_s.to_bool ? :test : :production
 
     credit_card = ActiveMerchant::Billing::CreditCard.new(
-      :first_name => order.user.first_name,
-      :last_name => order.user.last_name,
+      :first_name => params[:firstName],
+      :last_name => params[:lastName],
       :number => params[:cardNumber],
       :month => params[:expMonth],
       :year => "20#{params[:expYear]}",

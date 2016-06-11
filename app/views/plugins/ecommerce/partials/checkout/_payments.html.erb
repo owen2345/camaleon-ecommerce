@@ -116,6 +116,7 @@
                     <% end %>
                 </div>
             <% end %>
+            <%= content_tag(:div, 'No Payment Methods Defined', class: 'alert alert-danger') unless payment_methods.any? %>
         </div>
     </div>
     <script>jQuery(function(){ cama_ecommerce_payments(); })</script>

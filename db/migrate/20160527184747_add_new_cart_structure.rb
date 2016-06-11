@@ -8,6 +8,7 @@ class AddNewCartStructure < ActiveRecord::Migration
       t.string :cache_the_total, :cache_the_sub_total, :cache_the_tax, :cache_the_weight, :cache_the_discounts, :cache_the_shipping
       t.decimal :amount, :precision => 8, :scale => 2
       t.text :description
+      t.timestamps null: false
     end
 
     create_table :plugins_ecommerce_products do |t|

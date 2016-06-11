@@ -41,7 +41,7 @@ function cama_checkout_actions(){
         $(form).fadeTo("fast", 0.4);
         $.post($(form).attr('action'), $(form).serialize()+'&next_step=true', function(res){
             panel.find('#step-3').html(res);
-            steps.filter('.active').next().trigger('next_step');
+            steps.last().trigger('next_step');
         }).complete(function(){
             $(form).fadeTo("fast", 1);
         }).error(function(e){
