@@ -34,6 +34,8 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
     if tax_rate_id.present?
       percent = h.current_site.tax_rates.find(tax_rate_id).options[:rate].to_f  rescue 0
       price * percent / 100
+    else # tax not defined
+      0
     end
   end
 

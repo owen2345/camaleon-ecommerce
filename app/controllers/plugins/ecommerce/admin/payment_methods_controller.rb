@@ -15,6 +15,7 @@ class Plugins::Ecommerce::Admin::PaymentMethodsController < Plugins::Ecommerce::
 
   def new
     @payment_method = current_site.payment_methods.new
+    @payment_method.status = 1
     add_breadcrumb("#{t('plugin.ecommerce.new')}")
     render 'form'
   end

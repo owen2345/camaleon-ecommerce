@@ -39,4 +39,4 @@
         </div>
     </div>
 </div>
-<script>jQuery(function(){ cama_checkout_actions(); })</script>
+<script>jQuery(function(){ cama_checkout_actions(); <% if flash[:payment_error].present? %> setTimeout(function(){ $('#cama_checkout_view #checkout_shipping_form').submit(); }, 200); <% end %> })</script>
