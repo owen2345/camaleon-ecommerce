@@ -13,7 +13,7 @@
         <% @cart.product_items.decorate.each do |item| product = item.product.decorate %>
             <tr>
                 <td><%= item.qty %></td>
-                <td><%= product.the_title %></td>
+                <td><%= link_to(item.the_title, product.the_url) %></td>
                 <td><%= item.the_price %></td>
                 <td><%= item.the_tax %></td>
                 <td><%= item.the_sub_total %></td>

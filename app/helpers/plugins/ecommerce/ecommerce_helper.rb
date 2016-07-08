@@ -9,21 +9,13 @@
 module Plugins::Ecommerce::EcommerceHelper
   include Plugins::Ecommerce::EcommerceEmailHelper
 
-  def ecommerce_on_render_post(d)
-
-  end
-
-  def ecommerce_on_render_post_type(d)
-
-  end
-
   def ecommerce_admin_list_post(d)
-
   end
 
-  def ecommerce_form_post(d)
-    if d[:post_type].slug == 'commerce'
-      append_asset_libraries({ecommerce: {css: [], js: [plugin_gem_asset('fix_form')]}})
+  def ecommerce_admin_product_form(args)
+    if args[:post_type].slug == 'commerce'
+      append_asset_libraries({ecommerce: {css: [], js: [plugin_asset_path('admin_product')]}})
+      args[:html] = render partial: plugin_view('admin/products/variations'), locals:{post_type: args[:post_type], product: args[:post] }
     end
   end
 
@@ -52,24 +44,19 @@ module Plugins::Ecommerce::EcommerceHelper
         items_i << {icon: "credit-card", title: t('plugin.ecommerce.payment_methods', default: 'Payment Methods'), url: admin_plugins_ecommerce_payment_methods_path}
         items_i << {icon: "tag", title: t('plugin.ecommerce.coupons', default: 'Coupons'), url: admin_plugins_ecommerce_coupons_path}
         items_i << {icon: "cogs", title: t('camaleon_cms.admin.button.settings', default: 'Settings'), url: admin_plugins_ecommerce_settings_path}
+        items_i << {icon: "cubes", title: t('plugin.ecommerce.product_attributes', default: 'Product Attributes'), url: admin_plugins_ecommerce_product_attributes_path}
       end
 
       admin_menu_insert_menu_after("content", "e-commerce", {icon: "shopping-cart", title: t('plugin.ecommerce.e_commerce', default: 'E-commerce'), url: "", items: items_i}) if items_i.present?
     end
-
-    # add assets admin
-    append_asset_libraries({ecommerce: {css: [plugin_gem_asset('admin')], js: []}})
-
   end
 
   def ecommerce_app_before_load
-
   end
 
   # here all actions on plugin destroying
   # plugin: plugin model
   def ecommerce_on_destroy(plugin)
-
   end
 
   # here all actions on going to active
@@ -84,6 +71,21 @@ module Plugins::Ecommerce::EcommerceHelper
   # plugin: plugin model
   def ecommerce_on_inactive(plugin)
     current_site.post_types.hidden_menu.where(slug: "commerce").first.destroy
+  end
+
+  # callback after create/update
+  def ecommerce_admin_product_created(args)
+    if args[:post_type].slug == 'commerce'
+      args[:post].product_variations.where.not(id: params[:product_variation].keys).delete_all
+      params[:product_variation].each do |p_key, p_var|
+        data = {amount: p_var[:price], photo: p_var[:photo], sku: p_var[:sku], weight: p_var[:weight], qty: p_var[:qty], attribute_ids: p_var[:attributes].map{|at| at[:value] }.join(',')}
+        if p_key.include?('new_') # new variation
+          args[:post].product_variations.create(data)
+        else
+          args[:post].product_variations.find(p_key).update(data)
+        end
+      end
+    end
   end
 
   def get_commerce_post_type

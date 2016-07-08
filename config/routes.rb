@@ -42,6 +42,8 @@ Rails.application.routes.draw do
     namespace 'plugins' do
       namespace 'ecommerce' do
         get 'index' => 'admin#index'
+        get 'product_attributes' => 'admin#product_attributes'
+        post 'product_attributes' => 'admin#save_product_attributes'
         resources :orders, controller: 'admin/orders' do
           get 'mark_accepted'
           get 'mark_bank_confirmed'

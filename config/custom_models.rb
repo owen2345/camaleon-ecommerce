@@ -7,9 +7,14 @@ Rails.application.config.to_prepare do
     has_many :shipping_methods, :class_name => "Plugins::Ecommerce::ShippingMethod", foreign_key: :parent_id, dependent: :destroy
     has_many :coupons, :class_name => "Plugins::Ecommerce::Coupon", foreign_key: :parent_id, dependent: :destroy
     has_many :tax_rates, :class_name => "Plugins::Ecommerce::TaxRate", foreign_key: :parent_id, dependent: :destroy
+    has_many :product_attributes, :class_name => "Plugins::Ecommerce::Attribute", foreign_key: :site_id, dependent: :destroy
     def products
       post_types.where(slug: 'commerce').first.try(:posts)
     end
+  end
+
+  CamaleonCms::Post.class_eval do
+    has_many :product_variations, class_name: 'Plugins::Ecommerce::ProductVariation', foreign_key: :product_id, dependent: :destroy
   end
 
   CamaleonCms::SiteDecorator.class_eval do

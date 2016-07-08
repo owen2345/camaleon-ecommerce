@@ -16,16 +16,16 @@
           <tbody>
           <% @products.each do |item| product = item.product.decorate %>
               <tr>
-                  <td><a href="<%= product.the_url %>"><%= product.the_title %></a></td>
+                  <td><a href="<%= product.the_url %>"><%= product.the_variation_title(item.variation_id) %></a></td>
                   <td><%= item.the_price %></td>
-                  <td><%= product.the_tax %></td>
+                  <td><%= item.the_tax %></td>
                   <td>
-                      <input name="products[][product_id]" type="hidden" value="<%= product.id %>"/>
-                      <input class="text-qty" type="number" name="products[][qty]" value="<%= item.qty %>">
+                      <input name="product_items[][item_id]" type="hidden" value="<%= item.id %>"/>
+                      <input class="text-qty" type="number" name="product_items[][qty]" value="<%= item.qty %>">
                   </td>
                   <td><%= item.the_sub_total %></td>
                   <td>
-                      <a rel="nofollow" data-method="delete" href="<%= plugins_ecommerce_checkout_cart_remove_path(product_id: product.id) %>"><%= t('.delete', default: 'Remove') %></a>
+                      <a rel="nofollow" data-method="delete" href="<%= plugins_ecommerce_checkout_cart_remove_path(product_item_id: item.id) %>"><%= t('.delete', default: 'Remove') %></a>
                   </td>
               </tr>
           <% end %>

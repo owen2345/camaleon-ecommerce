@@ -1,0 +1,95 @@
+<%= form_tag url_for(action: :save_product_attributes), class: 'panel panel-default', id: 'ecommerce_product_attributes', 'data-confirm-msg' => t('.confirm_delete', default: 'Are you sure to delete?') do %>
+    <div class="panel-heading ui-draggable-handle">
+        <h3 class="panel-title"><%= t('.title', default: 'Product Attributes') %></h3>
+    </div>
+    <div class="panel-body">
+        <% (current_site.product_attributes.to_a + [Plugins::Ecommerce::Attribute.new]).each_with_index do |attr, index| %>
+            <div data-id="<%= attr.id %>" class="panel panel-info attribute_group attribute_<%= attr.id %> <%= 'hidden' unless attr.id.present? %>">
+                <div class="panel-heading">
+                    <h3 class="panel-title">&nbsp;</h3>
+                    <ul class="panel-controls">
+                        <li><a href="#" class="del_group"><i class="fa fa-times"></i></a></li>
+                        <li><a class="hidden group_sorter"><i class="fa fa-arrows" style="cursor: move"></i></a></li>
+                        <li><a class="panel-collapse" href="#"><span class="fa fa-angle-down"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label><%= t('.group_label', default: 'Group Label') %></label>
+                        <%= text_field_tag "attribute_names[#{attr.id}][label]", attr.label, class: 'form-control translatable required' %>
+                    </div>
+                    <label><%= t('.values', default: 'Values') %></label>
+                    <hr>
+                    <div class="item-custom-field">
+                        <div class="actions"></div>
+                        <div class="row group-input-fields-content">
+                            <div class="col-md-4">
+                                <label><%= t('.code', default: 'Code') %></label><em class="text-danger">*</em><br>
+                            </div>
+                            <div class="col-md-8">
+                                <label><%= t('.value', default: 'Value') %></label><em class="text-danger">*</em><br>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="values_sortable">
+                        <% (attr.values.to_a + (attr.id.present? ? [] : [Plugins::Ecommerce::Attribute.new])).each do |value| %>
+                            <li class="item-custom-field product_attribute_value_<%= value.id %>">
+                                <%= hidden_field_tag "attribute[#{attr.id}][][position]", value.position, class: 'value_position' %>
+                                <%= hidden_field_tag "attribute[#{attr.id}][][id]", value.id %>
+                                <div class="actions">
+                                    <i style="cursor: move" class="fa fa-arrows values_sorter"></i>
+                                    <a href="#" class="del"><i class="fa fa-times"></i></a>
+                                </div>
+                                <div class="group-input-fields-content row">
+                                    <div class="col-md-4">
+                                        <%= text_field_tag "attribute[#{attr.id}][][key]", value.key, class: 'form-control slug required', "data-parent" => "category_name", style: "#{'margin-top: 47px;' if current_site.get_languages.count > 1 }" %>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <%= text_field_tag "attribute[#{attr.id}][][value]", value.label, class: 'form-control required translatable' %>
+                                    </div>
+                                </div>
+                            </li>
+                        <% end %>
+                    </ul>
+                    <div> <a href="#" class="btn btn-warning btn-xs add_new_value"> <i class="fa fa-plus"></i> <%= t('.add_new_value', default: 'Add new value') %></a></div>
+                </div>
+            </div>
+        <% end %>
+
+    </div>
+    <div class="panel-footer text-right">
+        <a class="btn btn-default pull-left" href="<%= url_for action: :index %>" role="back"><%= t('camaleon_cms.admin.button.back', default: 'Back')%></a>
+        <a class="btn btn-default add_new_group"><%= t('.add_attr_group', default: 'Add new group')%></a>
+        <button class="btn btn-primary" type="submit"><%= t('camaleon_cms.admin.button.submit', default: 'Save')%></button>
+    </div>
+<% end %>
+<script>
+    jQuery(function(){
+        var groups_counter = 1;
+        var panel = $('#ecommerce_product_attributes');
+        var val_cache = panel.find('.product_attribute_value_').remove().clone();
+        var p_cache = panel.find('.panel.attribute_').remove().clone().removeClass('hidden');
+        var after_reorder = function(){ $(this).children().each(function(index){ $(this).find('input.value_position').val(index); }) }
+        panel.find('.add_new_group').click(function(){
+            var g = p_cache.clone().attr('data-id', 'new_'+groups_counter);
+            panel.children('.panel-body').append(g);
+            g.find('input').each(function(){ $(this).attr('name', $(this).attr('name').replace('[]', '['+g.attr('data-id')+']')) });
+            g.find('.translatable').Translatable();
+            g.find('.add_new_value').click();
+            g.find('.values_sortable').sortable({handle: '.values_sorter', update: after_reorder})
+            return false;
+        });
+
+        panel.on('click', '.add_new_value', function(){
+            var g = $(this).closest('.attribute_group');
+            var clone = val_cache.clone();
+            clone.find('input').each(function(){ $(this).attr('name', $(this).attr('name').replace('[]', '['+g.attr('data-id')+']')) });
+            clone.find('.translatable').Translatable();
+            g.find('.panel-body > ul').append(clone);
+            return false;
+        });
+        panel.find('.values_sortable').sortable({handle: '.values_sorter', update: after_reorder})
+        panel.on('click', '.item-custom-field a.del', function(){ if(!confirm(panel.attr('data-confirm-msg'))) return false; $(this).closest('li').fadeOut('slow', function(){ $(this).remove(); }); return false; });
+        panel.on('click', 'a.del_group', function(){ if(!confirm(panel.attr('data-confirm-msg'))) return false; $(this).closest('.attribute_group').fadeOut('slow', function(){ $(this).remove(); }); return false; });
+    });
+</script>

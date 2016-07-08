@@ -26,23 +26,15 @@
     "admin_before_load": [
       "ecommerce_admin_before_load"
     ],
-    "on_render_post": [
-      "ecommerce_on_render_post"
-    ],
-    "on_render_post_type": [
-      "ecommerce_on_render_post_type"
-    ],
     "list_post": [
       "ecommerce_admin_list_post"
     ],
     "app_before_load": [
       "ecommerce_app_before_load"
     ],
-    "edit_post": [
-      "ecommerce_form_post"
-    ],
-    "new_post": [
-      "ecommerce_form_post"
-    ]
+    "post_form_custom_html": ["ecommerce_admin_product_form"],
+    "created_post": ["ecommerce_admin_product_created"],
+    "updated_post": ["ecommerce_admin_product_created"]
+
   }
 }

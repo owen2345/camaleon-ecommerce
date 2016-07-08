@@ -17,6 +17,7 @@ es:
       edit_coupon: "Editar Cupón"
       edit_order: "Editar Pedido"
       all_products: "Todos los Productos"
+      product_attributes: 'Atributos de Productos'
       add_new: "Agregar Nuevo"
       add_tax_rate: "Agregar Tasa de Impuesto"
       add_price: "Agregar Precio"
@@ -218,6 +219,38 @@ es:
         order_received_admin:
           subject: "Nueva Compra"
 
+  plugins:
+      ecommerce:
+        admin:
+          product_attributes:
+            group_label: 'Etiqueta de Grupo'
+            label: 'Etiqueta'
+            value: 'Valor'
+            title: 'Atributos de Producto'
+            add_attr_group: 'Agregar nuevo grupo'
+            add_new_value: 'Agregar valor'
+            values: 'Valores'
+            code: 'Código'
+            confirm_delete: 'Esta seguro de eliminar?'
+
+          save_product_attributes:
+            saved_product_attributes: 'Atributos guardados'
+
+
+          products:
+            variations:
+              title: 'Variaciones de Producto'
+              attributes: 'Atributos'
+              add_new_variation: 'Agregar Variación'
+              add_new_value: 'Agregar nuevo valor'
+              photo: 'Foto'
+              sku: 'SKU'
+              price: 'Precio'
+              weight: 'Peso'
+              qty: 'Cantidad'
+              confirm_del: 'Esta seguro de eliminar esta variación?'
+
+
   # frontend
   plugins:
     ecommerce:
@@ -226,6 +259,7 @@ es:
         checkout: 'Pago'
         saved_order: 'Orden guardado'
         not_enough_product_qty: 'No existen suficientes productos "%{product}" (%{qty})'
+        missing_variation: 'Variación de producto no válido'
         added_product_in_cart: 'Producto agregado al carrito'
         cart_updated: 'Carro de compras actualizado'
         cart_deleted: 'Producto eliminado de su carro de compras'
