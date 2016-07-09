@@ -1,0 +1,72 @@
+<% field = post_type.get_field_object('ecommerce_photos') %>
+<div class="panel panel-default hidden" id="product_variations" data-confirm-msg="<%= t('.confirm_del', default: 'Are you sure to delete this variation?') %>">
+    <div class="panel-heading ">
+        <h3 class="panel-title"><%= t('.title', default: 'Product Variations') %></h3>
+    </div>
+    <div class="panel-body variations_sortable">
+        <% (product.product_variations.to_a + [Plugins::Ecommerce::ProductVariation.new]).each do |variation| %>
+            <div class="panel panel-info product_variation <%= 'blank_product_variation hidden' unless variation.id.present? %>" data-id="<%= variation.id %>">
+                <div class="panel-heading">
+                    <h3 class="panel-title">&nbsp;</h3>
+                    <ul class="panel-controls">
+                        <li><a class="var_del" href="#"><i class="fa fa-times text-danger"></i></a></li>
+                        <li><a class="variation_sorter"><i class="fa fa-arrows" style="cursor: move"></i></a></li>
+                        <li><a class="panel-collapse" href="#"><span class="fa fa-angle-down"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <%= hidden_field_tag "product_variation[#{variation.id}][position]", variation.position, class: 'product_variation_position' %>
+                    <div class="variation_attributes form-group">
+                        <label><%= t('.attributes', default: 'Attributes') %></label>
+                        <ul class="item-custom-field sortable_values">
+                            <% (variation.id.present? ? variation.attribute_values : [variation.attribute_values.new]).each do |val| %>
+                                <li>
+                                    <div class="actions">
+                                        <a class="val_sorter"><i class="fa fa-arrows" style="cursor: move"></i></a>
+                                        <a href="#" class="val_del "><i class="fa fa-times text-danger"></i></a>
+                                    </div>
+                                    <div class="row group-input-fields-content">
+                                        <div class="col-md-4">
+                                            <%= select_tag "product_variation[#{variation.id}][attributes][][id]", options_from_collection_for_select(current_site.product_attributes, :id, :label, val.parent_id), class: 'form-control required product_attribute_select' %>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <%= select_tag "product_variation[#{variation.id}][attributes][][value]", val.id.present? ? options_from_collection_for_select(val.product_attribute.values, :id, :label, val.id) : [], class: 'form-control required product_attribute_vals_select' %>
+                                        </div>
+                                    </div>
+                                </li>
+                            <% end %>
+                        </ul>
+                        <div> <a href="#" class="btn btn-warning btn-xs add_new_value"> <i class="fa fa-plus"></i> <%= t('.add_new_value', default: 'Add new value') %></a></div>
+                    </div>
+                    <div class="form-group">
+                        <label><%= t('.photo', default: 'Photo') %></label><em class="text-danger">*</em><br>
+                        <div class=" input-group">
+                            <%= url_field_tag "product_variation[#{variation.id}][photo]", variation.photo, data:{dimension: field.options[:dimension], versions: field.options[:versions], thumb_size: field.options[:thumb_size]}, class: 'data-error-place-parent form-control required' %>
+                            <a href="#" class="input-group-addon product_variation_photo_link"><i class="fa fa-upload"></i> <%= t('camaleon_cms.admin.button.upload_image', default: 'Upload Photo')%> <%= "(#{field.get_option('dimension')})" if field.get_option('dimension').present? %></a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><%= t('.sku', default: 'SKU') %></label><em class="text-danger">*</em><br>
+                        <%= text_field_tag "product_variation[#{variation.id}][sku]", variation.sku, class: 'form-control required' %>
+                    </div>
+                    <div class="form-group">
+                            <label><%= t('.price', default: 'Price') %></label><em class="text-danger">*</em><br>
+                        <%= number_field_tag "product_variation[#{variation.id}][price]", variation.amount, class: 'form-control required number' %>
+                    </div>
+                    <div class="form-group">
+                        <label><%= t('.weight', default: 'Weight') %></label><em class="text-danger">*</em><br>
+                        <%= number_field_tag "product_variation[#{variation.id}][weight]", variation.weight, class: 'form-control required number' %>
+                    </div>
+                    <div class="form-group">
+                        <label><%= t('.qty', default: 'Quantity') %></label>
+                        <%= number_field_tag "product_variation[#{variation.id}][qty]", variation.qty, class: 'form-control number' %>
+                    </div>
+                </div>
+            </div>
+        <% end %>
+    </div>
+    <div class="panel-footer text-right">
+        <a class="btn btn-warning add_new_variation btn-xs" href="#"><i class="fa fa-plus"></i> <%= t('.add_new_variation', default: 'Add new variation') %></a>
+    </div>
+</div>
+<script>var PRODUCT_ATTRIBUTES = <%= raw current_site.product_attributes.to_json(include: :values) %></script>

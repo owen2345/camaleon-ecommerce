@@ -1,8 +1,7 @@
 <%= render plugin_view('partials/cart_widget') %>
-<% @field_values = @post.get_field_values_hash %>
 <div class="row">
     <div class="col-md-9 post-view">
-        <article class="post-content">
+        <article class="post-content" id="product_view">
             <div class="row">
                 <div class="col-md-6">
                     <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
@@ -36,16 +35,27 @@
 
                 <div class="col-md-6">
                     <h1><%= @post.the_title %></h1>
-                    <h3><%= t('plugins.ecommerce.single.sku', default: 'SKU') %>: <%= @post.the_sku %>
-                        <span class="pull-right"><%= raw @post.the_featured_status %></span></h3>
-                    <h4><%= @post.the_price %> <span class="pull-right"><%= raw @post.the_stock_status %></span></h4>
+                    <h3>
+                        <%= t('plugins.ecommerce.single.sku', default: 'SKU') %>: <span id="product_sku"><%= @post.the_sku %></span>
+                        <span class="pull-right"><%= raw @post.the_featured_status %></span>
+                    </h3>
+                    <h4><span id="product_price"><%= @post.the_price %></span> <span class="pull-right"><%= raw @post.the_stock_status %></span></h4>
                     <hr/>
                     <p><%= @post.the_excerpt %></p>
                     <hr/>
                     <% if @post.in_stock? %>
-                        <p><%= t('plugins.ecommerce.single.available_items', default: 'Items available') %>: <%= @post.the_qty_real %></p>
                         <% if @post.the_qty_real.to_i > 0 %>
                             <%= form_tag(plugins_ecommerce_checkout_cart_add_path, :method => "post", :class => "form") do %>
+                                <% if @post.is_variation_product? %>
+                                    <div class="form-group">
+                                        <%= label_tag :variation_id %>
+                                        <select class="form-control required" name="variation_id" id="product_variation_id">
+                                            <% @post.product_variations.each_with_index do |variation, index| %>
+                                                <option data-sku="<%= variation.sku %>" <%= 'selected' if index == 0 %> <%= 'disabled' unless @post.in_stock?(variation.id) %> data-price="<%= @post.the_price(variation.id) %>" value="<%= variation.id %>"><%= @post.the_variation_title(variation.id) %></option>
+                                            <% end %>
+                                        </select>
+                                    </div>
+                                <% end %>
                                 <div class="input-group">
                                     <span class="input-group-addon"><%= t('plugins.ecommerce.single.qty', default: 'Qty') %></span>
                                     <%= number_field :cart, :qty, class: 'form-control', value: 1, min: 0, max: @post.the_qty_real.to_i %>
@@ -67,22 +77,28 @@
                         <%= raw @post.the_content %>
                     </div>
                 </div>
-
-                <% attrs = []; @field_values[:ecommerce_attrs].to_a.each { |attr| attrs << JSON.parse(attr) rescue {} } %>
-                <% if attrs.present? %>
+                <% if (attrs = @post.the_attribute_fields('ecommerce_attrs').to_a).present? %>
                     <div class="col-md-6">
                         <h3><%= t('plugins.ecommerce.single.attrs', default: 'Attributes') %></h3>
                         <table class="table table-bordered">
-                            <% attrs.each do |data| %>
+                            <% attrs.each_with_index do |attr, index| %>
                                 <tr>
-                                    <td><strong><%= data['attr'].to_s.translate %></strong></td>
-                                    <td><%= data['value'].to_s.translate %></td>
+                                    <td><strong><%= attr['attr'].to_s.translate %></strong></td>
+                                    <td><%= attr['value'].to_s.translate %></td>
                                 </tr>
                             <% end %>
                         </table>
                     </div>
                 <% end %>
             </div>
+            <% if @post.is_variation_product? %>
+                <script>
+                    jQuery(function(){
+                        var panel = $('#product_view');
+                        panel.find('#product_variation_id').change(function(){ var op = $(this).find('option:selected'); panel.find('#product_sku').html(op.attr('data-sku')); panel.find('#product_price').html(op.attr('data-price'));  }).trigger('change');
+                    });
+                </script>
+            <% end %>
         </article>
     </div>
     <div class="col-md-3">

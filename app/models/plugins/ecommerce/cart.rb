@@ -18,23 +18,19 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
   belongs_to :user, :class_name => "CamaleonCms::User", foreign_key: :user_id
   after_create :generate_slug
 
-  def add_product(product, qty = 1)
-    pi = product_items.where(product_id: product.id).first
+  def add_product(product, qty = 1, variation_id = nil)
+    pi = product_items.where(product_id: product.id, variation_id: variation_id).first
     if pi.present?
       pi.update_column(:qty, qty)
     else
-      pi = product_items.create(product_id: product.id, qty: qty)
+      pi = product_items.create(product_id: product.id, qty: qty, variation_id: variation_id)
     end
     pi
   end
 
-  def remove_product(product_id)
-    product_items.where(product_id: product_id).destroy_all
-  end
-
   # return the product titles in array format
   def products_title
-    products.decorate.each{|p| p.the_title }.join(', ')
+    product_items.each{|i| p=i.product.decorate; p.the_variation_title(i.variation_id) }.join(', ')
   end
 
   def items_total
@@ -43,16 +39,15 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
 
   # price of all products (no include taxes)
   def sub_total
-    # product_items.map{|item| product = item.product.decorate; (product.price + product.tax) * item.qty }.inject{|sum,x| sum + x } || 0
-    product_items.map{|item| product = item.product.decorate; (product.price) * item.qty }.inject{|sum,x| sum + x } || 0
+    product_items.map{|item| product = item.product.decorate; (product.price(item.variation_id)) * item.qty }.inject{|sum,x| sum + x } || 0
   end
 
   def tax_total
-    product_items.map{|item| product = item.product.decorate; (product.tax) * item.qty }.inject{|sum,x| sum + x } || 0
+    product_items.map{|item| product = item.product.decorate; (product.tax(item.variation_id)) * item.qty }.inject{|sum,x| sum + x } || 0
   end
 
   def weight_total
-    product_items.map{|item| product = item.product.decorate; (product.weight) * item.qty }.inject{|sum,x| sum + x } || 0
+    product_items.map{|item| product = item.product.decorate; (product.weight(item.variation_id)) * item.qty }.inject{|sum,x| sum + x } || 0
   end
 
   # verify an return {error: (error code), discount: amount of discount} coupon for current cart
@@ -72,8 +67,10 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
         res[:error] = 'required_minimum_price'
       else
         case opts[:discount_type]
-          when 'free_ship'
+          when 'free'
             res[:discount] = price || sub_total
+          when 'free_ship'
+            res[:discount] = total_shipping
           when 'percent'
             res[:discount] = sub_total * opts[:amount].to_f / 100
           when 'money'
@@ -141,7 +138,7 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
   def make_paid!(status = 'paid')
     product_items.decorate.each do |item|
       p = item.product.decorate
-      item.update_columns(cache_the_price: item.the_price, cache_the_title: p.the_title, cache_the_tax: p.the_tax, cache_the_sub_total: item.the_sub_total)
+      item.update_columns(cache_the_price: p.the_price(item.variation_id), cache_the_title: p.the_variation_title(item.variation_id), cache_the_tax: p.the_tax(item.variation_id), cache_the_sub_total: item.the_sub_total)
     end
 
     if self.coupon.present?
