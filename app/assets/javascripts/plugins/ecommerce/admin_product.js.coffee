@@ -9,9 +9,9 @@ $ ->
     $input = $(this).prev()
     $.fn.upload_filemanager({
       formats: "image",
-      dimension: $input.attr("data-dimension"),
-      versions: $input.attr("data-versions"),
-      thumb_size: $input.attr("data-thumb_size"),
+      dimension: $input.attr("data-dimension") || '',
+      versions: $input.attr("data-versions") || '',
+      thumb_size: $input.attr("data-thumb_size") || '',
       selected: (file, response) ->
         $input.val(file.url);
     })
@@ -81,4 +81,3 @@ $ ->
     )
     return false
   )
-
