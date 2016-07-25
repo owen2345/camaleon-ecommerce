@@ -114,6 +114,11 @@
                                     data-locale="<%= I18n.locale %>"></script>
                         <% end %>
                     <% end %>
+
+                    <% if(custom_method = ecommerce_custom_payment_methods[payment.options[:type].to_sym]).present? %>
+                        <%= render custom_method[:payment_form_view_path], payment: payment, options: payment.options, cart: @cart %>
+                    <% end %>
+
                 </div>
             <% end %>
             <%= content_tag(:div, 'No Payment Methods Defined', class: 'alert alert-danger') unless payment_methods.any? %>
