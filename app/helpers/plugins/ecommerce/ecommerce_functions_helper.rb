@@ -9,7 +9,7 @@
 #encoding: utf-8
 module Plugins::Ecommerce::EcommerceFunctionsHelper
   def self.included(klass)
-    klass.helper_method [:e_get_currency_units, :e_get_currency_weight, :e_symbol_by_code] rescue ""
+    klass.helper_method [:e_get_currency_units, :e_get_currency_weight, :e_symbol_by_code, :ecommerce_custom_payment_methods] rescue ""
   end
   def e_get_currency_weight
     r = {}
@@ -21,8 +21,11 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
   end
 
   def e_get_currency_units
-    file = File.read("#{File.dirname(__FILE__)}/../../../../config/currency_#{I18n.locale.to_s}.json")
-    @e_get_currency_units ||= JSON.parse(file)
+    @e_get_currency_units ||= lambda{
+      file = File.read("#{File.dirname(__FILE__)}/../../../../config/currency.json")
+      args = {currencies: JSON.parse(file)}; hooks_run("ecommerce_currencies", args)
+      args[:currencies]
+    }.call
   end
 
   def e_symbol_by_code(unit)
@@ -46,4 +49,21 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
     post.metas.map{|m| metas[m.key] = m.value }
     data.merge(post: attributes, fields: post.get_field_values_hash, meta: metas)
   end
+
+  def ecommerce_custom_payment_methods
+    @_ecommerce_custom_payment_methods ||= lambda{
+      args = {custom_payment_methods: {}}; hooks_run("ecommerce_custom_payment_methods", args)
+      # Sample:
+      # args[:custom_payment_methods][:pay_u] = {
+        # title: 'Pay U',
+        # settings_view_path: '/my_plugin/views/payu/settings', # view must be like this: <div class="form-group"> <label>Key</label><br> <%= text_field_tag('options[payu_key]', options[:payu_key], class: 'form-control required') %> </div>
+        # payment_form_view_path: '/my_plugin/views/payu/payment_form',
+          # # view must include the payment form with your custom routes to process the payment,
+          # # sample: https://github.com/owen2345/camaleon-ecommerce/blob/master/app/controllers/plugins/ecommerce/front/checkout_controller.rb#L120
+          # #         https://github.com/owen2345/camaleon-ecommerce/blob/master/app/views/plugins/ecommerce/partials/checkout/_payments.html.erb#L104
+      # }
+    }.call
+    args[:custom_payment_methods]
+  end
+
 end

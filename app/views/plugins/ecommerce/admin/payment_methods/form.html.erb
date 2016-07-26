@@ -30,9 +30,11 @@
                 <ul  class="nav nav-tabs nav-justified">
                     <li class="<%= 'active' if options[:type] == 'bank_transfer' %>"><a href="#tab8" data-toggle="tab"><%= t('plugin.ecommerce.by_bank_transfer') %></a></li>
                     <li class="<%= 'active' if options[:type] == 'paypal' %>"><a href="#tab9" data-toggle="tab"><%= t('plugin.ecommerce.by_paypal') %></a></li>
-                    <!--<li class="<%= 'active' if options[:type] == 'credit_card' %>"><a href="#tab7" data-toggle="tab"><%= t('plugin.ecommerce.by_credit_card') %></a></li>-->
                     <li class="<%= 'active' if options[:type] == 'authorize_net' %>"><a href="#tab10" data-toggle="tab"><%= t('plugin.ecommerce.by_authorize_net') %></a></li>
                     <li class="<%= 'active' if options[:type] == 'stripe' %>"><a href="#tab11" data-toggle="tab"><%= t('plugin.ecommerce.by_stripe', default: 'Stripe') %></a></li>
+                    <% ecommerce_custom_payment_methods.each do |k, obj| %>
+                        <li class="<%= 'active' if options[:type] == k %>"><a href="#tab_<%= k %>" data-toggle="tab"><%= obj[:title] %></a></li>
+                    <% end %>
                 </ul>
                 <div class="panel-body tab-content">
 
@@ -115,6 +117,14 @@
                             <%= text_field_tag('options[stripe_key]', options[:stripe_key], class: 'form-control required') %>
                         </div>
                     </div>
+
+                    <% ecommerce_custom_payment_methods.each do |k, obj| %>
+                        <div class="tab-pane <%= 'active' if options[:type] == k %>" id="tab_<%= k %>">
+                            <%= hidden_field_tag('options[type]', k) %>
+                            <%= render obj[:settings_view_path], options: options %>
+                        </div>
+                    <% end %>
+
                 </div>
             </div>
 
