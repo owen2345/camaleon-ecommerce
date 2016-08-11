@@ -29,8 +29,7 @@ class Plugins::Ecommerce::Admin::ShippingMethodsController < Plugins::Ecommerce:
   end
 
   def create
-    data = params[:plugins_ecommerce_shipping_method]
-    @shipping_method = current_site.shipping_methods.new(data)
+    @shipping_method = current_site.shipping_methods.new(shipping_permit_data)
     if @shipping_method.save
       @shipping_method.set_meta('_default',params[:options])
       flash[:notice] = t('camaleon_cms.admin.post_type.message.created')
@@ -41,8 +40,7 @@ class Plugins::Ecommerce::Admin::ShippingMethodsController < Plugins::Ecommerce:
   end
 
   def update
-    data = params[:plugins_ecommerce_shipping_method]
-    if @shipping_method.update(data)
+    if @shipping_method.update(shipping_permit_data)
       @shipping_method.set_meta('_default',params[:options])
       flash[:notice] = t('camaleon_cms.admin.post_type.message.updated')
       redirect_to action: :index
@@ -57,6 +55,10 @@ class Plugins::Ecommerce::Admin::ShippingMethodsController < Plugins::Ecommerce:
   private
   def set_order
     @shipping_method = current_site.shipping_methods.find(params[:id])
+  end
+
+  def shipping_permit_data
+    params.require(:plugins_ecommerce_shipping_method).permit!
   end
 
 end
