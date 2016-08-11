@@ -1,11 +1,3 @@
-=begin
-  Camaleon CMS is a content management system
-  Copyright (C) 2015 by Owen Peredo Diaz
-  Email: owenperedo@gmail.com
-  This program is free software: you can redistribute it and/or modify   it under the terms of the GNU Affero General Public License as  published by the Free Software Foundation, either version 3 of the  License, or (at your option) any later version.
-  This program is distributed in the hope that it will be useful,  but WITHOUT ANY WARRANTY; without even the implied warranty of  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  See the  GNU Affero General Public License (GPLv3) for more details.
-=end
 #encoding: utf-8
 module Plugins::Ecommerce::EcommerceFunctionsHelper
   def self.included(klass)
@@ -54,16 +46,18 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
     @_ecommerce_custom_payment_methods ||= lambda{
       args = {custom_payment_methods: {}}; hooks_run("ecommerce_custom_payment_methods", args)
       # Sample:
-      # args[:custom_payment_methods][:pay_u] = {
-        # title: 'Pay U',
-        # settings_view_path: '/my_plugin/views/payu/settings', # view must be like this: <div class="form-group"> <label>Key</label><br> <%= text_field_tag('options[payu_key]', options[:payu_key], class: 'form-control required') %> </div>
-        # payment_form_view_path: '/my_plugin/views/payu/payment_form',
-          # # view must include the payment form with your custom routes to process the payment,
-          # # sample: https://github.com/owen2345/camaleon-ecommerce/blob/master/app/controllers/plugins/ecommerce/front/checkout_controller.rb#L120
-          # #         https://github.com/owen2345/camaleon-ecommerce/blob/master/app/views/plugins/ecommerce/partials/checkout/_payments.html.erb#L104
-      # }
+      # def my_callback(args)
+      #   args[:custom_payment_methods][:pay_u] = {
+          # title: 'Pay U',
+          # settings_view_path: '/my_plugin/views/payu/settings', # view must be like this: <div class="form-group"> <label>Key</label><br> <%= text_field_tag('options[payu_key]', options[:payu_key], class: 'form-control required') %> </div>
+          # payment_form_view_path: '/my_plugin/views/payu/payment_form',
+            # # view must include the payment form with your custom routes to process the payment,
+            # # sample: https://github.com/owen2345/camaleon-ecommerce/blob/master/app/controllers/plugins/ecommerce/front/checkout_controller.rb#L120
+            # #         https://github.com/owen2345/camaleon-ecommerce/blob/master/app/views/plugins/ecommerce/partials/checkout/_payments.html.erb#L104
+      #   }
+      # end
+      args[:custom_payment_methods]
     }.call
-    args[:custom_payment_methods]
   end
 
 end

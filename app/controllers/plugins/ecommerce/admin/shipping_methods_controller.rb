@@ -50,8 +50,6 @@ class Plugins::Ecommerce::Admin::ShippingMethodsController < Plugins::Ecommerce:
   end
 
 
-
-
   private
   def set_order
     @shipping_method = current_site.shipping_methods.find(params[:id])
