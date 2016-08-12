@@ -28,8 +28,7 @@ class Plugins::Ecommerce::Admin::TaxRatesController < Plugins::Ecommerce::AdminC
   end
 
   def create
-    data = params[:plugins_ecommerce_tax_rate]
-    @tax_rate = current_site.tax_rates.new(data)
+    @tax_rate = current_site.tax_rates.new(tax_rate_permit_data)
     if @tax_rate.save
       @tax_rate.set_meta('_default', params[:options])
       flash[:notice] = t('camaleon_cms.admin.post_type.message.created')
@@ -40,8 +39,7 @@ class Plugins::Ecommerce::Admin::TaxRatesController < Plugins::Ecommerce::AdminC
   end
 
   def update
-    data = params[:plugins_ecommerce_tax_rate]
-    if @tax_rate.update(data)
+    if @tax_rate.update(tax_rate_permit_data)
       @tax_rate.set_meta('_default', params[:options])
       flash[:notice] = t('camaleon_cms.admin.post_type.message.updated')
       redirect_to action: :index
@@ -54,6 +52,10 @@ class Plugins::Ecommerce::Admin::TaxRatesController < Plugins::Ecommerce::AdminC
 
 
   private
+  def tax_rate_permit_data
+   params.require(:plugins_ecommerce_tax_rate).permit!
+  end
+
   def set_order
     @tax_rate = current_site.tax_rates.find(params[:id])
   end
