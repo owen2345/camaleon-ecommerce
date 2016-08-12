@@ -28,8 +28,7 @@ class Plugins::Ecommerce::Admin::CouponsController < Plugins::Ecommerce::AdminCo
   end
 
   def create
-    data = params[:plugins_ecommerce_coupon]
-    @coupon = current_site.coupons.new(data)
+    @coupon = current_site.coupons.new(coupons_permit_data)
     if @coupon.save
       @coupon.set_meta('_default', params[:options])
       flash[:notice] = t('camaleon_cms.admin.post_type.message.created')
@@ -40,8 +39,7 @@ class Plugins::Ecommerce::Admin::CouponsController < Plugins::Ecommerce::AdminCo
   end
 
   def update
-    data = params[:plugins_ecommerce_coupon]
-    if @coupon.update(data)
+    if @coupon.update(coupons_permit_data)
       @coupon.set_meta('_default', params[:options])
       flash[:notice] = t('camaleon_cms.admin.post_type.message.updated')
       redirect_to action: :index
@@ -54,6 +52,10 @@ class Plugins::Ecommerce::Admin::CouponsController < Plugins::Ecommerce::AdminCo
 
 
   private
+
+  def coupons_permit_data
+    params.require(:plugins_ecommerce_coupon).permit!
+  end
   def set_order
     @coupon = current_site.coupons.find(params[:id])
   end
