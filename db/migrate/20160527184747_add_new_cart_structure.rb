@@ -16,6 +16,6 @@ class AddNewCartStructure < ActiveRecord::Migration
       t.string :cache_the_price, :cache_the_title, :cache_the_tax, :cache_the_sub_total
     end
 
-    drop_table :plugins_order_details
+    #drop_table :plugins_order_details
   end
 end
