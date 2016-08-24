@@ -1,7 +1,8 @@
 class AddNewCartStructure < ActiveRecord::Migration
   def change
     create_table :plugins_ecommerce_orders do |t|
-      t.string :name, :slug, :kind, :coupon, :the_coupon_amount, :currency_code, :payment_data
+      t.string :name, :slug, :kind, :coupon, :the_coupon_amount
+      t.string :currency_code, :payment_data
       t.string :status, default: 'unpaid'
       t.integer :shipping_method_id, :user_id, :site_id, :payment_method_id, index: true
       t.timestamp :paid_at, :received_at, :accepted_at, :shipped_at, :closed_at
@@ -14,6 +15,43 @@ class AddNewCartStructure < ActiveRecord::Migration
     create_table :plugins_ecommerce_products do |t|
       t.integer :qty, :product_id, :order_id, index: true
       t.string :cache_the_price, :cache_the_title, :cache_the_tax, :cache_the_sub_total
+    end
+    
+    Plugins::Ecommerce::LegacyOrder.reset_column_information
+    
+    CamaleonCms::Meta.where(object_class: 'Plugins::Ecommerce::Order').
+      update_all(object_class: 'Plugins::Ecommerce::LegacyOrder')
+
+    Plugins::Ecommerce::LegacyOrder.find_each do |legacy_order|
+      details = legacy_order.decorate.details
+      order = Plugins::Ecommerce::Order.new(
+        name: legacy_order.name,
+        description: legacy_order.description,
+        slug: legacy_order.slug,
+        status: legacy_order.status,
+        created_at: legacy_order.created_at,
+        updated_at: legacy_order.updated_at,
+        received_at: details.received_at,
+        accepted_at: details.accepted_at,
+        shipped_at: details.shipped_at,
+        closed_at: details.closed_at,
+        user_id: legacy_order.user_id,
+        # not 100% sure on parent_id -> site_id mapping
+        site_id: legacy_order.parent_id,
+        # not mapped fields because they are always nil in my orders:
+        # count, term_group, term_order
+      )
+      order.save(validate: false)
+      
+      legacy_order.metas.each do |legacy_meta|
+        meta = CamaleonCms::Meta.new(
+          object_class: 'Plugins::Ecommerce::Cart',
+          objectid: order.id,
+          key: legacy_meta.key,
+          value: legacy_meta.value,
+        )
+        meta.save(validate: false)
+      end
     end
 
     #drop_table :plugins_order_details
