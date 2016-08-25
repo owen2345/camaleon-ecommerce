@@ -53,6 +53,12 @@ class AddNewCartStructure < ActiveRecord::Migration
         meta.save(validate: false)
       end
       
+      order.reload
+      payment_meta = order.get_meta('payment')
+      if payment_meta
+        order.set_meta('payment_method_id', payment_meta['payment_id'])
+      end
+      
       if order.user
         order.user.set_option('phone', details.phone)
       end
