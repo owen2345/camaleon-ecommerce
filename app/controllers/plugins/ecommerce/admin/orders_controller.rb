@@ -27,6 +27,7 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
     if params[:s].present?
       orders = orders.where(status: params[:s])
     end
+    orders = orders.order('received_at desc')
     @orders = orders.paginate(:page => params[:page], :per_page => current_site.admin_per_page)
   end
 
