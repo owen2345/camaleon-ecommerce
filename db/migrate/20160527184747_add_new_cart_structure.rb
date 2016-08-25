@@ -26,6 +26,9 @@ class AddNewCartStructure < ActiveRecord::Migration
 
     # Plugins::Ecommerce::Order.transaction { Plugins::Ecommerce::Order.destroy_all }
 
+    product_post_type = CamaleonCms::PostType.where(slug: 'commerce').first
+    raise 'Product post type must exist' unless product_post_type
+    
     Plugins::Ecommerce::LegacyOrder.order(:created_at).find_each do |legacy_order|
       details = legacy_order.decorate.details
       order = Plugins::Ecommerce::Order.new(
@@ -73,13 +76,14 @@ class AddNewCartStructure < ActiveRecord::Migration
       end
       
       order.get_meta('products').each do |key, product|
+        p = product_post_type.posts.where(id: product['product_id']).first.decorate
         order.product_items.create(
           product_id: product['product_id'],
           qty: product['qty'],
-          cache_the_price: product['price'],
-          cache_the_title: product['product_title'],
-          cache_the_tax: product['tax'],
-          cache_the_sub_total: product['price'].to_f*product['qty'].to_f,
+          cache_the_price: p.the_price,
+          cache_the_title: p.title,
+          cache_the_tax: '$%.2f' % p.the_tax,
+          cache_the_sub_total: '$%.2f' % (product['price'].to_f*product['qty'].to_f),
         )
       end
       
