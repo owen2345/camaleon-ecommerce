@@ -1,11 +1,3 @@
-=begin
-  Camaleon CMS is a content management system
-  Copyright (C) 2015 by Owen Peredo Diaz
-  Email: owenperedo@gmail.com
-  This program is free software: you can redistribute it and/or modify   it under the terms of the GNU Affero General Public License as  published by the Free Software Foundation, either version 3 of the  License, or (at your option) any later version.
-  This program is distributed in the hope that it will be useful,  but WITHOUT ANY WARRANTY; without even the implied warranty of  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  See the  GNU Affero General Public License (GPLv3) for more details.
-=end
 class Plugins::Ecommerce::Admin::PaymentMethodsController < Plugins::Ecommerce::AdminController
   before_action :set_order, only: ['show','edit','update','destroy']
 
@@ -31,8 +23,7 @@ class Plugins::Ecommerce::Admin::PaymentMethodsController < Plugins::Ecommerce::
   end
 
   def create
-    data = params[:plugins_ecommerce_payment_method]
-    @payment_method = current_site.payment_methods.new(data)
+    @payment_method = current_site.payment_methods.new(payment_permit_data)
     if @payment_method.save
       @payment_method.set_meta('_default',params[:options])
       flash[:notice] = t('camaleon_cms.admin.post_type.message.created')
@@ -43,7 +34,6 @@ class Plugins::Ecommerce::Admin::PaymentMethodsController < Plugins::Ecommerce::
   end
 
   def update
-    data = params[:plugins_ecommerce_payment_method]
 
     if defined?(params[:options][:type]) && params[:options][:type] == 'paypal'
       unless valid_paypal_data(params[:options])
@@ -55,7 +45,7 @@ class Plugins::Ecommerce::Admin::PaymentMethodsController < Plugins::Ecommerce::
 
     #FIXME create valid_authorize_net_data function
 
-    if @payment_method.update(data)
+    if @payment_method.update(payment_permit_data)
       @payment_method.set_meta('_default',params[:options])
       flash[:notice] = t('camaleon_cms.admin.post_type.message.updated')
       redirect_to action: :index
@@ -68,6 +58,11 @@ class Plugins::Ecommerce::Admin::PaymentMethodsController < Plugins::Ecommerce::
 
 
   private
+
+  def payment_permit_data
+    params.require(:plugins_ecommerce_payment_method).permit!
+  end
+
   def set_order
     @payment_method = current_site.payment_methods.find(params[:id])#.decorate
   end

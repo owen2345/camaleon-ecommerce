@@ -88,7 +88,13 @@
             %>
                 <tr>
                     <td><%= order.slug %></td>
-                    <td><%= order.user.fullname %></td>
+                    <td>
+                      <% if order.user %>
+                        <%= order.user.fullname %>
+                      <% else %>
+                        <small>(No user)</small>
+                      <% end %>
+                    </td>
                     <td><%= raw order.the_status %></td>
                     <td><%= order.paid? ? 'Yes' : 'No' %></td>
                     <td>
