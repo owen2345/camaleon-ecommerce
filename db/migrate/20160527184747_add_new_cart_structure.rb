@@ -22,7 +22,7 @@ class AddNewCartStructure < ActiveRecord::Migration
     CamaleonCms::Meta.where(object_class: 'Plugins::Ecommerce::Order').
       update_all(object_class: 'Plugins::Ecommerce::LegacyOrder')
 
-    Plugins::Ecommerce::LegacyOrder.find_each do |legacy_order|
+    Plugins::Ecommerce::LegacyOrder.order(:created_at).find_each do |legacy_order|
       details = legacy_order.decorate.details
       order = Plugins::Ecommerce::Order.new(
         name: legacy_order.name,
@@ -51,6 +51,10 @@ class AddNewCartStructure < ActiveRecord::Migration
           value: legacy_meta.value,
         )
         meta.save(validate: false)
+      end
+      
+      if order.user
+        order.user.set_option('phone', details.phone)
       end
     end
 
