@@ -6,7 +6,8 @@ class AddNewCartStructure < ActiveRecord::Migration
       t.string :status, default: 'unpaid'
       t.integer :shipping_method_id, :user_id, :site_id, :payment_method_id, index: true
       t.timestamp :paid_at, :received_at, :accepted_at, :shipped_at, :closed_at
-      t.string :cache_the_total, :cache_the_sub_total, :cache_the_tax, :cache_the_weight, :cache_the_discounts, :cache_the_shipping
+      t.string :cache_the_total, :cache_the_sub_total, :cache_the_tax
+      t.string :cache_the_weight, :cache_the_discounts, :cache_the_shipping
       t.decimal :amount, :precision => 8, :scale => 2
       t.text :description
       t.timestamps null: false
@@ -14,13 +15,16 @@ class AddNewCartStructure < ActiveRecord::Migration
 
     create_table :plugins_ecommerce_products do |t|
       t.integer :qty, :product_id, :order_id, index: true
-      t.string :cache_the_price, :cache_the_title, :cache_the_tax, :cache_the_sub_total
+      t.string :cache_the_price, :cache_the_title, :cache_the_tax
+      t.string :cache_the_sub_total
     end
     
     Plugins::Ecommerce::LegacyOrder.reset_column_information
     
     CamaleonCms::Meta.where(object_class: 'Plugins::Ecommerce::Order').
       update_all(object_class: 'Plugins::Ecommerce::LegacyOrder')
+
+    # Plugins::Ecommerce::Order.transaction { Plugins::Ecommerce::Order.destroy_all }
 
     Plugins::Ecommerce::LegacyOrder.order(:created_at).find_each do |legacy_order|
       details = legacy_order.decorate.details
@@ -57,11 +61,35 @@ class AddNewCartStructure < ActiveRecord::Migration
       payment_meta = order.get_meta('payment')
       if payment_meta
         order.set_meta('payment_method_id', payment_meta['payment_id'])
+        order.shipping_method_id = payment_meta['shipping_method']
+        order.save(validate: false)
       end
       
       if order.user
         order.user.set_option('phone', details.phone)
       end
+      
+      order.get_meta('products').each do |key, product|
+        order.product_items.create(
+          product_id: product['product_id'],
+          qty: product['qty'],
+          cache_the_price: product['price'],
+          cache_the_title: product['product_title'],
+          cache_the_tax: product['tax'],
+          cache_the_sub_total: product['price'].to_f*product['qty'].to_f,
+        )
+      end
+      
+      order.reload
+      order.update_columns(
+        amount: order.total_amount,
+        cache_the_total: order.decorate.the_price, 
+        cache_the_sub_total: order.decorate.the_sub_total,
+        cache_the_tax: order.decorate.the_tax_total,
+        cache_the_weight: order.decorate.the_weight_total,
+        cache_the_discounts: order.decorate.the_total_discounts,
+        cache_the_shipping: order.decorate.the_total_shipping,
+      )
     end
 
     #drop_table :plugins_order_details
