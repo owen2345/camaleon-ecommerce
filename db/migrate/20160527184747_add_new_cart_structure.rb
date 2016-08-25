@@ -77,7 +77,8 @@ class AddNewCartStructure < ActiveRecord::Migration
         end
         
         order.get_meta('products').each do |key, product|
-          p = product_post_type.posts.where(id: product['product_id']).first.decorate
+          p = product_post_type.posts.where(id: product['product_id']).first
+          p = Plugins::Ecommerce::ProductDecorator.new(p)
           order.product_items.create(
             product_id: product['product_id'],
             qty: product['qty'],
