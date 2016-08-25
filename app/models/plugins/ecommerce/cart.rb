@@ -30,7 +30,7 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
 
   # return the product titles in array format
   def products_title
-    product_items.each{|i| p=i.product.decorate; p.the_variation_title(i.variation_id) }.join(', ')
+    product_items.map{|i| p=i.product.decorate; p.the_variation_title(i.variation_id) }.join(', ')
   end
 
   def items_total
