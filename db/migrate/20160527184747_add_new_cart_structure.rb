@@ -61,6 +61,7 @@ class AddNewCartStructure < ActiveRecord::Migration
       payment_meta = order.get_meta('payment')
       if payment_meta
         order.set_meta('payment_method_id', payment_meta['payment_id'])
+        order.payment_method_id = payment_meta['payment_id']
         order.shipping_method_id = payment_meta['shipping_method']
         order.save(validate: false)
       end
@@ -81,14 +82,15 @@ class AddNewCartStructure < ActiveRecord::Migration
       end
       
       order.reload
+      c = Plugins::Ecommerce::CartDecorator.new(order)
       order.update_columns(
         amount: order.total_amount,
-        cache_the_total: order.decorate.the_price, 
-        cache_the_sub_total: order.decorate.the_sub_total,
-        cache_the_tax: order.decorate.the_tax_total,
-        cache_the_weight: order.decorate.the_weight_total,
-        cache_the_discounts: order.decorate.the_total_discounts,
-        cache_the_shipping: order.decorate.the_total_shipping,
+        cache_the_total: c.the_price, 
+        cache_the_sub_total: c.the_sub_total,
+        cache_the_tax: c.the_tax_total,
+        cache_the_weight: c.the_weight_total,
+        cache_the_discounts: c.the_total_discounts,
+        cache_the_shipping: c.the_total_shipping,
       )
     end
 
