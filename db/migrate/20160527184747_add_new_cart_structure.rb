@@ -63,6 +63,8 @@ class AddNewCartStructure < ActiveRecord::Migration
         order.set_meta('payment_method_id', payment_meta['payment_id'])
         order.payment_method_id = payment_meta['payment_id']
         order.shipping_method_id = payment_meta['shipping_method']
+        order.coupon = payment_meta['coupon_code'],
+        order.the_coupon_amount = payment_meta['coupon_amount'],
         order.save(validate: false)
       end
       
