@@ -144,7 +144,7 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
     if self.coupon.present?
       res_coupon = self.discount_for(self.coupon, total_to_pay_without_discounts)
       unless res_coupon[:error].present?
-        update_columns(the_coupon_amount: res_coupon[:coupon].decorate.the_amount, coupon_amount: res_coupon[:discount])
+        update_columns(the_coupon_amount: res_coupon[:coupon].decorate.the_amount)
         res_coupon[:coupon].mark_as_used(user)
       end
     end
