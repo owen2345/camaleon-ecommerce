@@ -1,11 +1,3 @@
-=begin
-  Camaleon CMS is a content management system
-  Copyright (C) 2015 by Owen Peredo Diaz
-  Email: owenperedo@gmail.com
-  This program is free software: you can redistribute it and/or modify   it under the terms of the GNU Affero General Public License as  published by the Free Software Foundation, either version 3 of the  License, or (at your option) any later version.
-  This program is distributed in the hope that it will be useful,  but WITHOUT ANY WARRANTY; without even the implied warranty of  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  See the  GNU Affero General Public License (GPLv3) for more details.
-=end
 class Plugins::Ecommerce::Cart < ActiveRecord::Base
   self.table_name = 'plugins_ecommerce_orders'
   default_scope { where(kind: 'cart') }
@@ -30,7 +22,7 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
 
   # return the product titles in array format
   def products_title
-    product_items.each{|i| p=i.product.decorate; p.the_variation_title(i.variation_id) }.join(', ')
+    product_items.map{|i| p=i.product.decorate; p.the_variation_title(i.variation_id) }.join(', ')
   end
 
   def items_total
@@ -144,7 +136,7 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
     if self.coupon.present?
       res_coupon = self.discount_for(self.coupon, total_to_pay_without_discounts)
       unless res_coupon[:error].present?
-        update_columns(the_coupon_amount: res_coupon[:coupon].decorate.the_amount, coupon_amount: res_coupon[:discount])
+        update_columns(the_coupon_amount: res_coupon[:coupon].decorate.the_amount)
         res_coupon[:coupon].mark_as_used(user)
       end
     end
