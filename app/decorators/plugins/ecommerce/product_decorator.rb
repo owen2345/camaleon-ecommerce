@@ -104,33 +104,17 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
 
   # return the total of products available to sell
   def the_qty_real(variation_id = nil)
+    carts = h.current_site.carts.where.not(user_id: h.current_user.id).active_cart.joins(:product_items)
     if variation_id.present?
-      get_variation(variation_id).qty || 0
+      (get_variation(variation_id).qty || 0) - carts.where("#{Plugins::Ecommerce::ProductItemDecorator.table_name}" => {variation_id: variation_id}).sum("#{Plugins::Ecommerce::ProductItem.table_name}.qty")
     else
-      object.get_field_value('ecommerce_qty').to_f || 0
-    end
-  end
-
-  # decrement products quantity
-  # return false if the quantity is not enough to be decremented
-  def decrement_qty(qty, variation_id = nil)
-    val = (the_qty_real(variation_id) - qty).to_i
-    if val >= 0
-      if variation_id.present?
-        get_variation(variation_id).update_column(:qty, val)
-      else
-        object.update_field_value('ecommerce_qty', val)
-      end
-      true
-    else
-      false
+      (object.get_field_value('ecommerce_qty').to_f || 0) - carts.where("#{Plugins::Ecommerce::ProductItemDecorator.table_name}" => {product_id: object.id}).sum("#{Plugins::Ecommerce::ProductItem.table_name}.qty")
     end
   end
 
   # check if there are enough products to be purchased
   def can_added?(qty, variation_id = nil)
-    val = (the_qty_real(variation_id) - qty).to_i
-    val >= 0
+    (the_qty_real(variation_id) - qty).to_i >= 0
   end
 
   def self.object_class_name

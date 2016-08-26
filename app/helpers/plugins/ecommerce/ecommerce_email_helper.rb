@@ -64,10 +64,10 @@ module Plugins::Ecommerce::EcommerceEmailHelper
   def ecommerce_verify_cart_errors(cart)
     errors = []
     # products verification
-    cart.product_items.each do |item|
-      product = item.product.decorate
-      unless product.decrement_qty(item.qty)
-        errors << t('plugins.ecommerce.messages.not_enough_product_qty', product: product.the_title, qty: product.the_qty_real, default: 'There is not enough products "%{product}" (%{qty})')
+    cart.product_items.decorate.each do |item|
+      unless item.is_valid_qty?
+        product = item.product.decorate
+        errors << t('plugins.ecommerce.messages.not_enough_product_qty', product: product.the_title, qty: product.the_qty_real, default: 'There is not enough products "%{product}" (Available %{qty})')
       end
     end
 

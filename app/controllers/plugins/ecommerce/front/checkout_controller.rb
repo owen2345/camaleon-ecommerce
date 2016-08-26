@@ -71,7 +71,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
     end
 
     unless product.can_added?(qty, params[:variation_id])
-      flash[:error] =  t('plugins.ecommerce.messages.not_enough_product_qty', product: product.the_variation_title(params[:variation_id]), qty: product.the_qty_real(params[:variation_id]), default: 'There is not enough products "%{product}" (%{qty})')
+      flash[:error] =  t('plugins.ecommerce.messages.not_enough_product_qty', product: product.the_variation_title(params[:variation_id]), qty: product.the_qty_real(params[:variation_id]), default: 'There is not enough products "%{product}" (Available %{qty})')
       return redirect_to :back
     end
     @cart.add_product(product, qty, params[:variation_id])
@@ -88,7 +88,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
       if product.can_added?(qty, item.variation_id)
         @cart.add_product(product, qty, item.variation_id)
       else
-        errors << t('plugins.ecommerce.messages.not_enough_product_qty', product: product.the_variation_title(item.variation_id), qty: product.the_qty_real(item.variation_id), default: 'There is not enough products "%{product}" (%{qty})')
+        errors << t('plugins.ecommerce.messages.not_enough_product_qty', product: product.the_variation_title(item.variation_id), qty: product.the_qty_real(item.variation_id), default: 'There is not enough products "%{product}" (Available %{qty})')
       end
     end
     flash[:error] = errors.join('<br>') if errors.present?
@@ -196,7 +196,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
 
   private
   def set_cart
-    @cart = current_site.carts.set_user(current_user).first_or_create(name: "Cart by #{current_user.id}").decorate
+    @cart = current_site.carts.set_user(current_user).active_cart.first_or_create(name: "Cart by #{current_user.id}").decorate
   end
 
   def commerce_to_cents(money)
