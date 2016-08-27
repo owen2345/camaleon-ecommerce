@@ -21,11 +21,29 @@ class Plugins::Ecommerce::ProductItemDecorator < Draper::Decorator
   end
 
   def get_product
-    @_get_product ||= product.decorate
+    @_get_product ||= object.product.decorate
   end
 
   # return a product variation by id
   def get_variation
     @_get_variation ||= self.product_variation.decorate
+  end
+
+  # update quantity of product or product variation used in current cart item
+  def decrement_qty!
+    val = (get_product.the_qty_real(object.variation_id) - object.qty).to_i
+    if val >= 0
+      if object.variation_id.present?
+        object.product_variation.update_column(:qty, val)
+      else
+        get_product.update_field_value('ecommerce_qty', val)
+      end
+    end
+  end
+
+  # verify if the quantity of the cart item is avilable
+  # return true if quantity is available
+  def is_valid_qty?
+    (get_product.the_qty_real(object.variation_id) - object.qty).to_i >= 0
   end
 end

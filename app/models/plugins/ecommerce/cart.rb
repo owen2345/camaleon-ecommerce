@@ -8,6 +8,8 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
 
   belongs_to :site, :class_name => "CamaleonCms::Site", foreign_key: :site_id
   belongs_to :user, :class_name => "CamaleonCms::User", foreign_key: :user_id
+  scope :active_cart, ->{ where("#{Plugins::Ecommerce::Cart.table_name}.updated_at >= ?", 24.hours.ago) }
+
   after_create :generate_slug
 
   def add_product(product, qty = 1, variation_id = nil)
@@ -77,6 +79,7 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
 
   # convert into order current cart
   def make_order!
+    self.product_items.decorate.each{|p_item| p_item.decrement_qty! }
     self.update_columns(kind: 'order', created_at: Time.current)
     site.orders.find(self.id)
   end
