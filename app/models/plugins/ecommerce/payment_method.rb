@@ -5,7 +5,9 @@ class Plugins::Ecommerce::PaymentMethod < CamaleonCms::TermTaxonomy
   scope :actives, -> {where(status: '1')}
 
   def method_text
-    if options[:type] == 'paypal'
+    if options[:type] == 'cod'
+      I18n.t 'plugin.ecommerce.method_cod'
+    elsif options[:type] == 'paypal'
       I18n.t 'plugin.ecommerce.method_paypal'
     elsif options[:type] == 'credit_card'
       I18n.t 'plugin.ecommerce.method_credit_card'

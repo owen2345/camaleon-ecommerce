@@ -49,6 +49,10 @@ class Plugins::Ecommerce::Order < Plugins::Ecommerce::Cart
     status == 'bank_pending'
   end
 
+  def cod_pending?
+    status == 'cod_pending'
+  end
+
   def bank_confirmed!
     update_columns({status: 'paid', updated_at: Time.current})
   end
