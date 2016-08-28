@@ -83,6 +83,16 @@
     "name_plural": "Hungarian forints"
   },
 
+  "INR": {
+    "symbol": "₹",
+    "name": "Indian Rupee",
+    "symbol_native": "₹",
+    "decimal_digits": 2,
+    "rounding": 0,
+    "code": "INR",
+    "name_plural": "Indian Rupees"
+  },
+
   "JPY": {
     "symbol": "¥",
     "name": "Japanese Yen",
