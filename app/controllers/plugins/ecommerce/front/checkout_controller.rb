@@ -196,7 +196,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
 
   private
   def set_cart
-    @cart = current_site.carts.set_user(current_user).active_cart.first_or_create(name: "Cart by #{current_user.id}").decorate
+    @cart = Plugins::Ecommerce::UserCartService.new(current_site, current_user).get_cart
   end
 
   def commerce_to_cents(money)
