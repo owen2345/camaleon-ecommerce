@@ -1,8 +1,8 @@
 class MigrateOrderData < ActiveRecord::Migration
   def change
-    if Plugins::Ecommerce::LegacyOrder.count > 0
+    if table_exists?('plugins_order_details') && Plugins::Ecommerce::LegacyOrder.count > 0
       Plugins::Ecommerce::LegacyOrder.reset_column_information
-      
+
       CamaleonCms::Meta.where(object_class: 'Plugins::Ecommerce::Order').
         update_all(object_class: 'Plugins::Ecommerce::LegacyOrder')
 
@@ -10,7 +10,7 @@ class MigrateOrderData < ActiveRecord::Migration
 
       product_post_type = CamaleonCms::PostType.where(slug: 'commerce').first
       raise 'Product post type must exist' unless product_post_type
-      
+
       Plugins::Ecommerce::LegacyOrder.order(:created_at).find_each do |legacy_order|
         details = legacy_order.decorate.details
         order = Plugins::Ecommerce::Order.new(
@@ -31,7 +31,7 @@ class MigrateOrderData < ActiveRecord::Migration
           # count, term_group, term_order
         )
         order.save(validate: false)
-        
+
         legacy_order.metas.each do |legacy_meta|
           meta = CamaleonCms::Meta.new(
             object_class: 'Plugins::Ecommerce::Cart',
@@ -41,7 +41,7 @@ class MigrateOrderData < ActiveRecord::Migration
           )
           meta.save(validate: false)
         end
-        
+
         order.reload
         payment_meta = order.get_meta('payment')
         if payment_meta
@@ -52,11 +52,11 @@ class MigrateOrderData < ActiveRecord::Migration
           order.the_coupon_amount = payment_meta['coupon_amount'],
           order.save(validate: false)
         end
-        
+
         if order.user
           order.user.set_option('phone', details.phone)
         end
-        
+
         order.get_meta('products').each do |key, product|
           p = product_post_type.posts.where(id: product['product_id']).first
           p = Plugins::Ecommerce::ProductDecorator.new(p)
@@ -69,12 +69,12 @@ class MigrateOrderData < ActiveRecord::Migration
             cache_the_sub_total: '$%.2f' % (product['price'].to_f*product['qty'].to_f),
           )
         end
-        
+
         order.reload
         c = Plugins::Ecommerce::CartDecorator.new(order)
         order.update_columns(
           amount: order.total_amount,
-          cache_the_total: c.the_price, 
+          cache_the_total: c.the_price,
           cache_the_sub_total: c.the_sub_total,
           cache_the_tax: c.the_tax_total,
           cache_the_weight: c.the_weight_total,
