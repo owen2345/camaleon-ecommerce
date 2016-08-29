@@ -8,13 +8,13 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
 
   def show
     @order = current_site.orders.find_by_slug(params[:order]).decorate
-    @ecommerce_bredcrumb << [t('plugins.ecommerce.messages.detail_order', default: "Detail order: #%{order}", order: params[:order])]
+    @ecommerce_breadcrumb << [t('plugins.ecommerce.messages.detail_order', default: "Detail order: #%{order}", order: params[:order])]
   end
 
 
 
   private
   def set_bread
-    @ecommerce_bredcrumb << [t('plugins.ecommerce.messages.my_orders', default: 'My Orders'), url_for(action: :index)]
+    @ecommerce_breadcrumb << [t('plugins.ecommerce.messages.my_orders', default: 'My Orders'), url_for(action: :index)]
   end
 end

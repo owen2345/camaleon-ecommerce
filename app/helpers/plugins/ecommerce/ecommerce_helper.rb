@@ -13,7 +13,7 @@ module Plugins::Ecommerce::EcommerceHelper
 
   def ecommerce_front_before_load
     @ecommerce_post_type = current_site.post_types.where(slug: 'commerce').first.decorate
-    @ecommerce_bredcrumb = [].push(["Home", cama_root_url])
+    @ecommerce_breadcrumb = [].push(["Home", cama_root_url])
   end
 
   def ecommerce_admin_before_load
