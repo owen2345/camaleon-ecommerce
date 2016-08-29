@@ -8,7 +8,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
       flash[:notice] = t('plugins.ecommerce.messages.cart_no_products', default: 'Not exist products in your cart')
       return redirect_to action: :cart_index
     end
-    @ecommerce_bredcrumb << [t('plugins.ecommerce.messages.checkout', default: 'Checkout')]
+    @ecommerce_breadcrumb << [t('plugins.ecommerce.messages.checkout', default: 'Checkout')]
   end
 
   def step_address
@@ -46,7 +46,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
 
   def cart_index
     @products = @cart.product_items.decorate
-    @ecommerce_bredcrumb << [t('plugins.ecommerce.messages.shopping_cart', default: 'Shopping cart')]
+    @ecommerce_breadcrumb << [t('plugins.ecommerce.messages.shopping_cart', default: 'Shopping cart')]
   end
 
   def res_coupon
@@ -204,7 +204,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
   end
 
   def set_bread
-    @ecommerce_bredcrumb << [t('plugins.ecommerce.messages.checkout', default: 'Checkout'), url_for(action: :cart_index)]
+    @ecommerce_breadcrumb << [t('plugins.ecommerce.messages.checkout', default: 'Checkout'), url_for(action: :cart_index)]
   end
 
   def set_payment
