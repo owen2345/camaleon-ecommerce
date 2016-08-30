@@ -81,6 +81,7 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
   def make_order!
     self.product_items.decorate.each{|p_item| p_item.decrement_qty! }
     self.update_columns(kind: 'order', created_at: Time.current)
+    self.metas.update_all(object_class: 'Plugins::Ecommerce::Order')
     site.orders.find(self.id)
   end
 
