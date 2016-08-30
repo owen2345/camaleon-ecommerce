@@ -107,7 +107,7 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
     if h.current_user
       UserProductService.new(h.current_site, h.current_user, object, variation_id).available_qty
     else
-      UserProductService.new(h.current_site, object, variation_id).available_qty
+      ProductService.new(h.current_site, object, variation_id).available_qty
     end
   end
 
