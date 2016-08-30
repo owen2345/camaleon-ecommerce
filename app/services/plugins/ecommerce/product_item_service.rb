@@ -15,7 +15,7 @@ class Plugins::Ecommerce::ProductItemService
   end
   
   def decrement_qty!
-    available_qty = UserProductService.new(
+    available_qty = Plugins::Ecommerce::UserProductService.new(
       site, user, product, product_item.variation_id).available_qty
     val = (available_qty - product_item.qty).to_i
     if val >= 0
