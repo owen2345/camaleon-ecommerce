@@ -104,12 +104,7 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
 
   # return the total of products available to sell
   def the_qty_real(variation_id = nil)
-    carts = h.current_site.carts.where.not(user_id: h.current_user.id).active_cart.joins(:product_items)
-    if variation_id.present?
-      (get_variation(variation_id).qty || 0) - carts.where("#{Plugins::Ecommerce::ProductItemDecorator.table_name}" => {variation_id: variation_id}).sum("#{Plugins::Ecommerce::ProductItem.table_name}.qty")
-    else
-      (object.get_field_value('ecommerce_qty').to_f || 0) - carts.where("#{Plugins::Ecommerce::ProductItemDecorator.table_name}" => {product_id: object.id}).sum("#{Plugins::Ecommerce::ProductItem.table_name}.qty")
-    end
+    UserProductService.new(h.current_site, h.current_user, object, variation_id).available_qty
   end
 
   # check if there are enough products to be purchased
