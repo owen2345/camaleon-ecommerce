@@ -104,7 +104,11 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
 
   # return the total of products available to sell
   def the_qty_real(variation_id = nil)
-    UserProductService.new(h.current_site, h.current_user, object, variation_id).available_qty
+    if h.current_user
+      UserProductService.new(h.current_site, h.current_user, object, variation_id).available_qty
+    else
+      UserProductService.new(h.current_site, object, variation_id).available_qty
+    end
   end
 
   # check if there are enough products to be purchased
