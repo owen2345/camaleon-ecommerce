@@ -19,10 +19,10 @@ Rails.application.config.to_prepare do
 
   CamaleonCms::SiteDecorator.class_eval do
     def current_unit
-      @current_unit ||= h.e_get_currency_units[object.meta[:_setting_ecommerce][:current_unit]]['symbol'] rescue '$'
+      @current_unit ||= h.e_get_currency_units[object.meta[:_setting_ecommerce][:current_unit]]['symbol'] rescue '₹'
     end
     def currency_code
-      @currency_code ||= h.e_get_currency_units[object.meta[:_setting_ecommerce][:current_unit]]['code'] rescue 'USD'
+      @currency_code ||= h.e_get_currency_units[object.meta[:_setting_ecommerce][:current_unit]]['code'] rescue 'INR'
     end
     def current_weight
       @current_weight ||= h.e_get_currency_weight[object.meta[:_setting_ecommerce][:current_weight]]['code'] rescue 'kg'

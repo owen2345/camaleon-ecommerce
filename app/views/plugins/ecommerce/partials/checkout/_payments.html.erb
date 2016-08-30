@@ -59,7 +59,11 @@
                             <%= inputs %>
                         <% end %>
                     <% end %>
-
+                    <% if payment.options[:type] == 'cod' %>
+                        <%= form_tag(plugins_ecommerce_checkout_pay_by_cod_path(order: @cart.slug), :method => "post") do %>
+                          <%= inputs %>
+                    <% end %>
+                  <% end %>
                     <% if payment.options[:type] == 'credit_card' %>
                         <img src="http://i76.imgup.net/accepted_c22e0.png" alt="Buy now with Credit Card"/>
                     <% end %>

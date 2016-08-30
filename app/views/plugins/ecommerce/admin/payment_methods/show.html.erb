@@ -42,7 +42,11 @@
                         <li><strong><%= t('plugin.ecommerce.table.details') %>:</strong> <span> <%= @payment_method.options[:bank_transfer_detail] %></span></li>
                     </ul>
                 <% end  %>
-
+                <% if @payment_method.options[:type] == 'cod' %>
+                  <h3> <%= t('plugin.ecommerce.method_cod') %></h3>
+                  <ul class="ec-list-orders-address">
+                  </ul>
+                <% end  %>
                 <% if @payment_method.options[:type] == 'authorize_net' %>
                     <h3><%= t('plugin.ecommerce.method_authorize_net') %></h3>
                     <ul class="ec-list-orders-address">

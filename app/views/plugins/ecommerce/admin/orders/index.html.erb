@@ -112,9 +112,9 @@
                         <div class="btn-group">
                             <button class="btn btn-info btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="<%= t('camaleon_cms.admin.button.settings') %>"><i class="fa fa-cog"></i></button>
                                 <ul class="dropdown-menu pull-right" style="min-width: 50px;">
-                                    <%= content_tag :li, link_to(t('plugin.ecommerce.table.make_accepted', default: 'Mark as Accepted'), url_for(action: :mark_accepted, order_id: order.slug), class: 'btn btn-xs') if order.paid? %>
+                                    <%= content_tag :li, link_to(t('plugin.ecommerce.table.make_accepted', default: 'Mark as Accepted'), url_for(action: :mark_accepted, order_id: order.slug), class: 'btn btn-xs') if order.paid? || order.cod_pending? %>
                                     <%= content_tag :li, link_to(t('plugin.ecommerce.table.make_shipped', default: 'Mark as Shipped'), url_for(action: :mark_shipped, order_id: order.slug), class: 'btn btn-xs mark_shipped_btn') if order.accepted? || order.paid? %>
-                                    <%= content_tag :li, link_to(t('plugin.ecommerce.table.make_canceled', default: 'Mark as Canceled'), url_for(action: :mark_canceled, order_id: order.slug), class: 'btn btn-xs mark_canceled_btn', 'data-confirm_msg'=> t('plugin.ecommerce.table.confirm_mark_as_cancel', default: 'Are you sure to mark as Canceled?')) if order.bank_pending? || order.paid? %>
+                                    <%= content_tag :li, link_to(t('plugin.ecommerce.table.make_canceled', default: 'Mark as Canceled'), url_for(action: :mark_canceled, order_id: order.slug), class: 'btn btn-xs mark_canceled_btn', 'data-confirm_msg'=> t('plugin.ecommerce.table.confirm_mark_as_cancel', default: 'Are you sure to mark as Canceled?')) if order.bank_pending? || order.cod_pending? || order.paid? %>
                                     <%= content_tag :li, link_to(t('plugin.ecommerce.table.make_bank_confirmed', default: 'Mark as Paid'), url_for(action: :mark_bank_confirmed, order_id: order.slug), class: 'btn btn-xs', 'data-confirm'=> t('plugin.ecommerce.table.confirm_mark_as_paid', default: 'Are you sure to mark as Paid?')) if order.bank_pending? %>
                                 </ul>
                         </div>

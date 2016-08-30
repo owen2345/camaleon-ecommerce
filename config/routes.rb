@@ -15,6 +15,7 @@ Rails.application.routes.draw do
             get 'success_paypal'
             get 'cancel_paypal'
             post 'pay_by_bank_transfer'
+            post 'pay_by_cod'
             post 'pay_by_credit_card'
             post 'pay_by_authorize_net'
             post 'pay_by_stripe'
