@@ -89,7 +89,6 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
   # convert into order current cart
   def convert_to_order
     self.update_columns(kind: 'order', created_at: Time.current)
-    self.metas.update_all(object_class: 'Plugins::Ecommerce::Order')
     site.orders.find(self.id)
   end
 
