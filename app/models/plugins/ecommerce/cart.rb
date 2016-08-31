@@ -77,9 +77,17 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
     res
   end
 
+  def prepare_to_pay
+    self.class.transaction do
+      self.update_columns(
+        status: 'qtys_taken',
+      )
+      self.product_items.decorate.each{|p_item| p_item.decrement_qty! }
+    end
+  end
+
   # convert into order current cart
-  def make_order!
-    self.product_items.decorate.each{|p_item| p_item.decrement_qty! }
+  def convert_to_order
     self.update_columns(kind: 'order', created_at: Time.current)
     self.metas.update_all(object_class: 'Plugins::Ecommerce::Order')
     site.orders.find(self.id)
@@ -130,8 +138,7 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
     total_amount <= 0
   end
 
-  # return order object
-  def make_paid!(status = 'paid')
+  def update_amounts
     product_items.decorate.each do |item|
       p = item.product.decorate
       item.update_columns(
@@ -151,8 +158,6 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
     end
     c = self.decorate
     self.update_columns(
-      status: status,
-      paid_at: Time.current,
       amount: total_amount,
       cache_the_total: c.the_price,
       cache_the_sub_total: c.the_sub_total,
@@ -161,7 +166,13 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
       cache_the_discounts: c.the_total_discounts,
       cache_the_shipping: c.the_total_shipping,
     )
-    make_order!
+  end
+  
+  def mark_paid(status = 'paid')
+    self.update_columns(
+      status: status,
+      paid_at: Time.current,
+    )
   end
 
 
