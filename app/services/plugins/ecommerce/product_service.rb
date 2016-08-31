@@ -9,11 +9,9 @@ class Plugins::Ecommerce::ProductService
   
   def available_qty
     if variation_id.present?
-      (product.decorate.get_variation(variation_id).qty || 0).
-        sum("#{Plugins::Ecommerce::ProductItem.table_name}.qty")
+      product.decorate.get_variation(variation_id).qty || 0
     else
-      (product.get_field_value('ecommerce_qty').to_f || 0).
-        sum("#{Plugins::Ecommerce::ProductItem.table_name}.qty")
+      product.get_field_value('ecommerce_qty').to_f || 0
     end
   end
 end
