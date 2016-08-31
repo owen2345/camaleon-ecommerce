@@ -134,7 +134,12 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
   def make_paid!(status = 'paid')
     product_items.decorate.each do |item|
       p = item.product.decorate
-      item.update_columns(cache_the_price: p.the_price(item.variation_id), cache_the_title: p.the_variation_title(item.variation_id), cache_the_tax: p.the_tax(item.variation_id), cache_the_sub_total: item.the_sub_total)
+      item.update_columns(
+        cache_the_price: p.the_price(item.variation_id),
+        cache_the_title: p.the_variation_title(item.variation_id),
+        cache_the_tax: p.the_tax(item.variation_id),
+        cache_the_sub_total: item.the_sub_total,
+      )
     end
 
     if self.coupon.present?
@@ -145,7 +150,17 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
       end
     end
     c = self.decorate
-    self.update_columns(status: status, paid_at: Time.current, amount: total_amount, cache_the_total: c.the_price, cache_the_sub_total: c.the_sub_total, cache_the_tax: c.the_tax_total, cache_the_weight: c.the_weight_total, cache_the_discounts: c.the_total_discounts, cache_the_shipping: c.the_total_shipping)
+    self.update_columns(
+      status: status,
+      paid_at: Time.current,
+      amount: total_amount,
+      cache_the_total: c.the_price,
+      cache_the_sub_total: c.the_sub_total,
+      cache_the_tax: c.the_tax_total,
+      cache_the_weight: c.the_weight_total,
+      cache_the_discounts: c.the_total_discounts,
+      cache_the_shipping: c.the_total_shipping,
+    )
     make_order!
   end
 
