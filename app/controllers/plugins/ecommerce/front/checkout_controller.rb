@@ -163,35 +163,9 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
   end
 
   def pay_by_paypal
-    billing_address = @cart.get_meta("billing_address")
-    ActiveMerchant::Billing::Base.mode = @payment.options[:paypal_sandbox].to_s.to_bool ? :test : :production
-    paypal_options = {
-      :login => @payment.options[:paypal_login],
-      :password => @payment.options[:paypal_password],
-      :signature => @payment.options[:paypal_signature]
-    }
-    @gateway = ActiveMerchant::Billing::PaypalExpressGateway.new(paypal_options)
-    @options = {
-      brand_name: current_site.name,
-      items: [{number: @cart.slug, name: "Buy Products from #{current_site.the_title}: #{@cart.products_title}", amount: commerce_to_cents(@cart.total_amount)}],
-      :order_id => @cart.slug,
-      :currency => current_site.currency_code,
-      :email => @cart.user.email,
-      :billing_address => {:name => "#{billing_address[:first_name]} #{billing_address[:last_name]}",
-                           :address1 => billing_address[:address1],
-                           :address2 => billing_address[:address2],
-                           :city => billing_address[:city],
-                           :state => billing_address[:state],
-                           :country => billing_address[:country],
-                           :zip => billing_address[:zip]
-      },
-      :description => "Buy Products from #{current_site.the_title}: #{@cart.total_amount}",
-      :ip => request.remote_ip,
-      :return_url => plugins_ecommerce_checkout_success_paypal_url(order: @cart.slug),
-      :cancel_return_url => plugins_ecommerce_checkout_cancel_paypal_url(order: @cart.slug)
-    }
-    response = @gateway.setup_purchase(commerce_to_cents(@cart.total_amount), @options)
-    redirect_to @gateway.redirect_url_for(response.token)
+    result = Plugins::Ecommerce::CartService.new(current_site, @cart).
+      pay_with_paypal(@payment, ip: request.remote_ip)
+    redirect_to result[:redirect_url]
   end
 
   private
