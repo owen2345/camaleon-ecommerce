@@ -6,7 +6,8 @@ class Plugins::Ecommerce::CartService
   
   attr_reader :site, :cart
   
-  def pay_with_authorize_net(payment_method, options={})
+  def pay_with_authorize_net(options={})
+    payment_method = options[:payment_method] || get_payment_method('authorize_net')
     billing_address = cart.get_meta("billing_address")
     details = cart.get_meta("details")
     amount = Plugins::Ecommerce::UtilService.ecommerce_money_to_cents(cart.total_amount)
@@ -59,7 +60,8 @@ class Plugins::Ecommerce::CartService
     end
   end
   
-  def pay_with_paypal(payment_method, options={})
+  def pay_with_paypal(options={})
+    payment_method = options[:payment_method] || get_payment_method('paypal')
     billing_address = cart.get_meta("billing_address")
     ActiveMerchant::Billing::Base.mode = payment_method.options[:paypal_sandbox].to_s.to_bool ? :test : :production
     paypal_options = {
@@ -102,8 +104,9 @@ class Plugins::Ecommerce::CartService
     {redirect_url: gateway.redirect_url_for(response.token)}
   end
   
-  def pay_with_stripe(payment_method, options)
+  def pay_with_stripe(options)
     require 'stripe'
+    payment_method = options[:payment_method] || get_payment_method('stripe')
     Stripe.api_key = payment_method.options[:stripe_id]
     customer = Stripe::Customer.create(
       :email => params[:email], :source  => params[:stripe_token])
@@ -128,5 +131,15 @@ class Plugins::Ecommerce::CartService
   
   def site_currency
     site.get_meta("_setting_ecommerce", {})[:current_unit] || 'USD'
+  end
+  
+  def get_payment_method(type)
+    payment_method = site.payment_methods.actives.detect do |payment_method|
+      payment_method.get_option('type') == type
+    end
+    if payment_method.nil?
+      raise ArgumentError, "Payment method #{type} is not found"
+    end
+    payment_method
   end
 end

@@ -110,7 +110,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
 
   def pay_by_stripe
     result = Plugins::Ecommerce::CartService.new(current_site, @cart).
-      pay_with_stripe(@payment,
+      pay_with_stripe(payment_method: @payment,
         email: params[:stripeEmail],
         stripe_token: params[:stripeToken],
       )
@@ -134,7 +134,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
 
   def pay_by_authorize_net
     res = Plugins::Ecommerce::CartService.new(current_site, @cart).
-      pay_with_authorize_net(@payment, ip: request.remote_ip)
+      pay_with_authorize_net(payment_method: @payment, ip: request.remote_ip)
     if res[:error].present?
       flash[:error] = res[:error]
       flash[:payment_error] = true
@@ -158,7 +158,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
 
   def pay_by_paypal
     result = Plugins::Ecommerce::CartService.new(current_site, @cart).
-      pay_with_paypal(@payment, ip: request.remote_ip)
+      pay_with_paypal(payment_method: @payment, ip: request.remote_ip)
     redirect_to result[:redirect_url]
   end
 
