@@ -108,28 +108,21 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
     redirect_to plugins_ecommerce_orders_url
   end
 
-  # pay by stripe
   def pay_by_stripe
-    require 'stripe'
-    Stripe.api_key = @payment.options[:stripe_id]
-    customer = Stripe::Customer.create(:email => params[:stripeEmail], :source  => params[:stripeToken])
-    begin
-      charge = Stripe::Charge.create(
-        :customer    => customer.id,
-        :amount      => commerce_to_cents(@cart.total_amount),
-        :description => "Payment Products: #{@cart.products_title}",
-        :currency    => commerce_current_currency
+    result = Plugins::Ecommerce::CartService.new(current_site, @cart).
+      pay_with_stripe(@payment,
+        email: params[:stripeEmail],
+        stripe_token: params[:stripeToken],
       )
-      @cart.set_meta("payment_data", params)
+    if result[:error].present?
+      flash[:error] = result[:error]
+      if result[:payment_error]
+        flash[:payment_error] = true
+      end
+      redirect_to :back
+    else
       mark_order_like_received(@cart)
       redirect_to plugins_ecommerce_orders_url
-    rescue Stripe::CardError => e
-      flash[:error] = e.message
-      flash[:payment_error] = true
-      redirect_to :back
-    rescue => e
-      flash[:error] = e.message
-      redirect_to :back
     end
   end
 
@@ -171,10 +164,6 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
   private
   def set_cart
     @cart = Plugins::Ecommerce::UserCartService.new(current_site, current_user).get_cart
-  end
-
-  def commerce_to_cents(money)
-    (money*100).round
   end
 
   def set_bread

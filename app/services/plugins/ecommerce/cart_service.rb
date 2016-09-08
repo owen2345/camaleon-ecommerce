@@ -101,4 +101,32 @@ class Plugins::Ecommerce::CartService
     # TODO handle errors
     {redirect_url: gateway.redirect_url_for(response.token)}
   end
+  
+  def pay_with_stripe(payment_method, options)
+    require 'stripe'
+    Stripe.api_key = payment_method.options[:stripe_id]
+    customer = Stripe::Customer.create(
+      :email => params[:email], :source  => params[:stripe_token])
+    amount_in_cents = Plugins::Ecommerce::UtilService.ecommerce_money_to_cents(cart.total_amount)
+    begin
+      charge = Stripe::Charge.create(
+        :customer    => customer.id,
+        :amount      => amount_in_cents,
+        :description => "Payment Products: #{cart.products_title}",
+        :currency    => site_currency,
+      )
+      cart.set_meta("payment_data", params)
+      {}
+    rescue Stripe::CardError => e
+      {error: e.message, payment_error: true}
+    rescue => e
+      {error: e.message}
+    end
+  end
+  
+  private
+  
+  def site_currency
+    site.get_meta("_setting_ecommerce", {})[:current_unit] || 'USD'
+  end
 end

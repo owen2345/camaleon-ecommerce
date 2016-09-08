@@ -10,8 +10,4 @@ module Plugins::Ecommerce::EcommercePaymentHelper
     Plugins::Ecommerce::UtilService.ecommerce_money_to_cents(money)
   end
 
-  def commerce_current_currency
-    current_site.get_meta("_setting_ecommerce", {})[:current_unit] || 'USD'
-  end
-
 end
