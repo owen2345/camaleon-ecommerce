@@ -39,12 +39,12 @@ class Plugins::Ecommerce::CartService
     ActiveMerchant::Billing::Base.mode = payment_method.options[:authorize_net_sandbox].to_s.to_bool ? :test : :production
 
     credit_card = ActiveMerchant::Billing::CreditCard.new(
-      :first_name => params[:firstName],
-      :last_name => params[:lastName],
-      :number => params[:cardNumber],
-      :month => params[:expMonth],
-      :year => "20#{params[:expYear]}",
-      :verification_value => params[:cvCode]
+      :first_name => options[:first_name],
+      :last_name => options[:last_name],
+      :number => options[:number],
+      :month => options[:exp_month],
+      :year => "20#{options[:exp_year]}",
+      :verification_value => options[:cvc]
     )
     if credit_card.validate.empty?
       gateway = ActiveMerchant::Billing::AuthorizeNetGateway.new(authorize_net_options)
@@ -109,7 +109,7 @@ class Plugins::Ecommerce::CartService
     payment_method = options[:payment_method] || get_payment_method('stripe')
     Stripe.api_key = payment_method.options[:stripe_id]
     customer = Stripe::Customer.create(
-      :email => params[:email], :source  => params[:stripe_token])
+      :email => options[:email], :source  => options[:stripe_token])
     amount_in_cents = Plugins::Ecommerce::UtilService.ecommerce_money_to_cents(cart.total_amount)
     begin
       charge = Stripe::Charge.create(
@@ -118,7 +118,12 @@ class Plugins::Ecommerce::CartService
         :description => "Payment Products: #{cart.products_title}",
         :currency    => site_currency,
       )
-      cart.set_meta("payment_data", params)
+      payment_data = {
+        email: options[:email],
+        customer: customer.id,
+        charge: charge.id,
+      }
+      cart.set_meta("payment_data", payment_data)
       {}
     rescue Stripe::CardError => e
       {error: e.message, payment_error: true}

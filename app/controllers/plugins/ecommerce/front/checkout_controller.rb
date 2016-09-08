@@ -134,7 +134,14 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
 
   def pay_by_authorize_net
     res = Plugins::Ecommerce::CartService.new(current_site, @cart).
-      pay_with_authorize_net(payment_method: @payment, ip: request.remote_ip)
+      pay_with_authorize_net(payment_method: @payment, ip: request.remote_ip,
+        first_name: params[:firstName],
+        last_name: params[:lastName],
+        number: params[:cardNumber],
+        exp_month: params[:expMonth],
+        exp_year: params[:expYear],
+        cvc: params[:cvCode],
+      )
     if res[:error].present?
       flash[:error] = res[:error]
       flash[:payment_error] = true
