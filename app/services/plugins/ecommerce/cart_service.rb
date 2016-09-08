@@ -7,7 +7,7 @@ class Plugins::Ecommerce::CartService
   attr_reader :site, :cart
   
   def pay_with_authorize_net(options={})
-    payment_method = options[:payment_method] || get_payment_method('authorize_net')
+    payment_method = options[:payment_method] || site_service.payment_method('authorize_net')
     billing_address = cart.get_meta("billing_address")
     details = cart.get_meta("details")
     amount = Plugins::Ecommerce::UtilService.ecommerce_money_to_cents(cart.total_amount)
@@ -61,7 +61,7 @@ class Plugins::Ecommerce::CartService
   end
   
   def pay_with_paypal(options={})
-    payment_method = options[:payment_method] || get_payment_method('paypal')
+    payment_method = options[:payment_method] || site_service.payment_method('paypal')
     billing_address = cart.get_meta("billing_address")
     ActiveMerchant::Billing::Base.mode = payment_method.options[:paypal_sandbox].to_s.to_bool ? :test : :production
     paypal_options = {
@@ -106,7 +106,7 @@ class Plugins::Ecommerce::CartService
   
   def pay_with_stripe(options)
     require 'stripe'
-    payment_method = options[:payment_method] || get_payment_method('stripe')
+    payment_method = options[:payment_method] || site_service.payment_method('stripe')
     Stripe.api_key = payment_method.options[:stripe_id]
     customer = Stripe::Customer.create(
       :email => options[:email], :source  => options[:stripe_token])
@@ -116,7 +116,7 @@ class Plugins::Ecommerce::CartService
         :customer    => customer.id,
         :amount      => amount_in_cents,
         :description => "Payment Products: #{cart.products_title}",
-        :currency    => site_currency,
+        :currency    => site_service.currency,
       )
       payment_data = {
         email: options[:email],
@@ -134,17 +134,7 @@ class Plugins::Ecommerce::CartService
   
   private
   
-  def site_currency
-    site.get_meta("_setting_ecommerce", {})[:current_unit] || 'USD'
-  end
-  
-  def get_payment_method(type)
-    payment_method = site.payment_methods.actives.detect do |payment_method|
-      payment_method.get_option('type') == type
-    end
-    if payment_method.nil?
-      raise ArgumentError, "Payment method #{type} is not found"
-    end
-    payment_method
+  def site_service
+    @site_service ||= Plugins::Ecommerce::SiteService.new(site)
   end
 end
