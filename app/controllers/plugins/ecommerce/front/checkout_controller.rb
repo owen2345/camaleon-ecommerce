@@ -108,28 +108,21 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
     redirect_to plugins_ecommerce_orders_url
   end
 
-  # pay by stripe
   def pay_by_stripe
-    require 'stripe'
-    Stripe.api_key = @payment.options[:stripe_id]
-    customer = Stripe::Customer.create(:email => params[:stripeEmail], :source  => params[:stripeToken])
-    begin
-      charge = Stripe::Charge.create(
-        :customer    => customer.id,
-        :amount      => commerce_to_cents(@cart.total_amount),
-        :description => "Payment Products: #{@cart.products_title}",
-        :currency    => commerce_current_currency
+    result = Plugins::Ecommerce::CartService.new(current_site, @cart).
+      pay_with_stripe(payment_method: @payment,
+        email: params[:stripeEmail],
+        stripe_token: params[:stripeToken],
       )
-      @cart.set_meta("payment_data", params)
+    if result[:error].present?
+      flash[:error] = result[:error]
+      if result[:payment_error]
+        flash[:payment_error] = true
+      end
+      redirect_to :back
+    else
       mark_order_like_received(@cart)
       redirect_to plugins_ecommerce_orders_url
-    rescue Stripe::CardError => e
-      flash[:error] = e.message
-      flash[:payment_error] = true
-      redirect_to :back
-    rescue => e
-      flash[:error] = e.message
-      redirect_to :back
     end
   end
 
@@ -140,7 +133,15 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
   end
 
   def pay_by_authorize_net
-    res = payment_pay_by_credit_card_authorize_net(@cart, @payment)
+    res = Plugins::Ecommerce::CartService.new(current_site, @cart).
+      pay_with_authorize_net(payment_method: @payment, ip: request.remote_ip,
+        first_name: params[:firstName],
+        last_name: params[:lastName],
+        number: params[:cardNumber],
+        exp_month: params[:expMonth],
+        exp_year: params[:expYear],
+        cvc: params[:cvCode],
+      )
     if res[:error].present?
       flash[:error] = res[:error]
       flash[:payment_error] = true
@@ -163,44 +164,14 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
   end
 
   def pay_by_paypal
-    billing_address = @cart.get_meta("billing_address")
-    ActiveMerchant::Billing::Base.mode = @payment.options[:paypal_sandbox].to_s.to_bool ? :test : :production
-    paypal_options = {
-      :login => @payment.options[:paypal_login],
-      :password => @payment.options[:paypal_password],
-      :signature => @payment.options[:paypal_signature]
-    }
-    @gateway = ActiveMerchant::Billing::PaypalExpressGateway.new(paypal_options)
-    @options = {
-      brand_name: current_site.name,
-      items: [{number: @cart.slug, name: "Buy Products from #{current_site.the_title}: #{@cart.products_title}", amount: commerce_to_cents(@cart.total_amount)}],
-      :order_id => @cart.slug,
-      :currency => current_site.currency_code,
-      :email => @cart.user.email,
-      :billing_address => {:name => "#{billing_address[:first_name]} #{billing_address[:last_name]}",
-                           :address1 => billing_address[:address1],
-                           :address2 => billing_address[:address2],
-                           :city => billing_address[:city],
-                           :state => billing_address[:state],
-                           :country => billing_address[:country],
-                           :zip => billing_address[:zip]
-      },
-      :description => "Buy Products from #{current_site.the_title}: #{@cart.total_amount}",
-      :ip => request.remote_ip,
-      :return_url => plugins_ecommerce_checkout_success_paypal_url(order: @cart.slug),
-      :cancel_return_url => plugins_ecommerce_checkout_cancel_paypal_url(order: @cart.slug)
-    }
-    response = @gateway.setup_purchase(commerce_to_cents(@cart.total_amount), @options)
-    redirect_to @gateway.redirect_url_for(response.token)
+    result = Plugins::Ecommerce::CartService.new(current_site, @cart).
+      pay_with_paypal(payment_method: @payment, ip: request.remote_ip)
+    redirect_to result[:redirect_url]
   end
 
   private
   def set_cart
     @cart = Plugins::Ecommerce::UserCartService.new(current_site, current_user).get_cart
-  end
-
-  def commerce_to_cents(money)
-    (money*100).round
   end
 
   def set_bread
