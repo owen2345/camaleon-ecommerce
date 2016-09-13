@@ -19,7 +19,7 @@
                     <div class="variation_attributes form-group">
                         <label><%= t('.attributes', default: 'Attributes') %></label>
                         <ul class="item-custom-field sortable_values">
-                            <% (variation.id.present? ? variation.attribute_values : [variation.attribute_values.new]).each do |val| %>
+                            <% (variation.id.present? ? variation.attribute_values : [variation.attribute_values.rewhere(id: nil).new]).each do |val| %>
                                 <li>
                                     <div class="actions">
                                         <a class="val_sorter"><i class="fa fa-arrows" style="cursor: move"></i></a>
