@@ -2,10 +2,12 @@ module Plugins::Ecommerce::EcommerceEmailHelper
   include CamaleonCms::EmailHelper
 
   def mark_order_like_received(cart, status = 'paid')
-    cart.prepare_to_pay
-    cart.update_amounts
-    cart.mark_paid(status)
-    order = cart.convert_to_order
+    order = Plugins::Ecommerce::Cart.transaction do
+      cart.prepare_to_pay
+      cart.update_amounts
+      cart.mark_paid(status)
+      cart.convert_to_order
+    end
 
     # send email to buyer
     commerce_send_order_received_email(order)
