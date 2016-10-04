@@ -131,7 +131,16 @@ class Plugins::Ecommerce::CartService
       {error: e.message}
     end
   end
-  
+
+  def convert_to_order(status = 'paid')
+    Plugins::Ecommerce::Cart.transaction do
+      cart.prepare_to_pay
+      cart.update_amounts
+      cart.mark_paid(status)
+      cart.convert_to_order
+    end
+  end
+
   private
   
   def site_service
