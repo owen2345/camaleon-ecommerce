@@ -98,14 +98,9 @@ module Plugins::Ecommerce::EcommerceEmailHelper
       :total_cost => order.cache_the_total,
       :order => order
     }
-    files = []
-    owners = []
-    order.products.each do |product|
-      files += product.get_fields('ecommerce_files').map{|f| CamaleonCmsLocalUploader::private_file_path(f, current_site) }
-      owners << product.owner if product.owner.present?
-    end
-    data[:owners] = owners.uniq
-    data[:files] = files.uniq
+    order_service = Plugins::Ecommerce::OrderService.new(current_site, order)
+    data[:owners] = order_service.product_owners
+    data[:files] = order_service.product_files
     data
   end
 
