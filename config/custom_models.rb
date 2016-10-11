@@ -12,6 +12,11 @@ Rails.application.config.to_prepare do
       post_types.where(slug: 'commerce').first.try(:posts)
     end
   end
+  
+  CamaleonCms::User.class_eval do
+    has_many :carts, class_name: 'Plugins::Ecommerce::Cart', foreign_key: :user_id
+    has_many :orders, class_name: 'Plugins::Ecommerce::Order', foreign_key: :user_id
+  end
 
   CamaleonCms::Post.class_eval do
     has_many :product_variations, class_name: 'Plugins::Ecommerce::ProductVariation', foreign_key: :product_id, dependent: :destroy
