@@ -3,9 +3,9 @@ class Plugins::Ecommerce::CartService
     @site = site
     @cart = cart
   end
-  
+
   attr_reader :site, :cart
-  
+
   def pay_with_authorize_net(options={})
     payment_method = options[:payment_method] || site_service.payment_method('authorize_net')
     billing_address = cart.get_meta("billing_address")
@@ -26,7 +26,7 @@ class Plugins::Ecommerce::CartService
       description: 'Buy Products',
       ip: request.remote_ip
     }
-    
+
     if options[:ip]
       payment_params[:ip] = options[:ip]
     end
@@ -59,7 +59,7 @@ class Plugins::Ecommerce::CartService
       return {error: credit_card.validate.map{|k, v| "#{k}: #{v.join(', ')}"}.join('<br>')}
     end
   end
-  
+
   def pay_with_paypal(options={})
     payment_method = options[:payment_method] || site_service.payment_method('paypal')
     billing_address = cart.get_meta("billing_address")
@@ -90,20 +90,20 @@ class Plugins::Ecommerce::CartService
                            zip: billing_address[:zip]
       },
       description: "Buy Products from #{site.the_title}: #{cart.total_amount}",
-      ip: request.remote_ip,
+      ip: options[:ip],
       return_url: plugins_ecommerce_checkout_success_paypal_url(order: @cart.slug),
       cancel_return_url: plugins_ecommerce_checkout_cancel_paypal_url(order: @cart.slug)
     }
-    
+
     if options[:ip]
       gateway_request[:ip] = options[:ip]
     end
-    
+
     response = gateway.setup_purchase(amount_in_cents, gateway_request)
     # TODO handle errors
     {redirect_url: gateway.redirect_url_for(response.token)}
   end
-  
+
   def pay_with_stripe(options)
     require 'stripe'
     payment_method = options[:payment_method] || site_service.payment_method('stripe')
@@ -142,7 +142,7 @@ class Plugins::Ecommerce::CartService
   end
 
   private
-  
+
   def site_service
     @site_service ||= Plugins::Ecommerce::SiteService.new(site)
   end

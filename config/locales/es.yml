@@ -369,6 +369,7 @@ es:
             country: 'País'
             state: 'Estado'
             code_zip: 'Código Zip'
+            billing_address: "Dirección de facturación"
             shipping_address: 'Dirección de envío'
             copy_address: 'Copiar mis datos de envío'
             phone_number: 'Número de Teléfono'
