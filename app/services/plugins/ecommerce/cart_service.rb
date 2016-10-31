@@ -24,7 +24,7 @@ class Plugins::Ecommerce::CartService
                            zip: billing_address[:zip]
       },
       description: 'Buy Products',
-      ip: request.remote_ip
+      ip: options[:ip]
     }
 
     if options[:ip]
@@ -91,8 +91,8 @@ class Plugins::Ecommerce::CartService
       },
       description: "Buy Products from #{site.the_title}: #{cart.total_amount}",
       ip: options[:ip],
-      return_url: plugins_ecommerce_checkout_success_paypal_url(order: @cart.slug),
-      cancel_return_url: plugins_ecommerce_checkout_cancel_paypal_url(order: @cart.slug)
+      return_url: options[:return_url],
+      cancel_return_url: options[:cancel_return_url]
     }
 
     if options[:ip]

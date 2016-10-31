@@ -35,6 +35,9 @@ function cama_checkout_actions(){
         });
         return false;
     }});
+    panel.find('#checkout_address_form #billing_address input').blur(function(){
+        panel.find('#checkout_address_form #'+$(this).attr('id').replace('billing_address', 'shipping_address')).val($(this).val())
+    });
 
     // shipping form
     panel.find('#checkout_shipping_form').validate({submitHandler: function(form){

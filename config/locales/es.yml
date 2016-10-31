@@ -346,6 +346,16 @@ es:
             no_shipping: 'Metodo de envío no asignado'
             no_shipped: 'No enviado'
             phone_number: 'Número de Teléfono'
+            total: 'Total'
+            qty: 'Cantidad'
+            item: 'Item'
+            price: 'Precio'
+            tax: 'Impuestos'
+            subtotal: 'Sub Total'
+            total_excl: 'Total (excluyendo impuestos)'
+            discount: 'Descuento'
+            total_shipping: 'Total envío'
+            total_price: 'Precio Total'
 
         login:
           login: 'Acceder'

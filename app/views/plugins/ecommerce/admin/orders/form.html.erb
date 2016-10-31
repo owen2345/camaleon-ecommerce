@@ -1,20 +1,32 @@
 <div class="panel panel-default">
-  <div class="panel-heading">
-    <h4><span class="fa fa-cog"></span> <%= t('plugin.ecommerce.edit_order') %>: <%= @order.slug %></h4>
-  </div>
-  <%= form_for @order, url: {action: @order.new_record? ? :create : :update}, html: {class: 'form-order', id: 'form-order'} do |f| %>
-      <div class="panel-body">
-        <%= render plugin_view('partials/checkout/user_info'), cart: @order, as_partial: true %>
-          <hr>
-        <div class="form-group">
-            <%= f.label nil, t('plugin.ecommerce.show_order.consignment_number', default: 'Consignment Number')  %>
-            <%= text_field_tag 'metas[consignment_number]', @order.get_meta('consignment_number'), class: 'form-control' %>
+    <div class="panel-heading">
+        <h4><span class="fa fa-cog"></span> <%= t('plugin.ecommerce.edit_order') %>: <%= @order.slug %></h4>
+    </div>
+    <%= form_for @order, url: {action: @order.new_record? ? :create : :update}, html: {class: 'form-order', id: 'form-order'} do |f| %>
+        <div class="panel-body">
+            <%= render plugin_view('partials/checkout/user_info'), cart: @order, as_partial: true %>
+            <hr>
+            <div class="form-group">
+                <%= f.label nil, t('plugin.ecommerce.show_order.consignment_number', default: 'Consignment Number') %>
+                <%= text_field_tag 'metas[consignment_number]', @order.get_meta('consignment_number'), class: 'form-control' %>
+            </div>
+            <div class="form-group">
+                <%= f.label nil, t('plugins.ecommerce.front.orders.show.date_shipped', default: 'Date Shipped') %>
+                <div class="input-group date date-input-box">
+                    <%= f.text_field :shipped_at, class: 'form-control' %>
+                    <span class="add-on input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+            </div>
         </div>
-      </div>
 
-      <div class="panel-footer">
-        <button class="btn btn-default" onclick="history.back()"><%= t('camaleon_cms.admin.button.back') %></button>
-        <button class="btn btn-primary pull-right"><%= t('camaleon_cms.admin.button.update') %></button>
-      </div>
-  <% end %>
+        <div class="panel-footer">
+            <button class="btn btn-default" onclick="history.back()"><%= t('camaleon_cms.admin.button.back') %></button>
+            <button class="btn btn-primary pull-right"><%= t('camaleon_cms.admin.button.update') %></button>
+        </div>
+        <script>
+            jQuery(function () {
+                $('#form-order').find('#plugins_ecommerce_order_shipped_at').parent().datetimepicker({ format: 'YYYY-MM-DD HH:mm' });;
+            })
+        </script>
+    <% end %>
 </div>

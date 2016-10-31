@@ -1,17 +1,20 @@
 <% order ||= @order %>
 <div class="order_details">
-  <% unless defined?(as_partial) %>
-    <h1><%= t('.title', default: 'Order Details') %>: <%= order.slug %></h1>
-  <% end %>
-  <div class="row">
-        <div class="col-md-6">
-            <h4><%= t('.customer_info', default: 'Customer Info') %></h4>
-            <ul class="ec-list-orders-address">
-              <li><strong><%= t('.name', default: 'Name') %>:</strong> <span> <%= order.user.fullname %></span></li>
-              <li><strong><%= t('.email', default: 'Email') %>:</strong> <span> <%= order.user.email %></span></li>
-              <li><strong><%= t('.phone', default: 'Phone') %>:</strong> <span> <%= order.user.get_option('phone') %></span></li>
-            </ul>
+    <% unless defined?(as_partial) %>
+        <h1><%= t('.title', default: 'Order Details') %>: <%= order.slug %></h1>
+    <% end %>
+    <div>
+        <h4><%= t('.customer_info', default: 'Customer Info') %></h4>
+        <ul class="ec-list-orders-address">
+            <li><strong><%= t('.name', default: 'Name') %>:</strong> <span> <%= order.user.fullname %></span></li>
+            <li><strong><%= t('.email', default: 'Email') %>:</strong> <span> <%= order.user.email %></span></li>
+            <li><strong><%= t('.phone', default: 'Phone') %>:</strong>
+                <span> <%= order.user.get_option('phone') %></span></li>
+        </ul>
+    </div>
 
+    <div class="row">
+        <div class="col-md-6">
             <h4><%= t('.billing_address', default: 'Billing Address') %></h4>
             <% detail = order.get_meta("billing_address", {}) %>
             <ul class="ec-list-orders-address">
@@ -21,12 +24,13 @@
                 <li><strong><%= t('.state', default: 'State') %>:</strong> <%= detail[:state] %></li>
                 <li><strong><%= t('.zip_code', default: 'Zip code') %>:</strong> <%= detail[:zip] %></li>
                 <li><strong><%= t('.country', default: 'Country') %>:</strong> <%= detail[:country] %></li>
-                <li><strong><%= t('.phone_number', default: 'Phone Number') %>:</strong> <%= detail[:phone_number] %></li>
+                <li><strong><%= t('.phone_number', default: 'Phone Number') %>:</strong> <%= detail[:phone_number] %>
+                </li>
             </ul>
         </div>
         <div class="col-md-6">
-          <h4><%= t('.shipping_address', default: 'Shipping Address') %></h4>
-          <% detail = order.get_meta("shipping_address", {}) %>
+            <h4><%= t('.shipping_address', default: 'Shipping Address') %></h4>
+            <% detail = order.get_meta("shipping_address", {}) %>
             <ul class="ec-list-orders-address">
                 <li><strong><%= t('.address', default: 'Address1') %>:</strong> <%= detail[:address1] %></li>
                 <li><strong><%= t('.address', default: 'Address') %>2:</strong> <%= detail[:address2] %></li>
@@ -34,99 +38,100 @@
                 <li><strong><%= t('.state', default: 'State') %>:</strong> <%= detail[:state] %></li>
                 <li><strong><%= t('.zip_code', default: 'Zip code') %>:</strong> <%= detail[:zip] %></li>
                 <li><strong><%= t('.country', default: 'Country') %>:</strong> <%= detail[:country] %></li>
-                <li><strong><%= t('.phone_number', default: 'Phone Number') %>:</strong> <%= detail[:phone_number] %></li>
+                <li><strong><%= t('.phone_number', default: 'Phone Number') %>:</strong> <%= detail[:phone_number] %>
+                </li>
             </ul>
         </div>
-  </div>
+    </div>
 
-  <div class="row">
-    <div class="col-md-12">
-      <h4><%= t('.title_products', default: 'Products and Payments') %></h4>
-        <div id="totals_section">
+    <div class="row">
+        <div class="col-md-12">
+            <h4><%= t('.title_products', default: 'Products and Payments') %></h4>
+            <div id="totals_section">
+                <table class="table table-bordered">
+                    <tbody>
+                    <tr>
+                        <th id="quantity_col"><%= t('.qty', default: 'Quantity') %></th>
+                        <th id="item_col"><%= t('.item', default: 'Item') %></th>
+                        <th id="price_col"><%= t('.price', default: 'Price') %></th>
+
+                        <th id="tax_col"><%= t('.tax', default: 'Tax') %></th>
+                        <th id="subtotal_col"><%= t('.subtotal', default: 'Sub Total') %></th>
+                    </tr>
+                    <% order.product_items.each do |item| %>
+                        <tr>
+                            <td><%= item.qty %></td>
+                            <td><%= link_to(item.cache_the_title, item.product.try(:decorate).try(:the_url)) %></td>
+                            <td><%= item.cache_the_price %></td>
+                            <td><%= item.cache_the_tax %></td>
+                            <td><%= item.cache_the_sub_total %></td>
+                        </tr>
+                    <% end %>
+                    <tr>
+                        <td colspan="2"></td>
+                        <td colspan="2" class="text-right"><%= t('.total_excl', default: 'Total (excluding Tax)') %> </td>
+                        <td><%= order.cache_the_sub_total %></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"></td>
+                        <td colspan="2" class="text-right"><%= t('.tax', default: 'Tax') %></td>
+                        <td id="tax_total"><%= order.cache_the_tax %></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"></td>
+                        <td colspan="2" class="text-right"><%= t('.discount', default: 'Discount') %></td>
+                        <td><%= order.cache_the_discounts %></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"></td>
+                        <td colspan="2" class="text-right"><%= t('.total_shipping', default: 'Total shipping') %></td>
+                        <td><%= order.cache_the_shipping %></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"></td>
+                        <td colspan="2" class="text-right"><%= t('.total_price', default: 'Total Price') %></td>
+                        <td><%= order.cache_the_total %></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
             <table class="table table-bordered">
                 <tbody>
                 <tr>
-                    <th id="quantity_col"><%= t('.qty', default: 'Quantity') %></th>
-                    <th id="item_col"><%= t('.item', default: 'Item') %></th>
-                    <th id="price_col"><%= t('.price', default: 'Price') %></th>
-
-                    <th id="tax_col"><%= t('.tax', default: 'Tax') %></th>
-                    <th id="subtotal_col"><%= t('.subtotal', default: 'Sub Total') %></th>
+                    <th><%= t('.payment_type', default: 'Type Payment') %></th>
+                    <th></th>
                 </tr>
-                <% order.product_items.each do |item| %>
+                <tr>
+                    <td><%= order.payment_method.name rescue 'Not Payment' %></td>
+                    <td><%= raw order.the_status %></td>
+                </tr>
+                <% if defined?(as_partial) %>
                     <tr>
-                        <td><%= item.qty %></td>
-                        <td><%= item.cache_the_title %></td>
-                        <td><%= item.cache_the_price %></td>
-                        <td><%= item.cache_the_tax %></td>
-                        <td><%= item.cache_the_sub_total %></td>
+                        <td>
+                            <%= raw order.get_meta('payment_data', {}).map { |k, v| "<b>#{k.to_s.titleize}</b>: #{v}" }.join('<br>') %>
+                        </td>
                     </tr>
                 <% end %>
+                </tbody>
+            </table>
+
+            <table class="table table-bordered">
+                <tbody>
                 <tr>
-                    <td colspan="2"></td>
-                    <td colspan="2" class="text-right"><%= t('.total_excl', default: 'Total (excluding Tax)') %> </td>
-                    <td><%= order.cache_the_sub_total %></td>
+                    <th><%= t('.shipping_method', default: 'Shipping Method') %></th>
+                    <th><%= t('.date_shipped', default: 'Shipped Date') %></th>
+                    <th><%= t('.track_url', default: 'URL Tracking') %></th>
                 </tr>
                 <tr>
-                    <td colspan="2"></td>
-                    <td colspan="2" class="text-right"><%= t('.tax', default: 'Tax') %></td>
-                    <td id="tax_total"><%= order.cache_the_tax %></td>
-                </tr>
-                <tr>
-                    <td colspan="2"></td>
-                    <td colspan="2" class="text-right"><%= t('.discount', default: 'Discount') %></td>
-                    <td><%= order.cache_the_discounts %></td>
-                </tr>
-                <tr>
-                    <td colspan="2"></td>
-                    <td colspan="2" class="text-right"><%= t('.total_shipping', default: 'Total shipping') %></td>
-                    <td><%= order.cache_the_shipping %></td>
-                </tr>
-                <tr>
-                    <td colspan="2"></td>
-                    <td colspan="2" class="text-right"><%= t('.total_price', default: 'Total Price') %></td>
-                    <td><%= order.cache_the_total %></td>
+                    <td><%= order.shipping_method.name rescue t('.no_shipping', default: 'Not Shipped Assigned') %></td>
+                    <td><%= order.shipped_at.presence || t('.no_shipped', default: 'Not Shipped') %></td>
+                    <td><%= order.the_url_tracking %></td>
                 </tr>
                 </tbody>
             </table>
+            <div class="text-center">
+            </div>
         </div>
-
-      <table class="table table-bordered">
-        <tbody>
-        <tr>
-          <th><%= t('.payment_type', default: 'Type Payment') %></th>
-          <th></th>
-        </tr>
-        <tr>
-          <td><%= order.payment_method.name  rescue 'Not Payment' %></td>
-          <td><%= raw order.the_status %></td>
-        </tr>
-        <% if defined?(as_partial) %>
-            <tr>
-                <td>
-                    <%= raw order.get_meta('payment_data', {}).map{|k, v| "<b>#{k.to_s.titleize}</b>: #{v}" }.join('<br>') %>
-                </td>
-            </tr>
-        <% end %>
-        </tbody>
-      </table>
-
-      <table class="table table-bordered">
-        <tbody>
-        <tr>
-          <th><%= t('.shipping_method', default: 'Shipping Method') %></th>
-          <th><%= t('.date_shipped', default: 'Shipped Date') %></th>
-          <th><%= t('.track_url', default: 'URL Tracking') %></th>
-        </tr>
-        <tr>
-          <td><%= order.shipping_method.name rescue t('.no_shipping', default: 'Not Shipped Assigned') %></td>
-          <td><%= order.shipped_at.presence || t('.no_shipped', default: 'Not Shipped') %></td>
-          <td><%= order.the_url_tracking %></td>
-        </tr>
-         </tbody>
-      </table>
-      <div class="text-center">
-      </div>
     </div>
-  </div>
 </div>

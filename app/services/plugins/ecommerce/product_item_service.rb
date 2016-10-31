@@ -3,17 +3,17 @@ class Plugins::Ecommerce::ProductItemService
     @site = site
     @product_item = product_item
   end
-  
+
   attr_reader :site, :product_item
-  
+
   def user
     @user ||= product_item.cart.user
   end
-  
+
   def product
     @product ||= product_item.product
   end
-  
+
   def decrement_qty!
     available_qty = Plugins::Ecommerce::UserProductService.new(
       site, user, product, product_item.variation_id).available_qty

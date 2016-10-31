@@ -165,7 +165,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
 
   def pay_by_paypal
     result = Plugins::Ecommerce::CartService.new(current_site, @cart).
-      pay_with_paypal(payment_method: @payment, ip: request.remote_ip)
+      pay_with_paypal(payment_method: @payment, ip: request.remote_ip, return_url: plugins_ecommerce_checkout_success_paypal_url(order: @cart.slug), cancel_return_url: plugins_ecommerce_checkout_cancel_paypal_url(order: @cart.slug))
     redirect_to result[:redirect_url]
   end
 

@@ -42,6 +42,7 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
     @order.set_meta("billing_address", params[:order][:billing_address])
     @order.set_meta("shipping_address", params[:order][:shipping_address])
     @order.set_metas(params[:metas])
+    @order.update(params.require(:plugins_ecommerce_order).permit(:shipped_at))
     flash[:notice] = "#{t('plugin.ecommerce.message.order_updated', default: 'Order Updated')}"
     redirect_to action: :show, id: params[:id]
   end
