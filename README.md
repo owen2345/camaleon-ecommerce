@@ -6,7 +6,7 @@ More information [here](http://camaleon.tuzitio.com/store/plugins/6).
 * Add in your Gemfile
 
 ```
-gem 'camaleon_ecommerce', github: 'owen2345/camaleon-ecommerce'
+gem 'camaleon_ecommerce'
 ```
 * In your console
 
