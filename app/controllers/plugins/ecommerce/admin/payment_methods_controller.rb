@@ -34,17 +34,6 @@ class Plugins::Ecommerce::Admin::PaymentMethodsController < Plugins::Ecommerce::
   end
 
   def update
-
-    if defined?(params[:options][:type]) && params[:options][:type] == 'paypal'
-      unless valid_paypal_data(params[:options])
-        flash.now[:error] = "#{t('plugin.ecommerce.message.error_paypal_values')}"
-        render 'form'
-        return
-      end
-    end
-
-    #FIXME create valid_authorize_net_data function
-
     if @payment_method.update(payment_permit_data)
       @payment_method.set_meta('_default',params[:options])
       flash[:notice] = t('camaleon_cms.admin.post_type.message.updated')
@@ -54,33 +43,12 @@ class Plugins::Ecommerce::Admin::PaymentMethodsController < Plugins::Ecommerce::
     end
   end
 
-
-
-
   private
-
   def payment_permit_data
     params.require(:plugins_ecommerce_payment_method).permit!
   end
 
   def set_order
     @payment_method = current_site.payment_methods.find(params[:id])#.decorate
-  end
-
-  def valid_paypal_data(data)
-    ActiveMerchant::Billing::Base.mode = data[:paypal_sandbox].to_s.to_bool ? :test : :production
-    paypal_options = {
-        :login => data[:paypal_login],
-        :password => data[:paypal_password],
-        :signature => data[:paypal_signature]
-    }
-    opts = {
-        :ip => request.remote_ip,
-        :return_url => plugins_ecommerce_order_success_url(order: 'test'),
-        :cancel_return_url => plugins_ecommerce_order_cancel_url(order: 'test')
-    }
-    @gateway = ActiveMerchant::Billing::PaypalExpressGateway.new(paypal_options)
-    response = @gateway.setup_authorization(500, opts)
-    response.success?
   end
 end

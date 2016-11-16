@@ -1,4 +1,5 @@
 class Plugins::Ecommerce::FrontController < CamaleonCms::Apps::PluginsFrontController
+  before_action :init_flash
   include Plugins::Ecommerce::EcommercePaymentHelper
   before_action :ecommerce_add_assets_in_front
   before_action :save_cache_redirect, only: [:login, :register]
@@ -45,5 +46,9 @@ class Plugins::Ecommerce::FrontController < CamaleonCms::Apps::PluginsFrontContr
       cookies[:return_to] = request.referer
       redirect_to plugins_ecommerce_login_path
     end
+  end
+
+  def init_flash
+    flash[:cama_ecommerce] = {}
   end
 end
