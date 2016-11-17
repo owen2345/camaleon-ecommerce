@@ -1,5 +1,5 @@
 <div class="container" id="ecommerce_login_panel">
-    <%= render 'camaleon_cms/flash_messages' %>
+    <%= render 'camaleon_cms/flash_messages', locals:{ flash: (flash[:cama_ecommerce] || {}).with_indifferent_access } %>
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <ul class="nav nav-tabs" role="tablist">

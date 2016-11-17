@@ -12,6 +12,16 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
 
   after_create :generate_slug
 
+  # status: bank_pending => pending of verification for bank transfer orders
+  #         paid => paid by some method
+  #         canceled => canceled order
+  #         shipped => shipped status
+  #         accepted => received status
+
+  def payment_method
+    @_cama_cache_payment_method ||= Plugins::Ecommerce::PaymentMethod.find_by_id(get_meta('payment_method_id', self.payment_method_id))
+  end
+
   def add_product(product, qty = 1, variation_id = nil)
     pi = product_items.where(product_id: product.id, variation_id: variation_id).first
     if pi.present?
@@ -166,12 +176,23 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
       cache_the_shipping: c.the_total_shipping,
     )
   end
-  
+
   def mark_paid(status = 'paid')
     self.update_columns(
       status: status,
       paid_at: Time.current,
     )
+  end
+
+  # return the gateway for paypal transactions
+  def paypal_gateway
+    ActiveMerchant::Billing::Base.mode = payment_method.options[:paypal_sandbox].to_s.to_bool ? :test : :production
+    paypal_options = {
+      login: payment_method.options[:paypal_login],
+      password: payment_method.options[:paypal_password],
+      signature: payment_method.options[:paypal_signature]
+    }
+    ActiveMerchant::Billing::PaypalExpressGateway.new(paypal_options)
   end
 
 

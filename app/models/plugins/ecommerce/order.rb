@@ -8,10 +8,6 @@ class Plugins::Ecommerce::Order < Plugins::Ecommerce::Cart
   #         shipped => shipped status
   #         accepted => received status
 
-  def payment_method
-    Plugins::Ecommerce::PaymentMethod.find_by_id(get_meta('payment_method_id', self.payment_method_id))
-  end
-
   def paid?
     status == 'paid'
   end

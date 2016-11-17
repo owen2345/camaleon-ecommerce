@@ -61,15 +61,8 @@ class Plugins::Ecommerce::CartService
   end
 
   def pay_with_paypal(options={})
-    payment_method = options[:payment_method] || site_service.payment_method('paypal')
     billing_address = cart.get_meta("billing_address")
-    ActiveMerchant::Billing::Base.mode = payment_method.options[:paypal_sandbox].to_s.to_bool ? :test : :production
-    paypal_options = {
-      login: payment_method.options[:paypal_login],
-      password: payment_method.options[:paypal_password],
-      signature: payment_method.options[:paypal_signature]
-    }
-    gateway = ActiveMerchant::Billing::PaypalExpressGateway.new(paypal_options)
+    gateway = cart.paypal_gateway
     amount_in_cents = Plugins::Ecommerce::UtilService.ecommerce_money_to_cents(cart.total_amount)
     gateway_request = {
       brand_name: site.name,
