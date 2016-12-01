@@ -72,7 +72,7 @@ module Plugins::Ecommerce::EcommerceHelper
       params[:product_variation] ||= {}
       args[:post].product_variations.where.not(id: params[:product_variation].keys).delete_all
       params[:product_variation].each do |p_key, p_var|
-        data = {amount: p_var[:price], photo: p_var[:photo], sku: p_var[:sku], weight: p_var[:weight], qty: p_var[:qty], attribute_ids: p_var[:attributes].map{|at| at[:value] }.join(',')}
+        data = {amount: p_var[:price], photo: p_var[:photo], sku: p_var[:sku], weight: p_var[:weight], qty: p_var[:qty], attribute_ids: (p_var[:attributes] || []).map{|at| at[:value] }.join(',')}
         if p_key.include?('new_') # new variation
           args[:post].product_variations.create(data)
         else
