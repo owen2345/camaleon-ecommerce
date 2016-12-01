@@ -18,7 +18,7 @@
                     <%= hidden_field_tag "product_variation[#{variation.id}][position]", variation.position, class: 'product_variation_position' %>
                     <div class="variation_attributes form-group">
                         <label><%= t('.attributes', default: 'Attributes') %></label>
-                        <ul class="item-custom-field sortable_values">
+                        <ul class="item-custom-field sortable_values" style="padding: 0; list-style: none;">
                             <% (variation.id.present? ? variation.attribute_values : [variation.attribute_values.rewhere(id: nil).new]).each do |val| %>
                                 <li>
                                     <div class="actions">

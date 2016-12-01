@@ -31,7 +31,7 @@
                             </div>
                         </div>
                     </div>
-                    <ul class="values_sortable">
+                    <ul class="values_sortable" style="padding: 0; list-style: none;">
                         <% (attr.values.to_a + (attr.id.present? ? [] : [Plugins::Ecommerce::Attribute.new])).each do |value| %>
                             <li class="item-custom-field product_attribute_value_<%= value.id %>">
                                 <%= hidden_field_tag "attribute[#{attr.id}][][position]", value.position, class: 'value_position' %>
