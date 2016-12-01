@@ -14,7 +14,7 @@ module Plugins::Ecommerce::EcommerceHelper
 
   def ecommerce_front_before_load
     e_current_visitor_currency(params[:cama_change_currency]) if params[:cama_change_currency].present?
-    @ecommerce_breadcrumb = [].push(["Home", cama_root_url])
+    @ecommerce_breadcrumb = [].push([t('plugins.ecommerce.front.breadcrumb.home', default: 'Home'), cama_root_url])
   end
 
   def ecommerce_admin_before_load

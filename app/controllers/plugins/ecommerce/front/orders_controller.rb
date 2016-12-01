@@ -11,8 +11,6 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
     @ecommerce_breadcrumb << [t('plugins.ecommerce.messages.detail_order', default: "Detail order: #%{order}", order: params[:order])]
   end
 
-
-
   private
   def set_bread
     @ecommerce_breadcrumb << [t('plugins.ecommerce.messages.my_orders', default: 'My Orders'), url_for(action: :index)]

@@ -10,19 +10,25 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
     current_site.get_meta("_setting_ecommerce", {})
   end
 
+  # return the current cart for current user
+  def e_current_cart
+    @_cache_e_current_cart ||= Plugins::Ecommerce::UserCartService.new(current_site, current_user).get_cart
+  end
+
   # return all shipping country codes supported for shipping
   def e_shipping_countries
     ecommerce_get_settings[:shipping_countries] || ISO3166::Country.codes
   end
 
   # draw a select dropdown with all frontend currencies and actions to change current currency
-  # mode: long | short
-  def e_draw_ecommerce_currencies(mode = 'long')
+  # long_mode: (Boolean, default false)
+  # attrs = (Hash) attributes of the select drodown, sample: {class: 'form-control'}
+  def e_draw_ecommerce_currencies(long_mode = false, attrs = {})
     return '' if ecommerce_get_settings[:visitor_unit_currencies].count <= 1
-    res = '<select onchange="window.location.href=window.location.href.split(\'cama_change_currency\')[0]+(window.location.href.search(\'\\\?\') > 1 ? \'&\' : \'?\')+\'cama_change_currency=\'+this.value">'
+    res = '<select '+attrs.collect{|k, v| "#{k}='#{v}'" }.join(" ")+' onchange="window.location.href=window.location.href.split(\'cama_change_currency\')[0]+(window.location.href.search(\'\\\?\') > 1 ? \'&\' : \'?\')+\'cama_change_currency=\'+this.value">'
     ecommerce_get_settings[:visitor_unit_currencies].each do |unit|
       cur = e_get_currency_by_code(unit)
-      res << "<option value='#{unit}' #{'selected' if e_current_visitor_currency == unit}>#{mode == 'long' ? "#{cur[:label]} (#{cur[:symbol]})": cur[:symbol]}</option>"
+      res << "<option value='#{unit}' #{'selected' if e_current_visitor_currency == unit}>#{long_mode ? "#{cur[:label]} (#{cur[:symbol]})": cur[:symbol]}</option>"
     end
     res << '</select>'
   end
@@ -35,8 +41,8 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
   end
 
   # return all currency weights supported by the plugin
-  def e_get_currency_weight
-    @_cache_e_get_currency_weight ||= lambda{
+  def e_get_currency_weights
+    @_cache_e_get_currency_weights ||= lambda{
       weights = {kg: t('plugin.ecommerce.select.kilogram'), lb: t('plugin.ecommerce.select.pound'), dr: t('plugin.ecommerce.select.dram'), gr: t('plugin.ecommerce.select.grain'), g: t('plugin.ecommerce.select.gram'), mg: t('plugin.ecommerce.select.milligram'), oz: t('plugin.ecommerce.select.ounce'), t: t('plugin.ecommerce.select.tonne'), UK: t('plugin.ecommerce.select.hundredweight')}
       hooks_run('ecommerce_weights', weights)
       weights
@@ -69,7 +75,7 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
     return amount if cama_is_admin_request? || args[:from] == args[:to] || amount.to_f.round(2) == 0.00
 
     currency = cama_ecommerce_post_type.get_option(e_current_visitor_currency, {}, 'currencies')
-    return (currency[:exchange] * amount).round(2) if currency[:date] == Date.today.to_s
+    return (currency[:exchange] * amount).round(2) if currency[:date] == Date.today.to_s && currency[:base] == e_system_currency
 
     hooks_run('ecommerce_calculate_exchange', args) # permit to use custom exchange app by setting the value in :exchange attribute
     return (args[:exchange] * amount).round(2) if args[:exchange].present?
@@ -78,7 +84,7 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
     res = open("https://www.google.com/finance/converter?a=1&from=#{args[:from]}&to=#{args[:to]}").read
     res = res.scan(/\<span class=bld\>(.+?)\<\/span\>/).first.first.split(' ') # => ["69.3000", "BOB"]
     exchange = res.first.to_f.round(4)
-    cama_ecommerce_post_type.set_option(e_current_visitor_currency, {date: Date.today.to_s, exchange: exchange}, 'currencies')
+    cama_ecommerce_post_type.set_option(e_current_visitor_currency, {date: Date.today.to_s, exchange: exchange, base: e_system_currency}, 'currencies')
     (exchange * amount).round(2)
   end
 

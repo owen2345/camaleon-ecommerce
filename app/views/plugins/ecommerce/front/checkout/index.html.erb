@@ -4,20 +4,20 @@
 <% end %>
 <div id="cama_checkout_view" class="row checkout_view">
     <%= render plugin_view('partials/cart_widget') %>
-    <h1>Checkout Process</h1>
+    <h1><%= t('.check_out_process', default: 'Checkout Process') %></h1>
     <div class="stepwizard col-md-offset-3 col-sm-offset-3">
         <div class="stepwizard-row setup-panel">
             <div class="stepwizard-step">
                 <a href="#step-1" type="button" class="btn btn-default btn-circle" disabled="disabled">1</a>
-                <p>Step 1</p>
+                <p><%= t('.step', default: 'Step') %> 1</p>
             </div>
             <div class="stepwizard-step">
                 <a href="#step-2" type="button" class="btn btn-default btn-circle" disabled="disabled">2</a>
-                <p>Step 2</p>
+                <p><%= t('.step', default: 'Step') %> 2</p>
             </div>
             <div class="stepwizard-step">
                 <a href="#step-3" type="button" class="btn btn-default btn-circle" disabled="disabled">3</a>
-                <p>Step 3</p>
+                <p><%= t('.step', default: 'Step') %> 3</p>
             </div>
         </div>
     </div>

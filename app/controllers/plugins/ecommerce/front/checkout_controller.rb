@@ -187,7 +187,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
 
   private
   def set_cart
-    @cart = Plugins::Ecommerce::UserCartService.new(current_site, current_user).get_cart
+    @cart = e_current_cart
   end
 
   def set_bread

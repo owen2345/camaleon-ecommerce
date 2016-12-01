@@ -16,7 +16,7 @@
 
             <div class="form-group col-md-4">
                 <label><%= cama_t('plugin.ecommerce.table.currency_weight') %></label><br>
-                <%= select_tag( "setting[current_weight]",  options_for_select(e_get_currency_weight.collect{|k,x| ["#{x} (#{k})", x]}, @setting[:current_weight] || 'kg'), class: "form-control required") %>
+                <%= select_tag( "setting[current_weight]",  options_for_select(e_get_currency_weights.collect{|k,x| ["#{x} (#{k})", k]}, @setting[:current_weight] || 'kg'), class: "form-control required") %>
             </div>
 
             <div class="form-group col-md-4">

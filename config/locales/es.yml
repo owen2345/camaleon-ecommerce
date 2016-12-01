@@ -310,7 +310,12 @@ es:
         noavailable_items: 'No hay items disponibles'
 
       front:
+        breadcrumb:
+          home: 'Inicio'
         checkout:
+          index:
+            check_out_process: 'Proceso de Pago'
+            step: 'Paso'
           cart_index:
             item: 'Item'
             tax: 'Impuesto'
@@ -425,7 +430,7 @@ es:
             bank_name: 'Nombre del banco'
             descr: 'Descripción'
 
-          products_details:
+          products_detail:
             title: 'Información de Pedido'
             user_details: 'Detalles de Comprador'
             name: 'Nombre'
@@ -463,17 +468,6 @@ es:
           total: 'Total'
 
 
-        table_order_products:
-          qty: 'Cantidad'
-          item: 'Item'
-          price: 'Precio'
-          tax: 'Impuesto'
-          sub_total: 'Sub Total'
-          total_excluding_tax: 'Total (excluyendo impuestos)'
-          shipping: 'Total Envio'
-          total_price: 'Precio Total'
-          discounts: 'Descuentos'
-          sub_total: 'Sub Total'
 
 
 
