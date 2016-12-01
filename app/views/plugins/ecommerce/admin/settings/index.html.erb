@@ -1,22 +1,27 @@
 <div class="panel panel-default">
     <div class="panel-heading ui-draggable-handle">
-        <h4><span class="fa fa-cogs"></span> <%= t('plugin.ecommerce.e_commerce_settings') %></h4>
+        <h4><span class="fa fa-cogs"></span> <%= cama_t('plugin.ecommerce.e_commerce_settings') %></h4>
     </div>
     <%= form_tag(url_for(action: :saved, :method => "post"), :class => "validate-settings", id: 'ecommerce_settings_form') do %>
         <div class="panel-body">
             <div class="form-group col-md-4">
-                <label><%= t('plugin.ecommerce.table.system_currency_unit') %></label><br>
-                <%= select_tag( "setting[current_unit]", options_for_select(e_get_currency_units.collect{|k, x| ["#{x[:label]} (#{x[:symbol]})", k]}, @setting[:current_unit] || 'USD'), class: "form-control required") %>
+                <label><%= cama_t('plugin.ecommerce.table.system_currency_unit') %></label><br>
+                <%= select_tag( "setting[current_unit]", options_for_select(e_get_currency_units.collect{|k, x| ["#{x[:label]} (#{x[:symbol]})", k]}, @setting[:current_unit] || 'USD'), class: "form-control required masked_select", 'data-live-search' => true) %>
             </div>
 
             <div class="form-group col-md-4">
-                <label><%= t('plugin.ecommerce.table.available_currencies_unit') %></label><br>
-                <%= select_tag( "setting[visitor_unit_currencies]", options_for_select(e_get_currency_units.collect{|k, x| ["#{x[:label]} (#{x[:symbol]})", k]}, @setting[:visitor_unit_currencies] || 'USD'), class: "form-control required", multiple: true) %>
+                <label><%= cama_t('plugin.ecommerce.table.available_currencies_unit') %></label><br>
+                <%= select_tag( "setting[visitor_unit_currencies]", options_for_select(e_get_currency_units.collect{|k, x| ["#{x[:label]} (#{x[:symbol]})", k]}, @setting[:visitor_unit_currencies] || 'USD'), class: "form-control required", multiple: true, 'data-live-search' => true) %>
             </div>
 
             <div class="form-group col-md-4">
-                <label><%= t('plugin.ecommerce.table.currency_weight') %></label><br>
+                <label><%= cama_t('plugin.ecommerce.table.currency_weight') %></label><br>
                 <%= select_tag( "setting[current_weight]",  options_for_select(e_get_currency_weight.collect{|k,x| ["#{x} (#{k})", x]}, @setting[:current_weight] || 'kg'), class: "form-control required") %>
+            </div>
+
+            <div class="form-group col-md-4">
+                <label><%= cama_t('plugin.ecommerce.table.shipping_countries') %></label><br>
+                <%= country_select :setting, :shipping_countries, {locale: I18n.locale.to_s, iso_codes: true, selected:  e_shipping_countries}, { :name => 'setting[shipping_countries][]',  class: 'form-control', multiple: true, 'data-live-search' => true, 'data-actions-box' => true } %>
             </div>
         </div>
         <div class="panel-footer">
@@ -27,5 +32,5 @@
 </div>
 <script type="application/javascript">jQuery(function(){
     var form = $('#ecommerce_settings_form');
-    form.find('select[multiple]').selectpicker();
+    form.find('select[multiple], .masked_select').selectpicker();
 })</script>

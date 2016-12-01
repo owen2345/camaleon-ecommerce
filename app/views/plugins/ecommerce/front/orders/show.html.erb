@@ -3,6 +3,11 @@
     <% unless defined?(as_partial) %>
         <h1><%= t('.title', default: 'Order Details') %>: <%= order.slug %></h1>
     <% end %>
+    <div class="basic_info">
+        <% if order.received_at.present? %><b><%= t('.received_at', default: 'Received At') %>: </b> <%= order.received_at %><br> <% end %>
+        <b><%= t('.created_at', default: 'Created At') %>: </b> <%= order.created_at %><br>
+        <% if order.shipped_at.present? %><b><%= t('.shipped_at', default: 'Shipped At') %>: </b> <%= order.shipped_at %><br> <% end %>
+    </div>
     <div>
         <h4><%= t('.customer_info', default: 'Customer Info') %></h4>
         <ul class="ec-list-orders-address">
@@ -109,7 +114,7 @@
                 <% if defined?(as_partial) %>
                     <tr>
                         <td>
-                            <%= raw order.get_meta('payment_data', {}).map { |k, v| "<b>#{k.to_s.titleize}</b>: #{v}" }.join('<br>') %>
+                            <%= raw (order.get_meta('payment_data') || {}).map { |k, v| "<b>#{k.to_s.titleize}</b>: #{v}" }.join('<br>') %>
                         </td>
                     </tr>
                 <% end %>

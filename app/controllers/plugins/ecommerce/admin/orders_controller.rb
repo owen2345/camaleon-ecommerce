@@ -8,16 +8,13 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
       orders = orders.where("#{Plugins::Ecommerce::Order.table_name}.slug LIKE ?", "%#{params[:q]}%")
     end
     if params[:c].present?
-      orders = orders.joins(:details).where("plugins_order_details.customer LIKE ?", "%#{params[:c]}%")
+      orders = orders.joins(:user).where("#{Cama::User.table_name}.first_name LIKE ? OR #{Cama::User.table_name}.last_name LIKE ?", "%#{params[:c]}%", "%#{params[:c]}%")
     end
     if params[:e].present?
-      orders = orders.joins(:details).where("plugins_order_details.email LIKE ?", "%#{params[:e]}%")
-    end
-    if params[:p].present?
-      orders = orders.joins(:details).where("plugins_order_details.phone LIKE ?", "%#{params[:p]}%")
+      orders = orders.joins(:user).where("#{Cama::User.table_name}.email LIKE ?", "%#{params[:e]}%")
     end
     if params[:s].present?
-      orders = orders.where(status: params[:s])
+      orders = orders.where(status: params[:s].split('|'))
     end
     orders = orders.order('received_at desc')
     @orders = orders.paginate(:page => params[:page], :per_page => current_site.admin_per_page)
@@ -58,8 +55,8 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
 
   # accepted order
   def mark_accepted
-    @order.accepted!
     r = {order: @order}; hooks_run('plugin_ecommerce_before_accepted_order', r)
+    @order.accepted!
     message = "#{t('plugin.ecommerce.message.order_accepted', default: 'Order Accepted')}"
     r = {order: @order, message: message}; hooks_run('plugin_ecommerce_after_accepted_order', r)
     flash[:notice] = r[:message]
@@ -67,9 +64,15 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
   end
 
   def mark_bank_confirmed
-    @order.bank_confirmed!
-    commerce_send_order_received_email(@order, true)
-    flash[:notice] = "#{t('plugin.ecommerce.message.order_bank_confirmed', default: 'Pay Bank Confirmed')}"
+    if @order.on_delivery_pending?
+      @order.on_delivery_confirmed!
+      flash[:notice] = "#{t('plugin.ecommerce.message.order_on_delivery_confirmed', default: 'Payment on Delivery Confirmed')}"
+      commerce_send_order_received_email(@order)
+    else
+      @order.bank_confirmed!
+      flash[:notice] = "#{t('plugin.ecommerce.message.order_bank_confirmed', default: 'Pay Bank Confirmed')}"
+      commerce_send_order_received_email(@order, true)
+    end
     redirect_to action: :index
   end
 

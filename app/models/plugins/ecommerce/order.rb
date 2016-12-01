@@ -55,6 +55,10 @@ class Plugins::Ecommerce::Order < Plugins::Ecommerce::Cart
     update_columns({status: 'paid', updated_at: Time.current})
   end
 
+  def on_delivery_confirmed!
+    update_columns({status: 'paid', updated_at: Time.current})
+  end
+
   def payment_data
     get_meta('payment_data', {})
   end

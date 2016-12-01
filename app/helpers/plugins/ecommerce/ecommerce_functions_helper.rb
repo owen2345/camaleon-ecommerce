@@ -10,6 +10,11 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
     current_site.get_meta("_setting_ecommerce", {})
   end
 
+  # return all shipping country codes supported for shipping
+  def e_shipping_countries
+    ecommerce_get_settings[:shipping_countries] || ISO3166::Country.codes
+  end
+
   # draw a select dropdown with all frontend currencies and actions to change current currency
   # mode: long | short
   def e_draw_ecommerce_currencies(mode = 'long')

@@ -8,13 +8,13 @@
             <div class="input-group" id="adv-search">
                 <input type="text" class="form-control" placeholder="<%= t('plugin.ecommerce.search_order_number') %>" name="q" value="<%= params[:q] %>"/>
                 <div class="input-group-btn">
-                    <!--<button type="button" title="<%= t('plugin.ecommerce.advanced_search', default: 'Advanced Search') %>" class="btn btn-default" id="ecommerce_adv_search_btn"><span class="caret"></span></button>-->
+                    <button type="button" title="<%= t('plugin.ecommerce.advanced_search', default: 'Advanced Search') %>" class="btn btn-default" id="ecommerce_adv_search_btn"><span class="caret"></span></button>
                     <button type="submit" class="btn btn-primary"><span class="fa fa-search"></span></button>
                 </div>
             </div>
         <% end %>
         <div class="hidden" id="commerce_adv_search_modal">
-            <%= form_tag(url_for(action: :index)) do %>
+            <%= form_tag(url_for(action: :index), method: :get) do %>
                 <div class="form-group">
                     <label for="contain"><%= t('plugin.ecommerce.table.customer') %> </label>
                     <input class="form-control" type="text" name="c" value="<%= params[:c] %>"/>
@@ -23,15 +23,14 @@
                     <label for="contain"><%= t('plugin.ecommerce.e_mail_address') %></label>
                     <input class="form-control" type="email" name="e" value="<%= params[:e] %>"/>
                 </div>
-                <div class="form-group">
-                    <label for="contain"><%= t('plugin.ecommerce.phone_number') %></label>
-                    <input class="form-control" type="text" name="p" value="<%= params[:p] %>"/>
-                </div>
+                <!--<div class="form-group">-->
+                    <!--<label for="contain"><%= t('plugin.ecommerce.phone_number') %></label>-->
+                    <!--<input class="form-control" type="text" name="p" value="<%= params[:p] %>"/>-->
+                <!--</div>-->
                 <div class="form-group">
                     <label for="contain"><%= t('plugin.ecommerce.table.status') %></label>
-                    <%= select_tag "s", options_for_select([[""], [t('plugin.ecommerce.select.received'), "received"], [t('plugin.ecommerce.select.unpaid'), "unpaid"], [t('plugin.ecommerce.select.accepted'), "accepted"], [t('plugin.ecommerce.select.shipped'), "shipped"], [t('plugin.ecommerce.select.closed'), "closed"], [t('plugin.ecommerce.select.canceled'), "canceled"]], params[:s]), class: 'form-control' %>
+                    <%= select_tag "s", options_for_select([[""], [t('plugin.ecommerce.select.accepted'), "accepted"], [cama_t('plugin.ecommerce.select.shipped'), "shipped"], [cama_t('plugin.ecommerce.select.canceled'), "canceled"], [cama_t('plugin.ecommerce.select.paid'), "paid"], [cama_t('plugin.ecommerce.select.pending'), "on_delivery|bank_pending"]], params[:s]), class: 'form-control' %>
                 </div>
-
                 <button type="submit" class="btn btn-primary"><span class="fa fa-search" aria-hidden="true"></span> <%= t("camaleon_cms.admin.button.search") %></button>
             <% end %>
         </div>
@@ -62,15 +61,15 @@
         <table class="table">
             <thead>
             <tr>
-                <th id=""><%= t('plugin.ecommerce.table.id') %></th>
-                <th id=""><%= t('plugin.ecommerce.table.customer') %></th>
-                <th id=""><%= t('plugin.ecommerce.table.status') %></th>
-                <th id=""><%= t('plugin.ecommerce.table.paid') %></th>
-                <th id=""><%= t('plugin.ecommerce.table.products') %></th>
-                <th id=""><%= t('plugin.ecommerce.table.amount') %></th>
-                <th id=""><%= t('plugin.ecommerce.table.received_time') %></th>
-                <th id=""><%= t('plugin.ecommerce.table.payment_method') %></th>
-                <th><%= t('camaleon_cms.admin.table.actions') %></th>
+                <th><%= cama_t('plugin.ecommerce.table.id') %></th>
+                <th><%= cama_t('plugin.ecommerce.table.customer') %></th>
+                <th><%= cama_t('plugin.ecommerce.table.status') %></th>
+                <th><%= cama_t('plugin.ecommerce.table.paid') %></th>
+                <th><%= cama_t('plugin.ecommerce.table.products') %></th>
+                <th><%= cama_t('plugin.ecommerce.table.amount') %></th>
+                <th><%= cama_t('plugin.ecommerce.table.created_at') %></th>
+                <th><%= cama_t('plugin.ecommerce.table.payment_method') %></th>
+                <th><%= cama_t('camaleon_cms.admin.table.actions') %></th>
             </tr>
             </thead>
             <tbody>
@@ -95,7 +94,7 @@
                         <% end %>
                     </td>
                     <td><%= order.cache_the_total %></td>
-                    <td><%= order.received_at %></td>
+                    <td><%= order.created_at %></td>
                     <td><%= order.payment_method.name rescue "" %></td>
                     <td>
                         <%= link_to raw('<i class="fa fa-eye"></i>'), {action: :show, id: order.slug}, class: "btn btn-info btn-xs", title: "#{t('camaleon_cms.admin.button.preview')}" %>

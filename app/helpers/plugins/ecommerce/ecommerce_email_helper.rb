@@ -13,7 +13,7 @@ module Plugins::Ecommerce::EcommerceEmailHelper
 
     flash[:notice] = t('plugins.ecommerce.messages.payment_completed', default: "Payment completed successfully")
     args = {order: order}; hooks_run("commerce_after_payment_completed", args)
-    
+
     order
   end
 
@@ -96,7 +96,8 @@ module Plugins::Ecommerce::EcommerceEmailHelper
       :shipping_address => order.get_meta('shipping_address'),
       :subtotal => order.cache_the_sub_total,
       :total_cost => order.cache_the_total,
-      :order => order
+      :order => order,
+      :order_details_html => render_to_string(file: 'plugins/ecommerce/front/orders/show', layout: false, locals: {as_partial: true, order: order.decorated? ? order : order.decorate})
     }
     order_service = Plugins::Ecommerce::OrderService.new(current_site, order)
     data[:owners] = order_service.product_owners

@@ -65,6 +65,7 @@ es:
         shipped: "Enviado"
         updated: "Actualizado"
         order_bank_confirmed: 'Pago Bancario Confirmado'
+        order_on_delivery_confirmed: 'Pago Contra Entrega Confirmado'
         order_accepted: 'Orden aceptado'
         order_shipped: 'Orden enviado'
         order_canceled: 'Orden cancelado'
@@ -113,6 +114,14 @@ es:
       shipped_date: "Fecha de Envío"
       search_order_number: "Buscar número de pedido"
       select:
+        received: 'Recibido'
+        unpaid: 'No Pagado'
+        paid: 'Pagado'
+        accepted: 'Aceptado'
+        shipped: 'Enviado'
+        closed: 'Cerrado'
+        canceled: 'Cancelado'
+        pending: 'Pendiente'
         kilogram: "Kilogramo"
         pound: "Libra"
         dram: "Dracma"
@@ -133,6 +142,7 @@ es:
         currency_unit: "Unidad de Moneda"
         system_currency_unit: 'Unidad de Moneda Administrador'
         available_currencies_unit: 'Unidades de Moneda para Visitantes'
+        shipping_countries: 'Paises Para Envío'
         currency_weight: "Unidad de Peso"
         customer: "Cliente"
         customer_info: "Información del cliente"
@@ -171,6 +181,7 @@ es:
         products: "Productos"
         rate: "Tarifa"
         received_time: "Tiempo Recibido"
+        created_at: 'Fecha de Creación'
         sandbox: "Cuentas de Prueba"
         shipping: "Envío"
         signature: "Firma"
@@ -337,6 +348,9 @@ es:
             address: 'Dirección'
             details: 'Detalles'
             shipping_address: 'Dirección de envío'
+            created_at: 'Fecha de Creación'
+            received_at: 'Received At'
+            shipped_at: 'Enviado En'
             city: 'Ciudad'
             state: 'Estado'
             zip_code: 'Código zip'
