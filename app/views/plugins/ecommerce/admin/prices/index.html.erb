@@ -1,6 +1,6 @@
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h4><span class="fa fa-usd"></span> <%= t('plugin.ecommerce.product.price') %></h4>
+        <h4><span class="fa fa-usd"></span> <%= t('plugin.ecommerce.shipping_prices') %></h4>
         <%= link_to raw("<i class='fa fa-plus'></i> #{t('plugin.ecommerce.add_price')}"), {action: :new}, class: "btn btn-primary pull-right" %>
     </div>
     <div class="panel-body">
@@ -21,7 +21,7 @@
             %>
                 <tr>
                     <td><%= row[:code] %></td>
-                    <td><%= current_site.current_unit %> <%= row[:price] %></td>
+                    <td><%= e_parse_price(row[:price]) %></td>
                     <td><%= row[:min_weight] %> <%= current_site.current_weight %></td>
                     <td><%= row[:max_weight] %> <%= current_site.current_weight %></td>
                     <td>

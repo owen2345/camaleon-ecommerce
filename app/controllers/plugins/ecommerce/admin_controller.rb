@@ -33,7 +33,7 @@ class Plugins::Ecommerce::AdminController < CamaleonCms::Apps::PluginsAdminContr
 
   private
   def verify_ecommerce_permission
-    authorize! :posts, get_commerce_post_type
+    authorize! :posts, cama_ecommerce_post_type
     add_breadcrumb I18n.t("plugin.ecommerce.e_commerce", default: 'Ecommerce'), admin_plugins_ecommerce_index_path
   end
 end

@@ -19,6 +19,7 @@ Rails.application.routes.draw do
             post 'pay_by_authorize_net'
             post 'pay_by_stripe'
             post 'pay_by_paypal'
+            post 'pay_by_on_delivery'
           end
         end
 

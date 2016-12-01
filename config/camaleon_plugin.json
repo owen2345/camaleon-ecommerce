@@ -5,8 +5,7 @@
   "key": "ecommerce",
   "helpers": [
     "Plugins::Ecommerce::EcommerceHelper",
-    "Plugins::Ecommerce::EcommerceFunctionsHelper",
-    "Plugins::Ecommerce::EcommercePaymentHelper"
+    "Plugins::Ecommerce::EcommerceFunctionsHelper"
   ],
   "options": [
   ],
@@ -25,9 +24,6 @@
     ],
     "admin_before_load": [
       "ecommerce_admin_before_load"
-    ],
-    "list_post": [
-      "ecommerce_admin_list_post"
     ],
     "app_before_load": [
       "ecommerce_app_before_load"

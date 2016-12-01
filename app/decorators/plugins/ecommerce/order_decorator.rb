@@ -2,7 +2,7 @@ class Plugins::Ecommerce::OrderDecorator < Draper::Decorator
   delegate_all
 
   def the_status(include_date_action = false)
-    res = if object.bank_pending?
+    res = if object.bank_pending? || object.on_delivery_pending?
             "<span class='label label-warning'>#{h.t("plugins.ecommerce.messages.order_status.#{object.status}", default: object.status.titleize)}</span>"
           elsif object.canceled?
             "<span class='label label-danger'>#{h.t("plugins.ecommerce.messages.order_status.#{object.status}", default: object.status.titleize)}</span>"

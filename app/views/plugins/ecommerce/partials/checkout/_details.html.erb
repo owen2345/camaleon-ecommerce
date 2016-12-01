@@ -18,7 +18,7 @@
                 <h3><%= t('.shipping_options', default: 'Shipping Options') %></h3>
                 <div class="form-group">
                     <select class="form-control required" name="shipping_method" id="shipping_methods" >
-                        <% current_site.shipping_methods.each do |m| price = m.get_price_from_weight(@cart.weight_total); the_price = "#{current_site.current_unit}#{price}" %>
+                        <% current_site.shipping_methods.each do |m| price = m.get_price_from_weight(@cart.weight_total); the_price = e_parse_price(price) %>
                             <option value="<%= m.id %>" <%= 'selected' if @cart.shipping_method_id == m.id %> data-price="<%= price %>"><%= m.name %> (<%= the_price %>)</option>
                         <% end %>
                     </select>

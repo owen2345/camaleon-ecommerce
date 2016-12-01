@@ -4,44 +4,36 @@
     </div>
 
     <div class="panel-body">
-        <div class="box-adv-search pull-right" id="orders-box-adv-search">
+        <%= form_tag(url_for(action: :index), class: 'pull-right', method: 'get') do %>
             <div class="input-group" id="adv-search">
                 <input type="text" class="form-control" placeholder="<%= t('plugin.ecommerce.search_order_number') %>" name="q" value="<%= params[:q] %>"/>
-
                 <div class="input-group-btn">
-                    <div class="btn-group" role="group">
-                        <div class="dropdown dropdown-lg">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                <span class="caret"></span></button>
-                            <div class="dropdown-menu dropdown-menu-right" role="menu">
-                                <form action="<%= url_for(action: :index) %>" method="get" class="form-horizontal" role="form">
-                                    <div class="form-group">
-                                        <label for="contain"><%= t('plugin.ecommerce.table.customer') %> </label>
-                                        <input class="form-control" type="text" name="c" value="<%= params[:c] %>"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="contain"><%= t('plugin.ecommerce.e_mail_address') %></label>
-                                        <input class="form-control" type="email" name="e" value="<%= params[:e] %>"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="contain"><%= t('plugin.ecommerce.phone_number') %></label>
-                                        <input class="form-control" type="text" name="p" value="<%= params[:p] %>"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="contain"><%= t('plugin.ecommerce.table.status') %></label>
-                                        <%= select_tag "s", options_for_select([[""], [t('plugin.ecommerce.select.received'), "received"], [t('plugin.ecommerce.select.unpaid'), "unpaid"], [t('plugin.ecommerce.select.accepted'), "accepted"], [t('plugin.ecommerce.select.shipped'), "shipped"], [t('plugin.ecommerce.select.closed'), "closed"], [t('plugin.ecommerce.select.canceled'), "canceled"]], params[:s]), class: 'form-control' %>
-                                    </div>
-
-                                    <button type="submit" class="btn btn-primary">
-                                        <span class="fa fa-search" aria-hidden="true"></span></button>
-                                </form>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-primary">
-                            <span class="fa fa-search" aria-hidden="true"></span></button>
-                    </div>
+                    <!--<button type="button" title="<%= t('plugin.ecommerce.advanced_search', default: 'Advanced Search') %>" class="btn btn-default" id="ecommerce_adv_search_btn"><span class="caret"></span></button>-->
+                    <button type="submit" class="btn btn-primary"><span class="fa fa-search"></span></button>
                 </div>
             </div>
+        <% end %>
+        <div class="hidden" id="commerce_adv_search_modal">
+            <%= form_tag(url_for(action: :index)) do %>
+                <div class="form-group">
+                    <label for="contain"><%= t('plugin.ecommerce.table.customer') %> </label>
+                    <input class="form-control" type="text" name="c" value="<%= params[:c] %>"/>
+                </div>
+                <div class="form-group">
+                    <label for="contain"><%= t('plugin.ecommerce.e_mail_address') %></label>
+                    <input class="form-control" type="email" name="e" value="<%= params[:e] %>"/>
+                </div>
+                <div class="form-group">
+                    <label for="contain"><%= t('plugin.ecommerce.phone_number') %></label>
+                    <input class="form-control" type="text" name="p" value="<%= params[:p] %>"/>
+                </div>
+                <div class="form-group">
+                    <label for="contain"><%= t('plugin.ecommerce.table.status') %></label>
+                    <%= select_tag "s", options_for_select([[""], [t('plugin.ecommerce.select.received'), "received"], [t('plugin.ecommerce.select.unpaid'), "unpaid"], [t('plugin.ecommerce.select.accepted'), "accepted"], [t('plugin.ecommerce.select.shipped'), "shipped"], [t('plugin.ecommerce.select.closed'), "closed"], [t('plugin.ecommerce.select.canceled'), "canceled"]], params[:s]), class: 'form-control' %>
+                </div>
+
+                <button type="submit" class="btn btn-primary"><span class="fa fa-search" aria-hidden="true"></span> <%= t("camaleon_cms.admin.button.search") %></button>
+            <% end %>
         </div>
         <div class="hidden" id="commerce_cancel_modal">
             <%= form_tag '#' do %>
@@ -114,8 +106,8 @@
                                 <ul class="dropdown-menu pull-right" style="min-width: 50px;">
                                     <%= content_tag :li, link_to(t('plugin.ecommerce.table.make_accepted', default: 'Mark as Accepted'), url_for(action: :mark_accepted, order_id: order.slug), class: 'btn btn-xs') if order.paid? %>
                                     <%= content_tag :li, link_to(t('plugin.ecommerce.table.make_shipped', default: 'Mark as Shipped'), url_for(action: :mark_shipped, order_id: order.slug), class: 'btn btn-xs mark_shipped_btn') if order.accepted? || order.paid? %>
-                                    <%= content_tag :li, link_to(t('plugin.ecommerce.table.make_canceled', default: 'Mark as Canceled'), url_for(action: :mark_canceled, order_id: order.slug), class: 'btn btn-xs mark_canceled_btn', 'data-confirm_msg'=> t('plugin.ecommerce.table.confirm_mark_as_cancel', default: 'Are you sure to mark as Canceled?')) if order.bank_pending? || order.paid? %>
-                                    <%= content_tag :li, link_to(t('plugin.ecommerce.table.make_bank_confirmed', default: 'Mark as Paid'), url_for(action: :mark_bank_confirmed, order_id: order.slug), class: 'btn btn-xs', 'data-confirm'=> t('plugin.ecommerce.table.confirm_mark_as_paid', default: 'Are you sure to mark as Paid?')) if order.bank_pending? %>
+                                    <%= content_tag :li, link_to(t('plugin.ecommerce.table.make_canceled', default: 'Mark as Canceled'), url_for(action: :mark_canceled, order_id: order.slug), class: 'btn btn-xs mark_canceled_btn', 'data-confirm_msg'=> t('plugin.ecommerce.table.confirm_mark_as_cancel', default: 'Are you sure to mark as Canceled?')) if order.bank_pending? || order.on_delivery_pending? || order.paid? %>
+                                    <%= content_tag :li, link_to(t('plugin.ecommerce.table.make_bank_confirmed', default: 'Mark as Paid'), url_for(action: :mark_bank_confirmed, order_id: order.slug), class: 'btn btn-xs', 'data-confirm'=> t('plugin.ecommerce.table.confirm_mark_as_paid', default: 'Are you sure to mark as Paid?')) if order.bank_pending? || order.on_delivery_pending? %>
                                 </ul>
                         </div>
                     </td>
@@ -136,21 +128,20 @@
             open_modal({title: link.text(), content: panel.find('#commerce_shipped_modal').html(), callback: function(modal){ modal.find('form').attr('action', link.attr('href')).validate(); }});
         });
 
+        panel.find('#ecommerce_adv_search_btn').click(function(e){
+            var link = $(this);
+            e.preventDefault();
+            open_modal({title: link.attr('title'), content: panel.find('#commerce_adv_search_modal').html(), callback: function(modal){
+                modal.find('form').validate();
+            }});
+        });
+
         panel.find('.mark_canceled_btn').click(function(e){
             var link = $(this);
             e.preventDefault();
             open_modal({title: link.text(), content: panel.find('#commerce_cancel_modal').html(), callback: function(modal){
                 modal.find('form').attr('action', link.attr('href')).validate({submitHandler: function(){ return confirm(link.attr('data-confirm_msg')); }});
             }});
-        });
-
-        var cont = $('#orders-box-adv-search');
-        var rnd = "input_" + Math.floor((Math.random() * 1000000) + 1);
-        cont.find('#adv-search > input').change(function () {
-            cont.find('form  .' + rnd).val($(this).val());
-        }).clone().attr('type', 'hidden').addClass(rnd).appendTo(cont.find('form'));
-        cont.find('#adv-search .btn-group > button').click(function () {
-            cont.find('form').submit();
         });
     });
 </script>

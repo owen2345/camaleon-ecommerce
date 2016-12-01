@@ -28,6 +28,8 @@ es:
       by_paypal: "Por Paypal"
       by_credit_card: "Tarjeta Crédito (PayPal)"
       by_authorize_net: "Tarjeta Crédito (Authorize.net)"
+      by_on_delivery: 'Pago Contra Entrega'
+      advanced_search: 'Búsqueda Avanzada'
       details_shipping_methods: "Detalle Método de Envío"
       details_payment_methods: "Detalle Método de Pago"
       details_order: "Detalle Pedido"
@@ -111,15 +113,15 @@ es:
       shipped_date: "Fecha de Envío"
       search_order_number: "Buscar número de pedido"
       select:
-        kilogram: "kilogramo"
-        pound: "libra"
-        dram: "dracma"
-        grain: "grano"
-        gram: "gramo"
-        hundredweight: "quintal"
-        milligram: "miligramo"
-        ounce: "onza"
-        tonne: "tonelada"
+        kilogram: "Kilogramo"
+        pound: "Libra"
+        dram: "Dracma"
+        grain: "Grano"
+        gram: "Gramo"
+        hundredweight: "Quintal"
+        milligram: "Miligramo"
+        ounce: "Onza"
+        tonne: "Tonelada"
       table:
         address: "Dirección"
         actions: "Acciones"
@@ -129,6 +131,8 @@ es:
         code: "CÓDIGO"
         country: "País"
         currency_unit: "Unidad de Moneda"
+        system_currency_unit: 'Unidad de Moneda Administrador'
+        available_currencies_unit: 'Unidades de Moneda para Visitantes'
         currency_weight: "Unidad de Peso"
         customer: "Cliente"
         customer_info: "Información del cliente"
@@ -278,6 +282,7 @@ es:
         required_minimum_price: 'El monto de tu compra debe ser superior a %{min_amount}'
         order_status:
           bank_pending: 'Pendiente de confirmación'
+          on_delivery: 'Pendiente de confirmación'
           canceled: 'Cancelado'
           paid: 'Pagado'
           shipped: 'Enviado'

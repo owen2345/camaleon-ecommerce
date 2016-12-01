@@ -1,7 +1,7 @@
 class Plugins::Ecommerce::ProductVariationDecorator < Draper::Decorator
   delegate_all
   def the_price
-    "#{h.current_site.current_unit}#{sprintf('%.2f', object.amount)}"
+    h.e_parse_price(object.amount)
   end
 
   def the_title

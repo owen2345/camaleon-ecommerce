@@ -5,7 +5,7 @@ class Plugins::Ecommerce::ProductItemDecorator < Draper::Decorator
   end
 
   def the_sub_total
-    "#{h.current_site.current_unit}#{sprintf('%.2f', object.sub_total)}"
+    h.e_parse_price(object.sub_total)
   end
 
   def the_price

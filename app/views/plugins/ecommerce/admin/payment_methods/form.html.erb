@@ -29,6 +29,7 @@
             <div id="tab-select-payment-method" class="panel panel-default tabs">
                 <ul  class="nav nav-tabs nav-justified">
                     <li class="<%= 'active' if options[:type] == 'bank_transfer' %>"><a href="#tab8" data-toggle="tab"><%= t('plugin.ecommerce.by_bank_transfer') %></a></li>
+                    <li class="<%= 'active' if options[:type] == 'on_delivery' %>"><a href="#tab_on_delivery" data-toggle="tab"><%= t('plugin.ecommerce.by_on_delivery', default: 'Payment on delivery') %></a></li>
                     <li class="<%= 'active' if options[:type] == 'paypal' %>"><a href="#tab9" data-toggle="tab"><%= t('plugin.ecommerce.by_paypal') %></a></li>
                     <li class="<%= 'active' if options[:type] == 'authorize_net' %>"><a href="#tab10" data-toggle="tab"><%= t('plugin.ecommerce.by_authorize_net') %></a></li>
                     <li class="<%= 'active' if options[:type] == 'stripe' %>"><a href="#tab11" data-toggle="tab"><%= t('plugin.ecommerce.by_stripe', default: 'Stripe') %></a></li>
@@ -106,6 +107,10 @@
                                 </label>
                             </div>
                         </div>
+                    </div>
+                    <div class="tab-pane <%= 'active' if options[:type] == 'on_delivery' %>" id="tab_on_delivery">
+                        <%= hidden_field_tag('options[type]', 'on_delivery') %>
+                        <h3><i class="fa fa-check-circle"></i></h3>
                     </div>
                     <div class="tab-pane <%= 'active' if options[:type] == 'stripe' %>" id="tab11">
                         <%= hidden_field_tag('options[type]', 'stripe') %>

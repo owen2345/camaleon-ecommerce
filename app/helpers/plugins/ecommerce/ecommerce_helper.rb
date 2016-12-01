@@ -1,9 +1,5 @@
 module Plugins::Ecommerce::EcommerceHelper
   include Plugins::Ecommerce::EcommerceEmailHelper
-
-  def ecommerce_admin_list_post(d)
-  end
-
   def ecommerce_admin_product_form(args)
     if args[:post_type].slug == 'commerce'
       append_asset_libraries({ecommerce: {css: [], js: [plugin_asset_path('admin_product')]}})
@@ -11,8 +7,13 @@ module Plugins::Ecommerce::EcommerceHelper
     end
   end
 
+  # return ecommerce posttype
+  def cama_ecommerce_post_type
+    @_cache_ecommerce_post_type ||= current_site.post_types.where(slug: 'commerce').first.try(:decorate)
+  end
+
   def ecommerce_front_before_load
-    @ecommerce_post_type = current_site.post_types.where(slug: 'commerce').first.decorate
+    e_current_visitor_currency(params[:cama_change_currency]) if params[:cama_change_currency].present?
     @ecommerce_breadcrumb = [].push(["Home", cama_root_url])
   end
 
@@ -81,40 +82,37 @@ module Plugins::Ecommerce::EcommerceHelper
     end
   end
 
-  def get_commerce_post_type
-    @ecommerce = current_site.post_types.hidden_menu.where(slug: "commerce").first
-    unless @ecommerce.present?
-      @ecommerce = current_site.post_types.hidden_menu.new(slug: "commerce", name: "Product")
-      if @ecommerce.save
-        @ecommerce.set_options({
-          has_category: true,
-          has_tags: true,
-          not_deleted: true,
-          has_summary: true,
-          has_content: true,
-          has_comments: true,
-          has_picture: true,
-          has_template: false,
-          has_featured: true,
-          cama_post_decorator_class: 'Plugins::Ecommerce::ProductDecorator'
-        })
-        @ecommerce.categories.create({name: 'Uncategorized', slug: 'Uncategorized'.parameterize})
-      end
-      @ecommerce.set_options({posts_feature_image_label: 'plugin.ecommerce.product.image_label',
-                              posts_feature_image_label_default: 'Product Image'})
-    end
-  end
-
   def ecommerce_add_assets_in_front
     append_asset_libraries({ecommerce_front: {css: [plugin_gem_asset('front')], js: [plugin_gem_asset('cart')]}})
   end
 
   private
   def generate_custom_field_products
-    get_commerce_post_type
-    unless @ecommerce.get_field_groups.where(slug: "plugin_ecommerce_product_data").present?
-      @ecommerce.get_field_groups.destroy_all
-      group = @ecommerce.add_custom_field_group({name: 'Products Details', slug: 'plugin_ecommerce_product_data'})
+    ecommerce = current_site.post_types.hidden_menu.where(slug: "commerce").first
+    unless ecommerce.present?
+      ecommerce = current_site.post_types.hidden_menu.new(slug: "commerce", name: "Product")
+      if ecommerce.save
+        ecommerce.set_options({
+                                 has_category: true,
+                                 has_tags: true,
+                                 not_deleted: true,
+                                 has_summary: true,
+                                 has_content: true,
+                                 has_comments: true,
+                                 has_picture: true,
+                                 has_template: false,
+                                 has_featured: true,
+                                 cama_post_decorator_class: 'Plugins::Ecommerce::ProductDecorator'
+                               })
+        ecommerce.categories.create({name: 'Uncategorized', slug: 'Uncategorized'.parameterize})
+      end
+      ecommerce.set_options({posts_feature_image_label: 'plugin.ecommerce.product.image_label',
+                              posts_feature_image_label_default: 'Product Image'})
+    end
+
+    unless ecommerce.get_field_groups.where(slug: "plugin_ecommerce_product_data").present?
+      ecommerce.get_field_groups.destroy_all
+      group = ecommerce.add_custom_field_group({name: 'Products Details', slug: 'plugin_ecommerce_product_data'})
       group.add_manual_field({"name" => "t('plugin.ecommerce.product.sku', default: 'Sku')", "slug" => "ecommerce_sku"}, {field_key: "text_box", required: true, label_eval: true})
       group.add_manual_field({"name" => "t('plugin.ecommerce.product.attrs', default: 'Attributes')", "slug" => "ecommerce_attrs", description: "t('plugin.ecommerce.product.attrs_descr', default: 'Please enter your product attributes separated by commas, like: Color ==> Red, Blue, Green')"}, {field_key: "field_attrs", required: false, multiple: true, false: true, translate: true, label_eval: true})
       group.add_manual_field({"name" => "t('plugin.ecommerce.product.photos', default: 'Photos')", "slug" => "ecommerce_photos"}, {field_key: "image", required: false, multiple: true, label_eval: true})

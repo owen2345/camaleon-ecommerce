@@ -13,7 +13,7 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
   end
 
   def the_price(variation_id = nil)
-    "#{h.current_site.current_unit}#{sprintf('%.2f', price(variation_id))}"
+    h.e_parse_price(price(variation_id))
   end
 
   def the_weight(variation_id = nil)
@@ -69,7 +69,7 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
   end
 
   def the_tax(variation_id = nil)
-    tax(variation_id)
+    h.e_parse_price(tax(variation_id))
   end
 
   def tax(variation_id = nil)

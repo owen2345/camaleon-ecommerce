@@ -71,9 +71,7 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
         res[:error] = 'required_minimum_price'
       else
         case opts[:discount_type]
-          when 'free'
-            res[:discount] = price || sub_total
-          when 'free_ship'
+          when 'free_ship', 'free'
             res[:discount] = total_shipping
           when 'percent'
             res[:discount] = sub_total * opts[:amount].to_f / 100

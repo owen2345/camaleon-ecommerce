@@ -1,20 +1,20 @@
 class Plugins::Ecommerce::CartDecorator < Draper::Decorator
   delegate_all
   def the_sub_total
-    "#{h.current_site.current_unit}#{sprintf('%.2f', object.sub_total)}"
+    h.e_parse_price(object.sub_total)
   end
 
   def the_total_discounts
-    "#{h.current_site.current_unit}#{sprintf('%.2f', object.total_discounts)}"
+    h.e_parse_price(object.total_discounts)
   end
 
   def the_total_amount
-    "#{h.current_site.current_unit}#{sprintf('%.2f', object.total_amount)}"
+    h.e_parse_price(object.total_amount)
   end
   alias_method :the_price, :the_total_amount
 
   def the_tax_total
-    "#{h.current_site.current_unit}#{sprintf('%.2f', object.tax_total)}"
+    h.e_parse_price(object.tax_total)
   end
 
   def the_weight_total
@@ -22,6 +22,6 @@ class Plugins::Ecommerce::CartDecorator < Draper::Decorator
   end
 
   def the_total_shipping
-    "#{h.current_site.current_unit}#{sprintf('%.2f', object.total_shipping)}"
+    h.e_parse_price(object.total_shipping)
   end
 end

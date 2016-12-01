@@ -21,7 +21,7 @@
                   <%= text_field_tag( "price[code]", @price[:code], class: "form-control required") %>
                 </div>
                 <div class="form-group col-md-6">
-                  <label><%= t('plugin.ecommerce.product.price') %> </label> (<%= current_site.current_unit %>)<br>
+                  <label><%= t('plugin.ecommerce.product.price') %> </label> (<%= e_system_currency %>)<br>
                   <%= number_field_tag( "price[price]", @price[:price], class: "form-control required") %>
                 </div>
                 <div class="form-group col-md-6">

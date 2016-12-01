@@ -5,7 +5,7 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
   def index
     orders = current_site.orders
     if params[:q].present?
-      orders = orders.where(slug: params[:q])
+      orders = orders.where("#{Plugins::Ecommerce::Order.table_name}.slug LIKE ?", "%#{params[:q]}%")
     end
     if params[:c].present?
       orders = orders.joins(:details).where("plugins_order_details.customer LIKE ?", "%#{params[:c]}%")

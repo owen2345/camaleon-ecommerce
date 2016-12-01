@@ -1,3 +1,4 @@
+<%= raw e_draw_ecommerce_currencies %>
 <div class="row" style="min-height: 64px">
     <div class="col-md-9">
         <ol class="breadcrumb" style="margin: 0;">
@@ -19,7 +20,7 @@
                 <h4><%= t('.shopping_cart', default: 'Shopping Cart') %></h4>
                 <p><%= t('.total_items', default: '(%{qty}) items', qty: @cart.items_total) %>, <%= t('.total', default: 'Total') %>: <%= @cart.the_total_amount %></p>
                 <span>
-                    <a href="<%= @ecommerce_post_type.the_url %>" class="btn btn-default btn-xs"><%= t('.products_list', default: 'Products list') %></a>
+                    <a href="<%= cama_ecommerce_post_type.the_url %>" class="btn btn-default btn-xs"><%= t('.products_list', default: 'Products list') %></a>
                     <% if (@cart.items_total > 0) %>
                         <a href="<%= plugins_ecommerce_checkout_cart_path %>" class="btn btn-warning btn-xs"><%= t('.purchase', default: 'Purchase') %></a>
                     <% end %>
@@ -28,7 +29,7 @@
             </div>
         <% else %>
             <div class=" text-right">
-                <a href="<%= @ecommerce_post_type.the_url %>" class="btn btn-default"><%= t('.products_list', default: 'Products list') %></a>
+                <a href="<%= cama_ecommerce_post_type.the_url %>" class="btn btn-default"><%= t('.products_list', default: 'Products list') %></a>
             </div>
         <% end %>
     </div>

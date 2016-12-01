@@ -2,7 +2,9 @@ class Plugins::Ecommerce::Order < Plugins::Ecommerce::Cart
   self.table_name = 'plugins_ecommerce_orders'
   has_many :metas, ->{ where(object_class: 'Plugins::Ecommerce::Cart')}, :class_name => "CamaleonCms::Meta", foreign_key: :objectid, dependent: :delete_all
   default_scope { where(kind: 'order') }
-  # status: bank_pending => pending of verification for bank transfer orders
+  # status:
+  #         bank_pending => pending of verification for bank transfer orders
+  #         on_delivery => pending to mark as paid after after delivery
   #         paid => paid by some method
   #         canceled => canceled order
   #         shipped => shipped status
@@ -43,6 +45,10 @@ class Plugins::Ecommerce::Order < Plugins::Ecommerce::Cart
 
   def bank_pending?
     status == 'bank_pending'
+  end
+
+  def on_delivery_pending?
+    status == 'on_delivery'
   end
 
   def bank_confirmed!

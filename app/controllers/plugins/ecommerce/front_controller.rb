@@ -1,6 +1,5 @@
 class Plugins::Ecommerce::FrontController < CamaleonCms::Apps::PluginsFrontController
   prepend_before_action :init_flash
-  include Plugins::Ecommerce::EcommercePaymentHelper
   before_action :ecommerce_add_assets_in_front
   before_action :save_cache_redirect, only: [:login, :register]
   def login

@@ -1,7 +1,7 @@
 class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontController
   before_action :commerce_authenticate
   before_action :set_cart
-  before_action :set_payment, only: [:pay_by_stripe, :pay_by_bank_transfer, :pay_by_credit_card, :pay_by_authorize_net, :pay_by_paypal]
+  before_action :set_payment, only: [:pay_by_stripe, :pay_by_bank_transfer, :pay_by_credit_card, :pay_by_authorize_net, :pay_by_paypal, :pay_by_on_delivery]
 
   def index
     unless @cart.product_items.count > 0
@@ -129,6 +129,12 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
   def pay_by_bank_transfer
     @cart.set_meta("payment_data", params[:details])
     mark_order_like_received(@cart, 'bank_pending')
+    redirect_to plugins_ecommerce_orders_url
+  end
+
+  def pay_by_on_delivery
+    @cart.set_meta("payment_data", params[:details])
+    mark_order_like_received(@cart, 'on_delivery')
     redirect_to plugins_ecommerce_orders_url
   end
 

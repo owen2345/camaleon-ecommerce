@@ -1,43 +1,25 @@
 class Plugins::Ecommerce::CouponDecorator < CamaleonCms::TermTaxonomyDecorator
   delegate_all
 
-  # Define presentation-specific methods here. Helpers are accessed through
-  # `helpers` (aka `h`). You can override attributes, for example:
-  #
-  #   def created_at
-  #     helpers.content_tag :span, class: 'time' do
-  #       object.created_at.strftime("%a %m/%d/%y")
-  #     end
-  #   end
-
+  # return the code of the coupon
   def the_code
     object.slug.to_s.upcase
   end
 
+  # return humanized the amount/value of the coupon
   def the_amount
     opts = object.options
     case opts[:discount_type]
       when 'percent'
         "#{opts[:amount].to_f}%"
       when 'money'
-        "#{h.current_site.current_unit}#{opts[:amount].to_f}"
+        h.e_parse_price(opts[:amount].to_f)
       else
-        "Free"
+        I18n.t('plugin.ecommerce.table.free_shipping', default: 'Free Shipping')
     end
   end
 
-  def the_symbol
-    opts = object.options
-    case opts[:discount_type]
-      when 'percent'
-        "%"
-      when 'money'
-        h.current_site.current_unit
-      else
-        ""
-    end
-  end
-
+  # return the html text status of the coupon
   def the_status
     opts = object.options
     if "#{opts[:expirate_date]} 23:59:59".to_datetime.to_i < Time.now.to_i
@@ -47,6 +29,5 @@ class Plugins::Ecommerce::CouponDecorator < CamaleonCms::TermTaxonomyDecorator
     else
       "<span class='label label-default'>#{I18n.t('plugin.ecommerce.not_active')} </span>"
     end
-
   end
 end
