@@ -25,7 +25,7 @@ Rails.application.config.to_prepare do
   CamaleonCms::SiteDecorator.class_eval do
     # return the current system currency unit
     def current_unit
-      h.e_get_currency_by_code(h.e_system_currency)[:symbol] rescue '$'
+      h.e_system_currency
     end
 
     # return the current system currency
@@ -34,7 +34,7 @@ Rails.application.config.to_prepare do
     end
 
     def current_weight
-      object.get_meta('_setting_ecommerce', {})[:current_weight].to_s.capitalize rescue 'Kg'
+      object.get_meta('_setting_ecommerce', {})[:current_weight].to_s.capitalize.presence || 'Kg'
     end
 
     # return all visible products fo current user in current site
