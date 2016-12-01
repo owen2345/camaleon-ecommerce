@@ -6,12 +6,12 @@
         <div class="panel-body">
             <div class="form-group col-md-4">
                 <label><%= cama_t('plugin.ecommerce.table.system_currency_unit') %></label><br>
-                <%= select_tag( "setting[current_unit]", options_for_select(e_get_currency_units.collect{|k, x| ["#{x[:label]} (#{x[:symbol]})", k]}, @setting[:current_unit] || 'USD'), class: "form-control required masked_select", 'data-live-search' => true) %>
+                <%= select_tag( "setting[current_unit]", options_for_select(e_get_all_currencies.collect{|k, x| ["#{x[:label]} (#{x[:symbol]})", k]}, e_system_currency), class: "form-control required masked_select", 'data-live-search' => true) %>
             </div>
 
             <div class="form-group col-md-4">
                 <label><%= cama_t('plugin.ecommerce.table.available_currencies_unit') %></label><br>
-                <%= select_tag( "setting[visitor_unit_currencies]", options_for_select(e_get_currency_units.collect{|k, x| ["#{x[:label]} (#{x[:symbol]})", k]}, @setting[:visitor_unit_currencies] || 'USD'), class: "form-control required", multiple: true, 'data-live-search' => true) %>
+                <%= select_tag( "setting[visitor_unit_currencies]", options_for_select(e_get_all_currencies.collect{|k, x| ["#{x[:label]} (#{x[:symbol]})", k]}, e_visitor_unit_currencies), class: "form-control required", multiple: true, 'data-live-search' => true) %>
             </div>
 
             <div class="form-group col-md-4">

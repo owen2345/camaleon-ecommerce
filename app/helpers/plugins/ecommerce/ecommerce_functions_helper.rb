@@ -20,13 +20,18 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
     ecommerce_get_settings[:shipping_countries] || ISO3166::Country.codes
   end
 
+  # return (Array) all the currencies for visitors
+  def e_visitor_unit_currencies
+    ecommerce_get_settings[:visitor_unit_currencies] || ['USD']
+  end
+
   # draw a select dropdown with all frontend currencies and actions to change current currency
   # long_mode: (Boolean, default false)
   # attrs = (Hash) attributes of the select drodown, sample: {class: 'form-control'}
   def e_draw_ecommerce_currencies(long_mode = false, attrs = {})
-    return '' if ecommerce_get_settings[:visitor_unit_currencies].count <= 1
+    return '' if e_visitor_unit_currencies.count <= 1
     res = '<select '+attrs.collect{|k, v| "#{k}='#{v}'" }.join(" ")+' onchange="window.location.href=window.location.href.split(\'cama_change_currency\')[0]+(window.location.href.search(\'\\\?\') > 1 ? \'&\' : \'?\')+\'cama_change_currency=\'+this.value">'
-    ecommerce_get_settings[:visitor_unit_currencies].each do |unit|
+    e_visitor_unit_currencies.each do |unit|
       cur = e_get_currency_by_code(unit)
       res << "<option value='#{unit}' #{'selected' if e_current_visitor_currency == unit}>#{long_mode ? "#{cur[:label]} (#{cur[:symbol]})": cur[:symbol]}</option>"
     end
@@ -51,7 +56,7 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
 
   # return the currency details with code = code
   def e_get_currency_by_code(code)
-    e_get_currency_units[code.to_s.upcase] || {}
+    e_get_all_currencies[code.to_s.upcase] || {}
   end
 
   # return the currency defined for admin panel
@@ -89,8 +94,8 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
   end
 
   # return all currencies to use as a base currency
-  def e_get_currency_units
-    @_cache_e_get_currency_units ||= lambda{
+  def e_get_all_currencies
+    @_cache_e_get_all_currencies ||= lambda{
       currencies = {
         'AED' => {symbol: 'AED', label: t('plugin.ecommerce.currencies.aed', default: 'United Arab Emirates Dirham')},
         'AFN' => {symbol: 'AFN', label: t('plugin.ecommerce.currencies.afn', default: 'Afghan Afghani')},
