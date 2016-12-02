@@ -1,6 +1,7 @@
 <% order ||= @order %>
 <div class="order_details">
     <% unless defined?(as_partial) %>
+        <%= raw ecommerce_draw_breadcrumb %>
         <h1><%= t('.title', default: 'Order Details') %>: <%= order.slug %></h1>
     <% end %>
     <div class="basic_info">

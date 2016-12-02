@@ -7,7 +7,8 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
   end
 
   def show
-    @order = current_site.orders.find_by_slug(params[:order]).decorate
+    @order = current_site.orders.set_user(cama_current_user).find_by_slug(params[:order]).try(:decorate)
+    return redirect_to(url_for(action: :index), error: t('plugins.ecommerce.messages.order_not_found', default: "Order not found", order: params[:order])) unless @order.present?
     @ecommerce_breadcrumb << [t('plugins.ecommerce.messages.detail_order', default: "Detail order: #%{order}", order: params[:order])]
   end
 

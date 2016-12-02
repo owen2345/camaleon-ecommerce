@@ -273,6 +273,18 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
     }.call
   end
 
+  def ecommerce_draw_breadcrumb
+    res = '<ol class="breadcrumb" style="margin: 0;">'
+    @ecommerce_breadcrumb.each_with_index do |m, index|
+      if m[1].present?
+        res << "<li class='#{"active" if @ecommerce_breadcrumb.size == index+1}'><a href='#{m[1]}'>#{m[0]}</a></li>"
+      else
+        res << "<li class='#{"active" if @ecommerce_breadcrumb.size == index+1}'><span>#{m[0]}</span></li>"
+      end
+    end
+    res << '</ol>'
+  end
+
   # permit to add custom payment methods by hooks
   def ecommerce_custom_payment_methods
     @_ecommerce_custom_payment_methods ||= lambda{

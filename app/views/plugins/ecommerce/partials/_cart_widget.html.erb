@@ -1,15 +1,6 @@
 <div class="row" style="min-height: 64px">
     <div class="col-md-9">
-        <ol class="breadcrumb" style="margin: 0;">
-            <% @ecommerce_breadcrumb.each_with_index do |m, index| %>
-                <% if m[1].present? %>
-                    <li class="<%= "active" if @ecommerce_breadcrumb.size == index+1 %>">
-                        <a href="<%= m[1] %>"><%= m[0] %></a></li>
-                <% else %>
-                    <li class="<%= "active" if @ecommerce_breadcrumb.size == index+1 %>"><span><%= m[0] %></span></li>
-                <% end %>
-            <% end %>
-        </ol>
+        <%= raw ecommerce_draw_breadcrumb %>
     </div>
 
     <div class="col-md-3">

@@ -283,6 +283,7 @@ es:
         invalid_access: 'Acceso no válido'
         created_account: 'Cuenta creada satisfactoriamente'
         my_orders: 'Mis Ordenes'
+        order_not_found: 'Orden no encontrado'
         detail_order: 'Detalles de orden: #%{order}'
         coupon_not_found: 'Cupón no encontrado'
         coupon_expired: 'Cupón expirado'
