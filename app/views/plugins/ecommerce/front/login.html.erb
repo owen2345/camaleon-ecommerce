@@ -10,10 +10,10 @@
                 <%= form_tag plugins_ecommerce_login_path, id: 'login-form', class: 'tab-pane active', role: 'tabpanel' do %>
                     <%= hidden_field_tag :kind_form, 'login-form' %>
                     <div class="form-group">
-                        <input type="text" name="username" id="username" tabindex="1" class="form-control required" placeholder="<%= t('.username', default: 'Username') %>" value="">
+                        <input type="text" name="email" tabindex="1" class="form-control required" placeholder="<%= t('.email', default: 'Email') %>" value="<%= params[:email] %>">
                     </div>
                     <div class="form-group">
-                        <input type="password" name="password" id="password" tabindex="2" class="form-control required" placeholder="<%= t('.password', default: 'Password') %>">
+                        <input type="password" name="password" tabindex="2" class="form-control required" placeholder="<%= t('.password', default: 'Password') %>">
                     </div>
                     <div class="form-group">
                         <%= button_tag t('.login', default: 'Login'), class: 'btn btn-default col-md-3', type: 'submit' %>
@@ -27,9 +27,6 @@
                     <%= hidden_field_tag :kind_form, 'register-form' %>
                     <div class="form-group">
                         <%= f.text_field :first_name, class: 'form-control required', tabindex: 1, placeholder: t('.full_name', default: 'Full Name') %>
-                    </div>
-                    <div class="form-group">
-                        <%= f.text_field :username, class: 'form-control required', tabindex: 2, placeholder: t('.username', default: 'User name') %>
                     </div>
                     <div class="form-group">
                         <%= f.text_field :email, class: 'form-control email required', tabindex: 3, placeholder: t('.email', default: 'Email address') %>

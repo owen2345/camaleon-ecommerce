@@ -391,8 +391,8 @@ es:
           pass: 'Password'
           email: 'Correo Electrónico'
           full_name: 'Nombre Completo'
-          confirm_pass: 'Confirme Password'
-          create_account: 'Create cuenta'
+          confirm_pass: 'Repetir Password'
+          create_account: 'Crear cuenta'
 
 
       partials:

@@ -1,18 +1,18 @@
 #encoding: utf-8
 module Plugins::Ecommerce::EcommerceFunctionsHelper
-  # convert money into cents
-  def commerce_to_cents(money)
-    Plugins::Ecommerce::UtilService.ecommerce_money_to_cents(money)
-  end
-
   # return the settings for ecommerce (Hash)
   def ecommerce_get_settings
     current_site.get_meta("_setting_ecommerce", {})
   end
 
+  # return the visitor key which is used to relate the cart until login/register
+  def ecommerce_get_visitor_key
+    cookies[:e_cart_id] ||= cama_get_session_id unless cama_current_user.present?
+  end
+
   # return the current cart for current user
-  def e_current_cart
-    @_cache_e_current_cart ||= Plugins::Ecommerce::UserCartService.new(current_site, current_user).get_cart
+  def e_current_cart(custom_visitor_key = nil)
+    @_cache_e_current_cart ||= current_site.carts.set_user(custom_visitor_key || cama_current_user || ecommerce_get_visitor_key).active_cart.first_or_create(name: "Cart by #{Time.current.to_s}").decorate
   end
 
   # return all shipping country codes supported for shipping
@@ -271,24 +271,6 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
       hooks_run('ecommerce_currencies', currencies)
       currencies
     }.call
-  end
-
-  # use in add cart
-  def e_add_data_product(data, product_id)
-    post = CamaleonCms::Post.find(product_id).decorate
-    attributes = post.attributes
-    attributes[:content] = ''
-    data[:product_title] = post.the_title
-    data[:price] = post.get_field_value(:ecommerce_price)
-    data[:weight] = post.get_field_value(:ecommerce_weight)
-    data[:tax_rate_id] = post.get_field_value(:ecommerce_tax)
-    tax_product = current_site.tax_rates.find(data[:tax_rate_id]).options[:rate].to_f  rescue 0
-    data[:tax_percent] = tax_product
-    data[:tax] = data[:price].to_f * data[:tax_percent] / 100 rescue 0
-    data[:currency_code] = current_site.currency_code
-    metas = {}
-    post.metas.map{|m| metas[m.key] = m.value }
-    data.merge(post: attributes, fields: post.get_field_values_hash, meta: metas)
   end
 
   # permit to add custom payment methods by hooks

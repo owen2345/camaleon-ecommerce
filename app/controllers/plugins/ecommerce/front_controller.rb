@@ -8,9 +8,10 @@ class Plugins::Ecommerce::FrontController < CamaleonCms::Apps::PluginsFrontContr
   end
 
   def do_login
-    if login_user_with_password(params[:username], params[:password])
-      login_user(@user, false, (cookies[:return_to] || plugins_ecommerce_orders_path))
-      return cookies.delete(:return_to)
+    if login_user_with_password(params[:email], params[:password])
+      callback_login(@user)
+      login_user(@user, false, (cookies[:e_return_to] || plugins_ecommerce_orders_path))
+      return cookies.delete(:e_return_to)
     else
       flash[:cama_ecommerce][:error] = t('plugins.ecommerce.messages.invalid_access', default: 'Invalid access')
       return login
@@ -24,11 +25,13 @@ class Plugins::Ecommerce::FrontController < CamaleonCms::Apps::PluginsFrontContr
   end
 
   def do_register
+    params[:camaleon_cms_user][:username] = params[:camaleon_cms_user][:email] if params[:camaleon_cms_user].present?
     @user = current_site.users.new(params.require(:camaleon_cms_user).permit(:first_name, :last_name, :username, :email, :password, :password_confirmation))
     if @user.save
       flash[:cama_ecommerce][:notice] = t('plugins.ecommerce.messages.created_account', default: "Account created successfully")
-      login_user(@user, false, (cookies[:return_to] || plugins_ecommerce_orders_path))
-      return cookies.delete(:return_to)
+      callback_login(@user)
+      login_user(@user, false, (cookies[:e_return_to] || plugins_ecommerce_orders_path))
+      return cookies.delete(:e_return_to)
     else
       return register
     end
@@ -36,18 +39,26 @@ class Plugins::Ecommerce::FrontController < CamaleonCms::Apps::PluginsFrontContr
 
   private
   def save_cache_redirect
-    cookies[:return_to] = params[:return_to] if params[:return_to].present?
+    cookies[:e_return_to] = params[:return_to] if params[:return_to].present?
   end
 
   def commerce_authenticate
     unless cama_sign_in?
       flash[:cama_ecommerce][:error] = t('camaleon_cms.admin.login.please_login')
-      cookies[:return_to] = request.referer
+      cookies[:e_return_to] = request.referer
       redirect_to plugins_ecommerce_login_path
     end
   end
 
   def init_flash
     flash[:cama_ecommerce] = {} unless flash[:cama_ecommerce].present?
+  end
+
+  # callback after log in
+  def callback_login(user)
+    if cookies[:e_cart_id].present?
+      e_current_cart(ecommerce_get_visitor_key).change_user(user)
+      cookies.delete(:e_cart_id)
+    end
   end
 end

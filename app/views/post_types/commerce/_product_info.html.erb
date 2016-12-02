@@ -1,4 +1,4 @@
-<h1><%= product.the_title %></h1>
+<h1><%= product.the_title %> <%= product.the_edit_link %></h1>
 <h3>
     <%= t('plugins.ecommerce.single.sku', default: 'SKU') %>: <span id="product_sku"><%= product.the_sku %></span>
     <span class="pull-right"><%= raw product.the_featured_status %></span>
@@ -15,7 +15,7 @@
                     <%= label_tag :variation_id %>
                     <select class="form-control required" name="variation_id" id="product_variation_id">
                         <% product.product_variations.each_with_index do |variation, index| %>
-                            <option data-sku="<%= variation.sku %>" <%= 'selected' if index == 0 %> <%= 'disabled' if !product.in_stock?(variation.id) || product.the_qty_real(variation.id) > 0 %> data-price="<%= product.the_price(variation.id) %>" value="<%= variation.id %>"><%= product.the_variation_title(variation.id) %></option>
+                            <option data-sku="<%= variation.sku %>" <%= 'selected' if index == 0 %> <%= 'disabled' if !product.in_stock?(variation.id) || product.the_qty_real(variation.id) <= 0 %> data-price="<%= product.the_price(variation.id) %>" value="<%= variation.id %>"><%= product.the_variation_title(variation.id) %></option>
                         <% end %>
                     </select>
                 </div>

@@ -7,7 +7,7 @@ class Plugins::Ecommerce::CartService
   attr_reader :site, :cart
 
   def pay_with_authorize_net(options={})
-    payment_method = options[:payment_method] || site_service.payment_method('authorize_net')
+    payment_method = options[:payment_method] || site.payment_method('authorize_net')
     billing_address = cart.get_meta("billing_address")
     details = cart.get_meta("details")
     amount = Plugins::Ecommerce::UtilService.ecommerce_money_to_cents(cart.total_amount)
@@ -99,7 +99,7 @@ class Plugins::Ecommerce::CartService
 
   def pay_with_stripe(options)
     require 'stripe'
-    payment_method = options[:payment_method] || site_service.payment_method('stripe')
+    payment_method = options[:payment_method] || site.payment_method('stripe')
     Stripe.api_key = payment_method.options[:stripe_id]
     customer = Stripe::Customer.create(
       email: options[:email], source: options[:stripe_token])
@@ -109,7 +109,7 @@ class Plugins::Ecommerce::CartService
         customer: customer.id,
         amount: amount_in_cents,
         description: "Payment Products: #{cart.products_title}",
-        currency: site_service.currency,
+        currency: site.currency_code,
       )
       payment_data = {
         email: options[:email],
@@ -132,11 +132,5 @@ class Plugins::Ecommerce::CartService
       cart.mark_paid(status)
       cart.convert_to_order
     end
-  end
-
-  private
-
-  def site_service
-    @site_service ||= Plugins::Ecommerce::SiteService.new(site)
   end
 end

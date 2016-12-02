@@ -110,7 +110,7 @@
                                     <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                                             data-key="<%= payment.options[:stripe_key] %>"
                                             data-description="Payment Products: <%= @cart.products_title %>"
-                                            data-amount="<%= commerce_to_cents(@cart.total_amount) %>"
+                                            data-amount="<%= Plugins::Ecommerce::UtilService.ecommerce_money_to_cents(@cart.total_amount) %>"
                                             data-locale="<%= I18n.locale %>"></script>
                                 <% end %>
                             <% end %>

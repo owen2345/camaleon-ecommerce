@@ -1,5 +1,5 @@
 class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontController
-  before_action :commerce_authenticate
+  before_action :commerce_authenticate, except: [:cart_add, :cart_update, :cart_remove, :cart_index]
   before_action :set_cart
   before_action :set_payment, only: [:pay_by_stripe, :pay_by_bank_transfer, :pay_by_credit_card, :pay_by_authorize_net, :pay_by_paypal, :pay_by_on_delivery]
 

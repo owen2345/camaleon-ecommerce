@@ -32,8 +32,17 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
     if variation_id.present?
       get_variation(variation_id).qty || 0
     else
-      object.get_field_value('ecommerce_qty') || 0
+      is_variation_product? ? (get_default_variation.qty || 0) : object.get_field_value('ecommerce_qty').to_i || 0
     end
+  end
+
+  # return the total (Integer) of products available to sell (doesn't include the qty of the current cart)
+  def the_qty_real(variation_id = nil)
+    return the_qty_real(get_default_variation.id) if !variation_id.present? && is_variation_product?
+    carts = h.current_site.carts.active_cart.joins(:product_items)
+    _q = variation_id.present? ? {variation_id: variation_id} : {product_id: object.id}
+    _qty_in_carts = carts.where.not(id: h.e_current_cart.id).where("#{Plugins::Ecommerce::ProductItem.table_name}" => _q).sum("#{Plugins::Ecommerce::ProductItem.table_name}.qty")
+    the_qty - _qty_in_carts
   end
 
   def the_photos
@@ -99,17 +108,6 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
       "<span class='label label-primary'>#{I18n.t('plugin.ecommerce.product.featured')}</span>"
     else
       ""
-    end
-  end
-
-  # return the total of products available to sell
-  def the_qty_real(variation_id = nil)
-    if h.current_user
-      Plugins::Ecommerce::UserProductService.new(
-        h.current_site, h.current_user, object, variation_id).available_qty.to_i
-    else
-      Plugins::Ecommerce::ProductService.new(
-        h.current_site, object, variation_id).available_qty.to_i
     end
   end
 

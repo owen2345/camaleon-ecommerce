@@ -2,7 +2,7 @@ class Plugins::Ecommerce::Front::OrdersController < Plugins::Ecommerce::FrontCon
   before_action :commerce_authenticate
   before_action :set_bread
   def index
-    @orders = current_site.orders.set_user(current_user).decorate
+    @orders = current_site.orders.set_user(cama_current_user).decorate
     render "index"
   end
 

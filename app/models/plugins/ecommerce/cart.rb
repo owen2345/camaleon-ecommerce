@@ -134,10 +134,15 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
     shipping_method.present? ? shipping_method.get_price_from_weight(weight_total) : 0
   end
 
-  # set user in filter
+  # set user in filter (filter carts by user_id or cookie_id)
+  # cookie_id is used for public users who are buying without login
   def self.set_user(user)
-    user_id = defined?(user.id) ? user.id : user.to_i
-    self.where(user_id: user_id)
+    defined?(user.id) ? self.where(user_id: user.id) : self.where(visitor_key: user)
+  end
+
+  # move current cart from public user into existent user
+  def change_user(user)
+    update_columns(user_id: user.id, visitor_key: nil)
   end
 
   # check if the price of the cart is 0, including prices for products, discounts, shipping

@@ -31,7 +31,13 @@ class Plugins::Ecommerce::ProductItemDecorator < Draper::Decorator
 
   # update quantity of product or product variation used in current cart item
   def decrement_qty!
-    Plugins::Ecommerce::ProductItemService.new(object.cart.site, object).decrement_qty!
+    val = get_product.the_qty(object.variation_id) - object.qty
+    if object.variation_id.present?
+      product_variation.update_column(:qty, val)
+    else
+      product.update_field_value('ecommerce_qty', val)
+    end
+    val
   end
 
   # verify if the quantity of the cart item is avilable
