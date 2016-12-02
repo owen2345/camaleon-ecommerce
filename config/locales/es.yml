@@ -70,6 +70,9 @@ es:
         order_shipped: 'Orden enviado'
         order_canceled: 'Orden cancelado'
         order_updated: 'Orden actualizado'
+        not_deletable_product_variations: 'Algunas variaciones de producto no pueden ser eliminados.'
+        not_deletable_product: 'El Producto no puede ser eliminado porque existen órdenes referenciadas.'
+
       method_paypal: "Método por Paypal"
       method_credit_card: "Método por Tarjeta de Credito"
       method_bank_transfer: "Método Transferencia Bancaria"
@@ -202,8 +205,7 @@ es:
 
       tax_rates: "Tasas de Impuesto"
       add_to_cart: "Añadir al carro"
-      msg:
-        added_product_in_cart: "Producto añadido al carro correctamente."
+
       shipping_prices: "Precios de envío"
       mark_shipped: "Marcar como enviado"
       mail:
@@ -250,7 +252,6 @@ es:
 
           save_product_attributes:
             saved_product_attributes: 'Atributos guardados'
-
 
           products:
             variations:
@@ -308,6 +309,7 @@ es:
         attrs: 'Atributos'
         sku: 'SKU'
         noavailable_items: 'No hay items disponibles'
+        no_stock: 'Producto fuera de stock'
 
       front:
         breadcrumb:

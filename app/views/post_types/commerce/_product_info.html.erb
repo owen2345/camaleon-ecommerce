@@ -1,0 +1,45 @@
+<h1><%= product.the_title %></h1>
+<h3>
+    <%= t('plugins.ecommerce.single.sku', default: 'SKU') %>: <span id="product_sku"><%= product.the_sku %></span>
+    <span class="pull-right"><%= raw product.the_featured_status %></span>
+</h3>
+<h4><span id="product_price"><%= product.the_price %></span> <span class="pull-right"><%= raw product.the_stock_status %></span></h4>
+<hr/>
+<p><%= product.the_excerpt %></p>
+<hr/>
+<% if product.in_stock? %>
+    <% if product.the_qty_real.to_i > 0 || product.is_variation_product? %>
+        <%= form_tag(plugins_ecommerce_checkout_cart_add_path, :method => "post", :class => "form") do %>
+            <% if product.is_variation_product? %>
+                <div class="form-group">
+                    <%= label_tag :variation_id %>
+                    <select class="form-control required" name="variation_id" id="product_variation_id">
+                        <% product.product_variations.each_with_index do |variation, index| %>
+                            <option data-sku="<%= variation.sku %>" <%= 'selected' if index == 0 %> <%= 'disabled' if !product.in_stock?(variation.id) || product.the_qty_real(variation.id) > 0 %> data-price="<%= product.the_price(variation.id) %>" value="<%= variation.id %>"><%= product.the_variation_title(variation.id) %></option>
+                        <% end %>
+                    </select>
+                </div>
+                <script>
+                    jQuery(function(){
+                        var panel = $('#product_view');
+                        panel.find('#product_variation_id').change(function(){ var op = $(this).find('option:selected'); panel.find('#product_sku').html(op.attr('data-sku')); panel.find('#product_price').html(op.attr('data-price'));  }).trigger('change');
+                        if(panel.find('#product_variation_id option').not('[disabled]').length == 0){
+                            panel.find('#e_add_to_cart_field_group').html('<p><%= t('plugins.ecommerce.single.noavailable_items', default: 'No items available') %></p>')
+                            panel.find('#product_price').next().hide();
+                        }
+                    });
+                </script>
+            <% end %>
+            <div class="input-group" id="e_add_to_cart_field_group">
+                <span class="input-group-addon"><%= t('plugins.ecommerce.single.qty', default: 'Qty') %></span>
+                <%= number_field :cart, :qty, class: 'form-control', value: 1, min: 0, max: product.the_qty_real.to_i %>
+                <%= hidden_field :cart, :product_id, value: product.id %>
+                <span class="input-group-btn"><button class="btn btn-default" type="submit"><i class="fa fa-shopping-cart"></i> <%= t('plugins.ecommerce.single.add_to_cart', default: 'Add to cart') %></button></span>
+            </div>
+        <% end %>
+    <% else %>
+        <p><%= t('plugins.ecommerce.single.noavailable_items', default: 'No items available') %></p>
+    <% end %>
+<% else %>
+    <p><%= t('plugins.ecommerce.single.no_stock', default: 'This product is not in stock') %></p>
+<% end %>

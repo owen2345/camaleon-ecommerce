@@ -6,4 +6,7 @@ class Plugins::Ecommerce::Attribute < ActiveRecord::Base
   scope :only_group, ->{ where(parent_id: nil) }
   scope :only_value, ->{ where.not(parent_id: nil) }
   default_scope ->{ order(position: :ASC) }
+  def translated_values
+    values.select(:id, :label, :key).map{|item| item.label = item.label.to_s.translate; item }
+  end
 end

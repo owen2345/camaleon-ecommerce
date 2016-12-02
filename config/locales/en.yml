@@ -69,6 +69,9 @@
         accepted: 'Accepted'
         shipped: 'Shipped'
         updated: 'Updated'
+        not_deletable_product_variations: 'Some Product variations can not be deleted.'
+        not_deletable_product: 'The product can not be deleted because there are orders related.'
+
       method_paypal: 'Method by Paypal'
       method_credit_card: 'Method by Credit Card'
       method_bank_transfer: 'Method Bank Transfer'
@@ -186,8 +189,6 @@
         transaction_key: 'Transaction key'
       tax_rates: 'Tax Rates'
       add_to_cart: 'Add to cart'
-      msg:
-        added_product_in_cart: 'Added product successfully in Cart.'
       mail:
         order_received:
           welcome: "Hi"

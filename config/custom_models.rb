@@ -20,6 +20,13 @@ Rails.application.config.to_prepare do
 
   CamaleonCms::Post.class_eval do
     has_many :product_variations, class_name: 'Plugins::Ecommerce::ProductVariation', foreign_key: :product_id, dependent: :destroy
+    before_destroy :e_validate_related_orders
+
+    private
+    # verify if there are orders related to this product
+    def e_validate_related_orders
+      errors.add(:base, I18n.t('plugin.ecommerce.message.not_deletable_product')) if Plugins::Ecommerce::ProductItem.where(product_id: id).any?
+    end
   end
 
   CamaleonCms::SiteDecorator.class_eval do

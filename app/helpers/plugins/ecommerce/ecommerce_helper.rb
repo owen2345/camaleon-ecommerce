@@ -66,11 +66,16 @@ module Plugins::Ecommerce::EcommerceHelper
     current_site.post_types.hidden_menu.where(slug: "commerce").first.destroy
   end
 
-  # callback after create/update
-  def ecommerce_admin_product_created(args)
+  # callback after create/update products
+  def ecommerce_admin_product_saved(args)
     if args[:post_type].slug == 'commerce'
       params[:product_variation] ||= {}
-      args[:post].product_variations.where.not(id: params[:product_variation].keys).delete_all
+
+      # verify no deletable variances
+      no_deletable_variances = false
+      args[:post].product_variations.where.not(id: params[:product_variation].keys).each{|prod| no_deletable_variances = true unless prod.destroy }
+      flash[:warning] += cama_t('plugin.ecommerce.variations.not_deletable_product_variations') if no_deletable_variances
+
       params[:product_variation].each do |p_key, p_var|
         data = {amount: p_var[:price], photo: p_var[:photo], sku: p_var[:sku], weight: p_var[:weight], qty: p_var[:qty], attribute_ids: (p_var[:attributes] || []).map{|at| at[:value] }.join(',')}
         if p_key.include?('new_') # new variation

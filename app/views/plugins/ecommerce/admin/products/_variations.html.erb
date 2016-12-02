@@ -27,10 +27,10 @@
                                     </div>
                                     <div class="row group-input-fields-content">
                                         <div class="col-md-4">
-                                            <%= select_tag "product_variation[#{variation.id}][attributes][][id]", options_from_collection_for_select(current_site.product_attributes, :id, :label, val.parent_id), class: 'form-control required product_attribute_select' %>
+                                            <%= select_tag "product_variation[#{variation.id}][attributes][][id]", options_from_collection_for_select(current_site.product_attributes, :id, lambda{|i| i.label.to_s.translate }, val.parent_id), class: 'form-control required product_attribute_select' %>
                                         </div>
                                         <div class="col-md-8">
-                                            <%= select_tag "product_variation[#{variation.id}][attributes][][value]", val.id.present? ? options_from_collection_for_select(val.product_attribute.values, :id, :label, val.id) : [], class: 'form-control required product_attribute_vals_select' %>
+                                            <%= select_tag "product_variation[#{variation.id}][attributes][][value]", val.id.present? ? options_from_collection_for_select(val.product_attribute.values, :id, lambda{|i| i.label.to_s.translate }, val.id) : [], class: 'form-control required product_attribute_vals_select' %>
                                         </div>
                                     </div>
                                 </li>
@@ -69,4 +69,4 @@
         <a class="btn btn-warning add_new_variation btn-xs" href="#"><i class="fa fa-plus"></i> <%= t('.add_new_variation', default: 'Add new variation') %></a>
     </div>
 </div>
-<script>var PRODUCT_ATTRIBUTES = <%= raw current_site.product_attributes.to_json(include: :values) %></script>
+<script>var PRODUCT_ATTRIBUTES = <%= raw current_site.product_attributes.map{|item| item.label = item.label.to_s.translate; item }.to_json(include: :translated_values) %></script>

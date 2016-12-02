@@ -26,6 +26,7 @@ $ ->
     clone = cache_variation.clone().attr('data-id', 'new_'+variation_id+=1)
     product_variations.children('.variations_sortable').append(clone)
     clone.trigger('fill_variation_id')
+    check_variation_status()
     return false
 
   # add new variation value
@@ -46,7 +47,7 @@ $ ->
     sel = $(this).closest('.row').find('.product_attribute_vals_select').html('')
     for attr in PRODUCT_ATTRIBUTES
       if `attr.id == v`
-        for value in attr.values
+        for value in attr.translated_values
           sel.append('<option value="'+value.id+'">'+value.label.replace(/</g, '&lt;')+'</option>')
   )
 
@@ -78,6 +79,21 @@ $ ->
       return false
     $(this).closest('.product_variation').fadeOut('slow', ->
       $(this).remove()
+      check_variation_status()
     )
     return false
   )
+
+  # check the variation status and disable or enable some custom fields
+  check_variation_status = ->
+    fields = ['ecommerce_sku', 'ecommerce_price', 'ecommerce_weight', 'ecommerce_stock', 'ecommerce_qty']
+    if product_variations.find('.product_variation').length > 0 # is a variation product
+      for key in fields
+        p_field = form.find('.c-field-group .item-custom-field[data-field-key="'+key+'"]')
+        p_field.hide().find('.required').addClass('e_skip_required').removeClass('required')
+    else
+      for key in fields
+        p_field = form.find('.c-field-group .item-custom-field[data-field-key="'+key+'"]')
+        p_field.show().find('.e_skip_required').removeClass('e_skip_required').addClass('required')
+  check_variation_status()
+

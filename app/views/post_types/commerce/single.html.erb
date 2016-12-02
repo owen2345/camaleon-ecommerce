@@ -1,107 +1,85 @@
-<%= render plugin_view('partials/cart_widget') %>
+<% args={custom_slider: nil, custom_footer: nil, extra_footer: nil, custom_sidebar: nil, custom_cart_widget: nil, product: @post}; hooks_run('ecommerce_product_page', args) # permit custom footer %>
+<% if args[:custom_cart_widget].nil? %>
+    <%= render plugin_view('partials/cart_widget') %>
+<% else %>
+    <%= raw args[:custom_cart_widget] %>
+<% end %>
 <div class="row">
     <div class="col-md-9 post-view">
         <article class="post-content" id="product_view">
             <div class="row">
                 <div class="col-md-6">
-                    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-                        <!-- Indicators -->
-                        <ol class="carousel-indicators">
-                            <% @post.the_photos.each_with_index do |pthoto, index| %>
-                                <li data-target="#carousel-example-generic" data-slide-to="<%= index %>" class="<%= 'active' if index == 0 %>"></li>
-                            <% end %>
-                        </ol>
+                    <% unless args[:custom_slider].present? %>
+                        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                            <!-- Indicators -->
+                            <ol class="carousel-indicators">
+                                <% @post.the_photos.each_with_index do |pthoto, index| %>
+                                    <li data-target="#carousel-example-generic" data-slide-to="<%= index %>" class="<%= 'active' if index == 0 %>"></li>
+                                <% end %>
+                            </ol>
 
-                        <!-- Wrapper for slides -->
-                        <div class="carousel-inner" role="listbox">
-                            <% @post.the_photos.each_with_index do |pthoto, index| %>
-                                <div class="item <%= 'active' if index == 0 %>">
-                                    <img src="<%= pthoto %>" class="center-block">
-                                </div>
-                            <% end %>
-                        </div>
-
-                        <!-- Controls -->
-                        <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
-                            <span class="glyphicon glyphicon-chevron-left fa fa-chevron-left" aria-hidden="true"></span>
-                            <span class="sr-only">Previous</span>
-                        </a>
-                        <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
-                            <span class="glyphicon glyphicon-chevron-right fa fa-chevron-right " aria-hidden="true"></span>
-                            <span class="sr-only">Next</span>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <h1><%= @post.the_title %></h1>
-                    <h3>
-                        <%= t('plugins.ecommerce.single.sku', default: 'SKU') %>: <span id="product_sku"><%= @post.the_sku %></span>
-                        <span class="pull-right"><%= raw @post.the_featured_status %></span>
-                    </h3>
-                    <h4><span id="product_price"><%= @post.the_price %></span> <span class="pull-right"><%= raw @post.the_stock_status %></span></h4>
-                    <hr/>
-                    <p><%= @post.the_excerpt %></p>
-                    <hr/>
-                    <% if @post.in_stock? %>
-                        <% if @post.the_qty_real.to_i > 0 %>
-                            <%= form_tag(plugins_ecommerce_checkout_cart_add_path, :method => "post", :class => "form") do %>
-                                <% if @post.is_variation_product? %>
-                                    <div class="form-group">
-                                        <%= label_tag :variation_id %>
-                                        <select class="form-control required" name="variation_id" id="product_variation_id">
-                                            <% @post.product_variations.each_with_index do |variation, index| %>
-                                                <option data-sku="<%= variation.sku %>" <%= 'selected' if index == 0 %> <%= 'disabled' unless @post.in_stock?(variation.id) %> data-price="<%= @post.the_price(variation.id) %>" value="<%= variation.id %>"><%= @post.the_variation_title(variation.id) %></option>
-                                            <% end %>
-                                        </select>
+                            <!-- Wrapper for slides -->
+                            <div class="carousel-inner" role="listbox">
+                                <% @post.the_photos.each_with_index do |pthoto, index| %>
+                                    <div class="item <%= 'active' if index == 0 %>">
+                                        <img src="<%= pthoto %>" class="center-block">
                                     </div>
                                 <% end %>
-                                <div class="input-group">
-                                    <span class="input-group-addon"><%= t('plugins.ecommerce.single.qty', default: 'Qty') %></span>
-                                    <%= number_field :cart, :qty, class: 'form-control', value: 1, min: 0, max: @post.the_qty_real.to_i %>
-                                    <%= hidden_field :cart, :product_id, value: @post.id %>
-                                    <span class="input-group-btn"><button class="btn btn-default" type="submit"><i class="fa fa-shopping-cart"></i> <%= t('plugins.ecommerce.single.add_to_cart', default: 'Add to cart') %></button></span>
-                                </div>
-                            <% end %>
-                        <% end %>
+                            </div>
+
+                            <!-- Controls -->
+                            <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                                <span class="glyphicon glyphicon-chevron-left fa fa-chevron-left" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                                <span class="glyphicon glyphicon-chevron-right fa fa-chevron-right " aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
                     <% else %>
-                        <p><%= t('plugins.ecommerce.single.noavailable_items', default: 'No items available') %></p>
+                        <%= raw args[:custom_slider] %>
                     <% end %>
+                </div>
+
+                <div class="col-md-6">
+                    <%= render 'post_types/commerce/product_info', product: @post %>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-6">
-                    <h3><%= t('plugins.ecommerce.single.descr', default: 'Description') %></h3>
-                    <div class="item-content">
-                        <%= raw @post.the_content %>
-                    </div>
-                </div>
-                <% if (attrs = @post.the_attribute_fields('ecommerce_attrs').to_a).present? %>
+            <% unless args[:custom_footer].present? %>
+                <div class="row">
                     <div class="col-md-6">
-                        <h3><%= t('plugins.ecommerce.single.attrs', default: 'Attributes') %></h3>
-                        <table class="table table-bordered">
-                            <% attrs.each_with_index do |attr, index| %>
-                                <tr>
-                                    <td><strong><%= attr['attr'].to_s.translate %></strong></td>
-                                    <td><%= attr['value'].to_s.translate %></td>
-                                </tr>
-                            <% end %>
-                        </table>
+                        <h3><%= t('plugins.ecommerce.single.descr', default: 'Description') %></h3>
+                        <div class="item-content">
+                            <%= raw @post.the_content %>
+                        </div>
                     </div>
-                <% end %>
-            </div>
-            <% if @post.is_variation_product? %>
-                <script>
-                    jQuery(function(){
-                        var panel = $('#product_view');
-                        panel.find('#product_variation_id').change(function(){ var op = $(this).find('option:selected'); panel.find('#product_sku').html(op.attr('data-sku')); panel.find('#product_price').html(op.attr('data-price'));  }).trigger('change');
-                    });
-                </script>
+                    <% if (attrs = @post.the_attribute_fields('ecommerce_attrs').to_a).present? %>
+                        <div class="col-md-6">
+                            <h3><%= t('plugins.ecommerce.single.attrs', default: 'Attributes') %></h3>
+                            <table class="table table-bordered">
+                                <% attrs.each_with_index do |attr, index| %>
+                                    <tr>
+                                        <td><strong><%= attr['attr'].to_s.translate %></strong></td>
+                                        <td><%= attr['value'].to_s.translate %></td>
+                                    </tr>
+                                <% end %>
+                            </table>
+                        </div>
+                    <% end %>
+                </div>
+            <% else %>
+                <%= raw args[:custom_footer] %>
             <% end %>
+            <%= raw args[:extra_footer] if args[:extra_footer].present? %>
         </article>
     </div>
     <div class="col-md-3">
-        <%= render partial: 'partials/sidebar', locals: {post: @post, skip_fields: true} %>
+        <% unless args[:custom_sidebar].present? %>
+            <%= render partial: 'partials/sidebar', locals: {post: @post, skip_fields: true} %>
+        <% else %>
+        <%= raw args[:custom_sidebar] %>
+        <% end %>
     </div>
 </div>

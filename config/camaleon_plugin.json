@@ -29,8 +29,7 @@
       "ecommerce_app_before_load"
     ],
     "post_form_custom_html": ["ecommerce_admin_product_form"],
-    "created_post": ["ecommerce_admin_product_created"],
-    "updated_post": ["ecommerce_admin_product_created"]
-
+    "created_post": ["ecommerce_admin_product_saved"],
+    "updated_post": ["ecommerce_admin_product_saved"]
   }
 }
