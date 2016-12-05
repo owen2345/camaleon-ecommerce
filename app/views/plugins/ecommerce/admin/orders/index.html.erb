@@ -1,14 +1,14 @@
 <div class="panel panel-default" id="commerce-orders-list">
     <div class="panel-heading">
-        <h4><span class="fa fa-cog"></span> <%= t('plugin.ecommerce.orders') %></h4>
+        <h4><span class="fa fa-cog"></span> <%= t('plugins.ecommerce.orders') %></h4>
     </div>
 
     <div class="panel-body">
         <%= form_tag(url_for(action: :index), class: 'pull-right', method: 'get') do %>
             <div class="input-group" id="adv-search">
-                <input type="text" class="form-control" placeholder="<%= t('plugin.ecommerce.search_order_number') %>" name="q" value="<%= params[:q] %>"/>
+                <input type="text" class="form-control" placeholder="<%= t('plugins.ecommerce.search_order_number') %>" name="q" value="<%= params[:q] %>"/>
                 <div class="input-group-btn">
-                    <button type="button" title="<%= t('plugin.ecommerce.advanced_search', default: 'Advanced Search') %>" class="btn btn-default" id="ecommerce_adv_search_btn"><span class="caret"></span></button>
+                    <button type="button" title="<%= t('plugins.ecommerce.advanced_search', default: 'Advanced Search') %>" class="btn btn-default" id="ecommerce_adv_search_btn"><span class="caret"></span></button>
                     <button type="submit" class="btn btn-primary"><span class="fa fa-search"></span></button>
                 </div>
             </div>
@@ -16,20 +16,20 @@
         <div class="hidden" id="commerce_adv_search_modal">
             <%= form_tag(url_for(action: :index), method: :get) do %>
                 <div class="form-group">
-                    <label for="contain"><%= t('plugin.ecommerce.table.customer') %> </label>
+                    <label for="contain"><%= t('plugins.ecommerce.table.customer') %> </label>
                     <input class="form-control" type="text" name="c" value="<%= params[:c] %>"/>
                 </div>
                 <div class="form-group">
-                    <label for="contain"><%= t('plugin.ecommerce.e_mail_address') %></label>
+                    <label for="contain"><%= t('plugins.ecommerce.e_mail_address') %></label>
                     <input class="form-control" type="email" name="e" value="<%= params[:e] %>"/>
                 </div>
                 <!--<div class="form-group">-->
-                    <!--<label for="contain"><%= t('plugin.ecommerce.phone_number') %></label>-->
+                    <!--<label for="contain"><%= t('plugins.ecommerce.phone_number') %></label>-->
                     <!--<input class="form-control" type="text" name="p" value="<%= params[:p] %>"/>-->
                 <!--</div>-->
                 <div class="form-group">
-                    <label for="contain"><%= t('plugin.ecommerce.table.status') %></label>
-                    <%= select_tag "s", options_for_select([[""], [t('plugin.ecommerce.select.accepted'), "accepted"], [cama_t('plugin.ecommerce.select.shipped'), "shipped"], [cama_t('plugin.ecommerce.select.canceled'), "canceled"], [cama_t('plugin.ecommerce.select.paid'), "paid"], [cama_t('plugin.ecommerce.select.pending'), "on_delivery|bank_pending"]], params[:s]), class: 'form-control' %>
+                    <label for="contain"><%= t('plugins.ecommerce.table.status') %></label>
+                    <%= select_tag "s", options_for_select([[""], [t('plugins.ecommerce.select.accepted'), "accepted"], [cama_t('plugins.ecommerce.select.shipped'), "shipped"], [cama_t('plugins.ecommerce.select.canceled'), "canceled"], [cama_t('plugins.ecommerce.select.paid'), "paid"], [cama_t('plugins.ecommerce.select.pending'), "on_delivery|bank_pending"]], params[:s]), class: 'form-control' %>
                 </div>
                 <button type="submit" class="btn btn-primary"><span class="fa fa-search" aria-hidden="true"></span> <%= t("camaleon_cms.admin.button.search") %></button>
             <% end %>
@@ -37,11 +37,11 @@
         <div class="hidden" id="commerce_cancel_modal">
             <%= form_tag '#' do %>
                 <div class="form-group">
-                    <%= label_tag nil, t('plugin.ecommerce.table.description', default: 'Description') %>
+                    <%= label_tag nil, t('plugins.ecommerce.table.description', default: 'Description') %>
                     <%= text_area_tag 'description', '', class: 'form-control required' %>
                 </div>
                 <div class="">
-                    <span class="input-group-btn"><button class="btn btn-default" type="submit"><%= t('plugin.ecommerce.table.make_canceled', default: 'Mark as Canceled') %></button></span>
+                    <span class="input-group-btn"><button class="btn btn-default" type="submit"><%= t('plugins.ecommerce.table.make_canceled', default: 'Mark as Canceled') %></button></span>
                 </div>
             <% end %>
         </div>
@@ -49,11 +49,11 @@
         <div class="hidden" id="commerce_shipped_modal">
             <%= form_tag '#' do %>
                 <div>
-                    <%= label_tag nil, t('plugin.ecommerce.show_order.consignment_number', default: 'Consignment Number') %>
+                    <%= label_tag nil, t('plugins.ecommerce.show_order.consignment_number', default: 'Consignment Number') %>
                 </div>
                 <div class="input-group">
                     <%= text_field_tag 'consignment_number', '', class: 'form-control' %>
-                    <span class="input-group-btn"><button class="btn btn-default" type="submit"><%= t('plugin.ecommerce.table.make_shipped', default: 'Mark as Shipped') %></button></span>
+                    <span class="input-group-btn"><button class="btn btn-default" type="submit"><%= t('plugins.ecommerce.table.make_shipped', default: 'Mark as Shipped') %></button></span>
                 </div>
             <% end %>
         </div>
@@ -61,14 +61,14 @@
         <table class="table">
             <thead>
             <tr>
-                <th><%= cama_t('plugin.ecommerce.table.id') %></th>
-                <th><%= cama_t('plugin.ecommerce.table.customer') %></th>
-                <th><%= cama_t('plugin.ecommerce.table.status') %></th>
-                <th><%= cama_t('plugin.ecommerce.table.paid') %></th>
-                <th><%= cama_t('plugin.ecommerce.table.products') %></th>
-                <th><%= cama_t('plugin.ecommerce.table.amount') %></th>
-                <th><%= cama_t('plugin.ecommerce.table.created_at') %></th>
-                <th><%= cama_t('plugin.ecommerce.table.payment_method') %></th>
+                <th><%= cama_t('plugins.ecommerce.table.id') %></th>
+                <th><%= cama_t('plugins.ecommerce.table.customer') %></th>
+                <th><%= cama_t('plugins.ecommerce.table.status') %></th>
+                <th><%= cama_t('plugins.ecommerce.table.paid') %></th>
+                <th><%= cama_t('plugins.ecommerce.table.products') %></th>
+                <th><%= cama_t('plugins.ecommerce.table.amount') %></th>
+                <th><%= cama_t('plugins.ecommerce.table.created_at') %></th>
+                <th><%= cama_t('plugins.ecommerce.table.payment_method') %></th>
                 <th><%= cama_t('camaleon_cms.admin.table.actions') %></th>
             </tr>
             </thead>
@@ -99,14 +99,14 @@
                     <td>
                         <%= link_to raw('<i class="fa fa-eye"></i>'), {action: :show, id: order.slug}, class: "btn btn-info btn-xs", title: "#{t('camaleon_cms.admin.button.preview')}" %>
                         <%= link_to raw('<i class="fa fa-edit"></i>'), {action: :edit, id: order.slug}, class: "btn btn-default btn-xs", title: "#{t('camaleon_cms.admin.button.edit')}" %>
-                        <%= link_to raw('<i class="fa fa-trash"></i>'), {action: :destroy, id: order.slug}, class: "btn btn-danger btn-xs", title: "#{t('camaleon_cms.admin.button.delete', default: 'Delete Order')}", method: :delete, 'data-confirm'=> t('plugin.ecommerce.table.confirm_delete', default: 'Are you sure to delete this order?') %>
+                        <%= link_to raw('<i class="fa fa-trash"></i>'), {action: :destroy, id: order.slug}, class: "btn btn-danger btn-xs", title: "#{t('camaleon_cms.admin.button.delete', default: 'Delete Order')}", method: :delete, 'data-confirm'=> t('plugins.ecommerce.table.confirm_delete', default: 'Are you sure to delete this order?') %>
                         <div class="btn-group">
                             <button class="btn btn-info btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="<%= t('camaleon_cms.admin.button.settings') %>"><i class="fa fa-cog"></i></button>
                                 <ul class="dropdown-menu pull-right" style="min-width: 50px;">
-                                    <%= content_tag :li, link_to(t('plugin.ecommerce.table.make_accepted', default: 'Mark as Accepted'), url_for(action: :mark_accepted, order_id: order.slug), class: 'btn btn-xs') if order.paid? %>
-                                    <%= content_tag :li, link_to(t('plugin.ecommerce.table.make_shipped', default: 'Mark as Shipped'), url_for(action: :mark_shipped, order_id: order.slug), class: 'btn btn-xs mark_shipped_btn') if order.accepted? || order.paid? %>
-                                    <%= content_tag :li, link_to(t('plugin.ecommerce.table.make_canceled', default: 'Mark as Canceled'), url_for(action: :mark_canceled, order_id: order.slug), class: 'btn btn-xs mark_canceled_btn', 'data-confirm_msg'=> t('plugin.ecommerce.table.confirm_mark_as_cancel', default: 'Are you sure to mark as Canceled?')) if order.bank_pending? || order.on_delivery_pending? || order.paid? %>
-                                    <%= content_tag :li, link_to(t('plugin.ecommerce.table.make_bank_confirmed', default: 'Mark as Paid'), url_for(action: :mark_bank_confirmed, order_id: order.slug), class: 'btn btn-xs', 'data-confirm'=> t('plugin.ecommerce.table.confirm_mark_as_paid', default: 'Are you sure to mark as Paid?')) if order.bank_pending? || order.on_delivery_pending? %>
+                                    <%= content_tag :li, link_to(t('plugins.ecommerce.table.make_accepted', default: 'Mark as Accepted'), url_for(action: :mark_accepted, order_id: order.slug), class: 'btn btn-xs') if order.paid? %>
+                                    <%= content_tag :li, link_to(t('plugins.ecommerce.table.make_shipped', default: 'Mark as Shipped'), url_for(action: :mark_shipped, order_id: order.slug), class: 'btn btn-xs mark_shipped_btn') if order.accepted? || order.paid? %>
+                                    <%= content_tag :li, link_to(t('plugins.ecommerce.table.make_canceled', default: 'Mark as Canceled'), url_for(action: :mark_canceled, order_id: order.slug), class: 'btn btn-xs mark_canceled_btn', 'data-confirm_msg'=> t('plugins.ecommerce.table.confirm_mark_as_cancel', default: 'Are you sure to mark as Canceled?')) if order.bank_pending? || order.on_delivery_pending? || order.paid? %>
+                                    <%= content_tag :li, link_to(t('plugins.ecommerce.table.make_bank_confirmed', default: 'Mark as Paid'), url_for(action: :mark_bank_confirmed, order_id: order.slug), class: 'btn btn-xs', 'data-confirm'=> t('plugins.ecommerce.table.confirm_mark_as_paid', default: 'Are you sure to mark as Paid?')) if order.bank_pending? || order.on_delivery_pending? %>
                                 </ul>
                         </div>
                     </td>

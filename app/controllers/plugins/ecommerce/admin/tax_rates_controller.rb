@@ -7,7 +7,7 @@ class Plugins::Ecommerce::Admin::TaxRatesController < Plugins::Ecommerce::AdminC
 
   def new
     @tax_rate = current_site.tax_rates.new
-    add_breadcrumb("#{t('plugin.ecommerce.new')}")
+    add_breadcrumb("#{t('plugins.ecommerce.new')}")
     render 'form'
   end
 

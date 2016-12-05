@@ -6,7 +6,7 @@ class Plugins::Ecommerce::Admin::PricesController < Plugins::Ecommerce::AdminCon
 
   def new
     @price = {}
-    add_breadcrumb("#{t('plugin.ecommerce.new')}")
+    add_breadcrumb("#{t('plugins.ecommerce.new')}")
     render 'form'
   end
 
@@ -50,9 +50,9 @@ class Plugins::Ecommerce::Admin::PricesController < Plugins::Ecommerce::AdminCon
   private
   def set_shipping_method
     @shipping_method = current_site.shipping_methods.find(params[:shipping_method_id])
-    add_breadcrumb(t("plugin.ecommerce.shipping_methods"))
+    add_breadcrumb(t("plugins.ecommerce.shipping_methods"))
     add_breadcrumb(@shipping_method.name)
-    add_breadcrumb(t("plugin.ecommerce.shipping_prices"), admin_plugins_ecommerce_shipping_method_prices_path(params[:shipping_method_id]))
+    add_breadcrumb(t("plugins.ecommerce.shipping_prices"), admin_plugins_ecommerce_shipping_method_prices_path(params[:shipping_method_id]))
     @prices = @shipping_method.get_meta("prices", {})
   end
 

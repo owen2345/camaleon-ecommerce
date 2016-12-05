@@ -1,5 +1,5 @@
 class Plugins::Ecommerce::Admin::SettingsController < Plugins::Ecommerce::AdminController
-  add_breadcrumb I18n.t("plugin.ecommerce.e_commerce")
+  add_breadcrumb I18n.t("plugins.ecommerce.e_commerce")
   def index
     @setting = current_site.get_meta("_setting_ecommerce", {})
   end

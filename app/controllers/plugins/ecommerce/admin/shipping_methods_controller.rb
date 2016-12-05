@@ -7,12 +7,12 @@ class Plugins::Ecommerce::Admin::ShippingMethodsController < Plugins::Ecommerce:
 
   def new
     @shipping_method = current_site.shipping_methods.new
-    add_breadcrumb("#{t('plugin.ecommerce.new')}")
+    add_breadcrumb("#{t('plugins.ecommerce.new')}")
     render 'form'
   end
 
   def show
-    add_breadcrumb("#{t('plugin.ecommerce.table.details')}")
+    add_breadcrumb("#{t('plugins.ecommerce.table.details')}")
   end
 
   def edit

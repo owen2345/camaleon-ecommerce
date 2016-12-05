@@ -1,12 +1,12 @@
 <div class="panel panel-default">
     <div class="panel-heading ui-draggable-handle">
-        <h4><span class="fa fa-credit-card"></span> <%= @shipping_method.new_record? ? t('plugin.ecommerce.new_shipping_methods') : "#{t('plugin.ecommerce.edit_shipping_methods')}: #{@shipping_method.name}" %></h4>
+        <h4><span class="fa fa-credit-card"></span> <%= @shipping_method.new_record? ? t('plugins.ecommerce.new_shipping_methods') : "#{t('plugins.ecommerce.edit_shipping_methods')}: #{@shipping_method.name}" %></h4>
     </div>
     <%= form_for @shipping_method, url:{action: @shipping_method.new_record? ? :create : :update},  html: {class: 'validate-shipping_method', id: 'form-shipping_method'}  do |f| %>
         <div class="panel-body">
             <%= render partial: 'layouts/camaleon_cms/admin/form_error', locals: {data: @shipping_method} %>
             <div class="form-group">
-                <%= f.label t('plugin.ecommerce.table.name') %><br>
+                <%= f.label t('plugins.ecommerce.table.name') %><br>
                 <%= f.text_field :name, :class => "form-control required" %>
             </div>
             <div class="form-group">
@@ -22,13 +22,13 @@
                options = params[:options] if params[:options].present?
             %>
             <div class="form-group">
-                <label><%= t('plugin.ecommerce.table.url_tracking') %></label><br>
+                <label><%= t('plugins.ecommerce.table.url_tracking') %></label><br>
                 <%= text_field_tag( "options[url_tracking]", options[:url_tracking], class: "form-control required") %>
-                <small><%= t('plugin.ecommerce.message.consignment_number') %></small>
+                <small><%= t('plugins.ecommerce.message.consignment_number') %></small>
             </div>
 
             <div class="form-group">
-                <label><%= f.check_box :status %> &nbsp; <%= t('plugin.ecommerce.active') %></label>
+                <label><%= f.check_box :status %> &nbsp; <%= t('plugins.ecommerce.active') %></label>
             </div>
         </div>
         <div class="panel-footer">

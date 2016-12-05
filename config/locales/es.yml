@@ -1,6 +1,5 @@
 es:
-  # backend
-  plugin:
+  plugins:
     ecommerce:
       accepted: "Aceptado"
       active: "Activo"
@@ -236,40 +235,38 @@ es:
         order_received_admin:
           subject: "Nueva Compra"
 
-  plugins:
-      ecommerce:
-        admin:
-          product_attributes:
-            group_label: 'Etiqueta de Grupo'
-            label: 'Etiqueta'
-            value: 'Valor'
-            title: 'Atributos de Producto'
-            add_attr_group: 'Agregar nuevo grupo'
-            add_new_value: 'Agregar valor'
-            values: 'Valores'
-            code: 'Código'
-            confirm_delete: 'Esta seguro de eliminar?'
+      admin:
+        product_attributes:
+          group_label: 'Etiqueta de Grupo'
+          label: 'Etiqueta'
+          value: 'Valor'
+          title: 'Atributos de Producto'
+          add_attr_group: 'Agregar nuevo grupo'
+          add_new_value: 'Agregar valor'
+          values: 'Valores'
+          code: 'Código'
+          confirm_delete: 'Esta seguro de eliminar?'
 
-          save_product_attributes:
-            saved_product_attributes: 'Atributos guardados'
+        save_product_attributes:
+          saved_product_attributes: 'Atributos guardados'
 
-          products:
-            variations:
-              title: 'Variaciones de Producto'
-              attributes: 'Atributos'
-              add_new_variation: 'Agregar Variación'
-              add_new_value: 'Agregar nuevo valor'
-              photo: 'Foto'
-              sku: 'SKU'
-              price: 'Precio'
-              weight: 'Peso'
-              qty: 'Cantidad'
-              confirm_del: 'Esta seguro de eliminar esta variación?'
+        products:
+          variations:
+            title: 'Variaciones de Producto'
+            attributes: 'Atributos'
+            add_new_variation: 'Agregar Variación'
+            add_new_value: 'Agregar nuevo valor'
+            photo: 'Foto'
+            sku: 'SKU'
+            price: 'Precio'
+            weight: 'Peso'
+            qty: 'Cantidad'
+            confirm_del: 'Esta seguro de eliminar esta variación?'
 
 
   # frontend
-  plugins:
-    ecommerce:
+  #plugins:
+  #  ecommerce:
       messages:
         cart_no_products: 'No existen productos en su carro'
         checkout: 'Pago'

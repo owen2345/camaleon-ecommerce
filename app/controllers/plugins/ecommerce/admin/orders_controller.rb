@@ -22,7 +22,7 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
 
   def show
     @order = @order.decorate
-    add_breadcrumb("#{t('plugin.ecommerce.details_order', default: 'Order details')} - #{@order.slug}")
+    add_breadcrumb("#{t('plugins.ecommerce.details_order', default: 'Order details')} - #{@order.slug}")
   end
 
   def new
@@ -40,15 +40,15 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
     @order.set_meta("shipping_address", params[:order][:shipping_address])
     @order.set_metas(params[:metas])
     @order.update(params.require(:plugins_ecommerce_order).permit(:shipped_at))
-    flash[:notice] = "#{t('plugin.ecommerce.message.order_updated', default: 'Order Updated')}"
+    flash[:notice] = "#{t('plugins.ecommerce.message.order_updated', default: 'Order Updated')}"
     redirect_to action: :show, id: params[:id]
   end
 
   def destroy
     if @order.destroy
-      flash[:notice] = "#{t('plugin.ecommerce.message.order_destroyed', default: 'Order Destroyed')}"
+      flash[:notice] = "#{t('plugins.ecommerce.message.order_destroyed', default: 'Order Destroyed')}"
     else
-      flash[:error] = "#{t('plugin.ecommerce.message.order_no_destroyed', default: 'Occurred some problems destroying the order')}"
+      flash[:error] = "#{t('plugins.ecommerce.message.order_no_destroyed', default: 'Occurred some problems destroying the order')}"
     end
     redirect_to action: :index
   end
@@ -57,7 +57,7 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
   def mark_accepted
     r = {order: @order}; hooks_run('plugin_ecommerce_before_accepted_order', r)
     @order.accepted!
-    message = "#{t('plugin.ecommerce.message.order_accepted', default: 'Order Accepted')}"
+    message = "#{t('plugins.ecommerce.message.order_accepted', default: 'Order Accepted')}"
     r = {order: @order, message: message}; hooks_run('plugin_ecommerce_after_accepted_order', r)
     flash[:notice] = r[:message]
     redirect_to action: :index
@@ -66,11 +66,11 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
   def mark_bank_confirmed
     if @order.on_delivery_pending?
       @order.on_delivery_confirmed!
-      flash[:notice] = "#{t('plugin.ecommerce.message.order_on_delivery_confirmed', default: 'Payment on Delivery Confirmed')}"
+      flash[:notice] = "#{t('plugins.ecommerce.message.order_on_delivery_confirmed', default: 'Payment on Delivery Confirmed')}"
       commerce_send_order_received_email(@order)
     else
       @order.bank_confirmed!
-      flash[:notice] = "#{t('plugin.ecommerce.message.order_bank_confirmed', default: 'Pay Bank Confirmed')}"
+      flash[:notice] = "#{t('plugins.ecommerce.message.order_bank_confirmed', default: 'Pay Bank Confirmed')}"
       commerce_send_order_received_email(@order, true)
     end
     redirect_to action: :index
@@ -79,16 +79,16 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
   # shipped order
   def mark_shipped
     @order.shipped!(params[:consignment_number])
-    cama_send_email(@order.user.email, t('plugin.ecommerce.mail.order_shipped.subject'), {template_name: 'order_shipped', extra_data: {order: @order, consignment_number: params[:consignment_number]}})
-    flash[:notice] = "#{t('plugin.ecommerce.message.order_shipped', default: 'Order Shipped')}"
+    cama_send_email(@order.user.email, t('plugins.ecommerce.mail.order_shipped.subject'), {template_name: 'order_shipped', extra_data: {order: @order, consignment_number: params[:consignment_number]}})
+    flash[:notice] = "#{t('plugins.ecommerce.message.order_shipped', default: 'Order Shipped')}"
     redirect_to action: :index
   end
 
   def mark_canceled
     @order.canceled!
     @order.set_meta('description', params[:description])
-    cama_send_email(@order.user.email, t('plugin.ecommerce.mail.order_canceled.subject'), {template_name: 'order_canceled', extra_data: {order: @order}, description: params[:description]})
-    flash[:notice] = "#{t('plugin.ecommerce.message.order_canceled', default: 'Order canceled')}"
+    cama_send_email(@order.user.email, t('plugins.ecommerce.mail.order_canceled.subject'), {template_name: 'order_canceled', extra_data: {order: @order}, description: params[:description]})
+    flash[:notice] = "#{t('plugins.ecommerce.message.order_canceled', default: 'Order canceled')}"
     redirect_to action: :index
   end
 
@@ -98,7 +98,7 @@ class Plugins::Ecommerce::Admin::OrdersController < Plugins::Ecommerce::AdminCon
   end
 
   def set_order_bread
-    add_breadcrumb I18n.t("plugin.ecommerce.orders", default: 'Orders'), admin_plugins_ecommerce_orders_path
+    add_breadcrumb I18n.t("plugins.ecommerce.orders", default: 'Orders'), admin_plugins_ecommerce_orders_path
   end
 
 end

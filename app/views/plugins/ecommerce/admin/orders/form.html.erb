@@ -1,13 +1,13 @@
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h4><span class="fa fa-cog"></span> <%= t('plugin.ecommerce.edit_order') %>: <%= @order.slug %></h4>
+        <h4><span class="fa fa-cog"></span> <%= t('plugins.ecommerce.edit_order') %>: <%= @order.slug %></h4>
     </div>
     <%= form_for @order, url: {action: @order.new_record? ? :create : :update}, html: {class: 'form-order', id: 'form-order'} do |f| %>
         <div class="panel-body">
             <%= render plugin_view('partials/checkout/user_info'), cart: @order, as_partial: true %>
             <hr>
             <div class="form-group">
-                <%= f.label nil, t('plugin.ecommerce.show_order.consignment_number', default: 'Consignment Number') %>
+                <%= f.label nil, t('plugins.ecommerce.show_order.consignment_number', default: 'Consignment Number') %>
                 <%= text_field_tag 'metas[consignment_number]', @order.get_meta('consignment_number'), class: 'form-control' %>
             </div>
             <div class="form-group">

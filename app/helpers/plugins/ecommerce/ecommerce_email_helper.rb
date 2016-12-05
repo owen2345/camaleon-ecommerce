@@ -20,10 +20,10 @@ module Plugins::Ecommerce::EcommerceEmailHelper
   def commerce_send_order_received_email(order, is_after_bank_confirmation = false)
     data = _commerce_prepare_send_order_email_data(order)
     if is_after_bank_confirmation
-      cama_send_email(order.user.email, t('plugin.ecommerce.mail.order_confirmed.subject'), {template_name: 'order_confirmed', extra_data: data[:extra_data], attachs: data[:files]})
+      cama_send_email(order.user.email, t('plugins.ecommerce.mail.order_confirmed.subject'), {template_name: 'order_confirmed', extra_data: data[:extra_data], attachs: data[:files]})
     else
       data.delete(:files) unless order.paid?
-      cama_send_email(order.user.email, t('plugin.ecommerce.email.order_received.subject'), {template_name: 'order_received', extra_data: data[:extra_data], attachs: data[:files]})
+      cama_send_email(order.user.email, t('plugins.ecommerce.email.order_received.subject'), {template_name: 'order_received', extra_data: data[:extra_data], attachs: data[:files]})
     end
   end
 
@@ -31,7 +31,7 @@ module Plugins::Ecommerce::EcommerceEmailHelper
     data = _commerce_prepare_send_order_email_data(order)
     data[:owners].each do |user|
       data[:extra_data][:admin] = user
-      cama_send_email(user.email, t('plugin.ecommerce.email.order_received_admin.subject'), {template_name: 'order_received_admin', extra_data: data[:extra_data], attachs: data[:files]})
+      cama_send_email(user.email, t('plugins.ecommerce.email.order_received_admin.subject'), {template_name: 'order_received_admin', extra_data: data[:extra_data], attachs: data[:files]})
     end
   end
 
@@ -40,7 +40,7 @@ module Plugins::Ecommerce::EcommerceEmailHelper
       :fullname => order.user.fullname,
       :order => order
     }
-    send_email(order.user.email, t('plugin.ecommerce.email.recovery_cart.subject'), '', nil, [], 'recovery_cart', nil, extra_data)
+    send_email(order.user.email, t('plugins.ecommerce.email.recovery_cart.subject'), '', nil, [], 'recovery_cart', nil, extra_data)
     Rails.logger.info "Send recovery to #{order.user.email} with order #{order.slug}"
   end
 

@@ -15,7 +15,7 @@ class Plugins::Ecommerce::CouponDecorator < CamaleonCms::TermTaxonomyDecorator
       when 'money'
         h.e_parse_price(opts[:amount].to_f)
       else
-        I18n.t('plugin.ecommerce.table.free_shipping', default: 'Free Shipping')
+        I18n.t('plugins.ecommerce.table.free_shipping', default: 'Free Shipping')
     end
   end
 
@@ -23,11 +23,11 @@ class Plugins::Ecommerce::CouponDecorator < CamaleonCms::TermTaxonomyDecorator
   def the_status
     opts = object.options
     if "#{opts[:expirate_date]} 23:59:59".to_datetime.to_i < Time.now.to_i
-      "<span class='label label-danger'>#{I18n.t('plugin.ecommerce.table.expired')} </span>"
+      "<span class='label label-danger'>#{I18n.t('plugins.ecommerce.table.expired')} </span>"
     elsif object.status.to_s.to_bool
-      "<span class='label label-success'>#{I18n.t('plugin.ecommerce.active')} </span>"
+      "<span class='label label-success'>#{I18n.t('plugins.ecommerce.active')} </span>"
     else
-      "<span class='label label-default'>#{I18n.t('plugin.ecommerce.not_active')} </span>"
+      "<span class='label label-default'>#{I18n.t('plugins.ecommerce.not_active')} </span>"
     end
   end
 end

@@ -1,5 +1,5 @@
 ﻿﻿en:
-  plugin:
+  plugins:
     ecommerce:
       currencies:
         usd: 'US dollars'

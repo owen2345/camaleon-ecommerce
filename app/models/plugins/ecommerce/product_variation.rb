@@ -10,6 +10,6 @@ class Plugins::Ecommerce::ProductVariation < ActiveRecord::Base
 
   private
   def verify_related_orders
-    errors.add(:base, t('plugin.ecommerce.message.not_deletable_product_variations')) if Plugins::Ecommerce::ProductItem.where(variation_id: id).any?
+    errors.add(:base, t('plugins.ecommerce.message.not_deletable_product_variations')) if Plugins::Ecommerce::ProductItem.where(variation_id: id).any?
   end
 end

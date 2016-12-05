@@ -1,6 +1,6 @@
 <div class="panel panel-default">
     <div class="panel-heading ui-draggable-handle">
-        <h4><span class="fa fa-money"></span> <%= @tax_rate.new_record? ? t('plugin.ecommerce.new_tax_rate') : "#{t('plugin.ecommerce.edit_tax_rate')}: #{@tax_rate.name}" %></h4>
+        <h4><span class="fa fa-money"></span> <%= @tax_rate.new_record? ? t('plugins.ecommerce.new_tax_rate') : "#{t('plugins.ecommerce.edit_tax_rate')}: #{@tax_rate.name}" %></h4>
     </div>
     <%= form_for @tax_rate, url:{action: @tax_rate.new_record? ? :create : :update},  html: {class: 'validate-tax_rate', id: 'form-tax_rate'}  do |f| %>
         <div class="panel-body">
@@ -11,7 +11,7 @@
             </div>
             <% options = params[:options].present? ? params[:options] : @tax_rate.options rescue {} %>
             <div class="form-group">
-                <label for=""><%= t('plugin.ecommerce.table.rate') %></label> (%)<br>
+                <label for=""><%= t('plugins.ecommerce.table.rate') %></label> (%)<br>
                 <%= number_field_tag "options[rate]", options[:rate] || '', :class => "form-control required" %>
             </div>
 
@@ -19,7 +19,7 @@
 
 
             <div class="form-group">
-                <label><%= f.check_box :status %> &nbsp; <%= t('plugin.ecommerce.active')%></label>
+                <label><%= f.check_box :status %> &nbsp; <%= t('plugins.ecommerce.active')%></label>
             </div>
         </div>
         <div class="panel-footer">

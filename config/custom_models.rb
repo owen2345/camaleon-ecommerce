@@ -38,7 +38,7 @@ Rails.application.config.to_prepare do
     private
     # verify if there are orders related to this product
     def e_validate_related_orders
-      errors.add(:base, I18n.t('plugin.ecommerce.message.not_deletable_product')) if Plugins::Ecommerce::ProductItem.where(product_id: id).any?
+      errors.add(:base, I18n.t('plugins.ecommerce.message.not_deletable_product')) if Plugins::Ecommerce::ProductItem.where(product_id: id).any?
     end
   end
 

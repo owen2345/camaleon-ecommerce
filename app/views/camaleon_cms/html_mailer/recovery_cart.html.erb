@@ -1,4 +1,4 @@
 <% order_slug = @extra_data[:order].slug %>
-<p><%= t('plugin.ecommerce.mail.order_received.welcome') %><%= @extra_data[:fullname] %></p>
-<p><%= t('plugin.ecommerce.mail.recovery_cart.body') %></p>
-<p><%= t('plugin.ecommerce.mail.recovery_cart.reference') %> <a href="<%= plugins_ecommerce_order_show_url(order: order_slug) %>"><%= order_slug %></a>
+<p><%= t('plugins.ecommerce.mail.order_received.welcome') %><%= @extra_data[:fullname] %></p>
+<p><%= t('plugins.ecommerce.mail.recovery_cart.body') %></p>
+<p><%= t('plugins.ecommerce.mail.recovery_cart.reference') %> <a href="<%= plugins_ecommerce_order_show_url(order: order_slug) %>"><%= order_slug %></a>
