@@ -3,7 +3,7 @@ module Plugins::Ecommerce::EcommerceHelper
   def ecommerce_admin_product_form(args)
     if args[:post_type].slug == 'commerce'
       append_asset_libraries({ecommerce: {css: [], js: [plugin_asset_path('admin_product')]}})
-      args[:html] = render partial: plugin_view('admin/products/variations'), locals:{post_type: args[:post_type], product: args[:post] }
+      args[:html] << render(partial: plugin_view('admin/products/variations'), locals:{post_type: args[:post_type], product: args[:post] })
     end
   end
 
