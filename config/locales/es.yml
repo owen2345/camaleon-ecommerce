@@ -68,6 +68,7 @@ es:
         order_accepted: 'Orden aceptado'
         order_shipped: 'Orden enviado'
         order_canceled: 'Orden cancelado'
+        order_email_resent: 'Correo Re-Enviado'
         order_updated: 'Orden actualizado'
         not_deletable_product_variations: 'Algunas variaciones de producto no pueden ser eliminados.'
         not_deletable_product: 'El Producto no puede ser eliminado porque existen órdenes referenciadas.'
@@ -228,14 +229,28 @@ es:
           message: 'Tu orden %{order} a sido cancelado por la siguiente razon: %{message}'
 
       email:
-        order_received:
-          subject: "Gracias por su compra"
-        recovery_cart:
-          subject: "Hemos observado que usted a dejado pendiente una compra."
-        order_received_admin:
-          subject: "Nueva Compra"
+        invoice_number_exceeded_subject: 'Número de factura excedido.'
+        invoice_number_exceeded_body: 'El número de factura %{number} fué excedido. Por favor revise las configuraciones de comercio electrónico.'
+        order_received_label: 'Orden Recibido'
+        order_confirmed_label: 'Orden Confirmado'
+        order_bank_confirmed_label: 'Orden Confirmado Por Banco'
+        order_on_delivery_confirmed_label: 'Orden Confirmado Contra Entrega'
+        order_shipped_label: 'Orden Enviado'
+        order_cancelled_label: 'Orden Cancelado'
 
       admin:
+        settings:
+          index:
+            email_settings: 'Configuración de correos'
+        orders:
+          index:
+            search_field: 'Correo, Código o Cupón'
+            created_after: 'Creado despues de'
+            created_before: 'Creado antes de'
+            search_status: 'Estado'
+            search_user: 'Usuario'
+            resend_email: 'Reenviar Correo'
+
         product_attributes:
           group_label: 'Etiqueta de Grupo'
           label: 'Etiqueta'
@@ -394,6 +409,33 @@ es:
 
 
       partials:
+        email:
+          billing_address:
+            address: 'Dirección'
+            city: 'Ciudad'
+            state: 'Estado'
+            zip_code: 'Código Zip'
+            country: 'País'
+            phone_number: 'Número de Teléfono'
+          shipping_address:
+            address: 'Dirección'
+            city: 'Ciudad'
+            state: 'Estado'
+            zip_code: 'Código Zip'
+            country: 'País'
+            phone_number: 'Número de Teléfono'
+
+          product_table:
+            qty: 'Cantidad'
+            item: 'Item'
+            price: 'Precio'
+            tax: 'Impuestos'
+            subtotal: 'Sub Total'
+            total_excl: 'Total (excluyendo impuestos)'
+            discount: 'Descuento'
+            total_shipping: 'Total envío'
+            total_price: 'Precio Total'
+
         checkout:
           user_info:
             firstname: 'Nombre(s)'

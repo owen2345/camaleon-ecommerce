@@ -4,36 +4,39 @@
     </div>
 
     <div class="panel-body">
-        <%= form_tag(url_for(action: :index), class: 'pull-right', method: 'get') do %>
-            <div class="input-group" id="adv-search">
-                <input type="text" class="form-control" placeholder="<%= t('plugins.ecommerce.search_order_number') %>" name="q" value="<%= params[:q] %>"/>
-                <div class="input-group-btn">
-                    <button type="button" title="<%= t('plugins.ecommerce.advanced_search', default: 'Advanced Search') %>" class="btn btn-default" id="ecommerce_adv_search_btn"><span class="caret"></span></button>
-                    <button type="submit" class="btn btn-primary"><span class="fa fa-search"></span></button>
+        <%= search_form_for @q, url: url_for(action: :index), class: 'row' do |f| %>
+            <div class="col-md-3">
+                <%= f.label :user_email_or_slug_or_coupon_cont, t('.search_field', default: 'Email or Number or Coupon') %>
+                <%= f.search_field :user_email_or_slug_or_coupon_cont, class: 'form-control' %>
+            </div>
+            <div class="col-md-2">
+                <%= f.label :created_at_gteq, t('.created_after', default: 'Created After') %>
+                <div class='input-group date date_field_w'>
+                    <%= f.text_field :created_at_gteq, class: 'form-control ' %>
+                    <span class='add-on input-group-addon'><span class='glyphicon glyphicon-calendar'></span></span>
                 </div>
             </div>
+            <div class="col-md-2">
+                <%= f.label :created_at_lteq, t('.created_before', default: 'Created Before') %>
+                <div class='input-group date date_field_w'>
+                    <%= f.text_field :created_at_lteq, class: 'form-control ' %>
+                    <span class='add-on input-group-addon'><span class='glyphicon glyphicon-calendar'></span></span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <%= f.label :status_eq, t('.search_status', default: 'Status') %>
+                <%= f.select :status_eq, [[cama_t('plugins.ecommerce.select.shipped'), "shipped"], [cama_t('plugins.ecommerce.select.canceled'), "canceled"], [cama_t('plugins.ecommerce.select.paid'), "paid"], [t('plugins.ecommerce.messages.order_status.bank_pending'), "bank_pending"], [cama_t('plugins.ecommerce.by_on_delivery'), "on_delivery"]], {include_blank: true}, class: 'form-control' %>
+            </div>
+            <div class="col-md-2">
+                <%= f.label :user_id_eq, t('.search_user', default: 'User') %>
+                <%= f.collection_select :user_id_eq, current_site.users.where(id: current_site.orders.pluck(:user_id)).decorate, :id, :the_name, {include_blank: true}, class: 'form-control' %>
+            </div>
+            <div class="col-md-1 text-left">
+                <label>&nbsp;</label><br>
+                <button type="submit" class="btn btn-primary"><span class="fa fa-search"></span></button>
+            </div>
         <% end %>
-        <div class="hidden" id="commerce_adv_search_modal">
-            <%= form_tag(url_for(action: :index), method: :get) do %>
-                <div class="form-group">
-                    <label for="contain"><%= t('plugins.ecommerce.table.customer') %> </label>
-                    <input class="form-control" type="text" name="c" value="<%= params[:c] %>"/>
-                </div>
-                <div class="form-group">
-                    <label for="contain"><%= t('plugins.ecommerce.e_mail_address') %></label>
-                    <input class="form-control" type="email" name="e" value="<%= params[:e] %>"/>
-                </div>
-                <!--<div class="form-group">-->
-                    <!--<label for="contain"><%= t('plugins.ecommerce.phone_number') %></label>-->
-                    <!--<input class="form-control" type="text" name="p" value="<%= params[:p] %>"/>-->
-                <!--</div>-->
-                <div class="form-group">
-                    <label for="contain"><%= t('plugins.ecommerce.table.status') %></label>
-                    <%= select_tag "s", options_for_select([[""], [t('plugins.ecommerce.select.accepted'), "accepted"], [cama_t('plugins.ecommerce.select.shipped'), "shipped"], [cama_t('plugins.ecommerce.select.canceled'), "canceled"], [cama_t('plugins.ecommerce.select.paid'), "paid"], [cama_t('plugins.ecommerce.select.pending'), "on_delivery|bank_pending"]], params[:s]), class: 'form-control' %>
-                </div>
-                <button type="submit" class="btn btn-primary"><span class="fa fa-search" aria-hidden="true"></span> <%= t("camaleon_cms.admin.button.search") %></button>
-            <% end %>
-        </div>
+        <hr>
         <div class="hidden" id="commerce_cancel_modal">
             <%= form_tag '#' do %>
                 <div class="form-group">
@@ -103,7 +106,8 @@
                         <div class="btn-group">
                             <button class="btn btn-info btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="<%= t('camaleon_cms.admin.button.settings') %>"><i class="fa fa-cog"></i></button>
                                 <ul class="dropdown-menu pull-right" style="min-width: 50px;">
-                                    <%= content_tag :li, link_to(t('plugins.ecommerce.table.make_accepted', default: 'Mark as Accepted'), url_for(action: :mark_accepted, order_id: order.slug), class: 'btn btn-xs') if order.paid? %>
+                                    <%#= content_tag :li, link_to(t('plugins.ecommerce.table.make_accepted', default: 'Mark as Accepted'), url_for(action: :mark_accepted, order_id: order.slug), class: 'btn btn-xs') if order.paid? %>
+                                    <%= content_tag :li, link_to(t('.resend_email', default: 'Resend Email'), url_for(action: :resend_email, order_id: order.slug), class: 'btn btn-xs') %>
                                     <%= content_tag :li, link_to(t('plugins.ecommerce.table.make_shipped', default: 'Mark as Shipped'), url_for(action: :mark_shipped, order_id: order.slug), class: 'btn btn-xs mark_shipped_btn') if order.accepted? || order.paid? %>
                                     <%= content_tag :li, link_to(t('plugins.ecommerce.table.make_canceled', default: 'Mark as Canceled'), url_for(action: :mark_canceled, order_id: order.slug), class: 'btn btn-xs mark_canceled_btn', 'data-confirm_msg'=> t('plugins.ecommerce.table.confirm_mark_as_cancel', default: 'Are you sure to mark as Canceled?')) if order.bank_pending? || order.on_delivery_pending? || order.paid? %>
                                     <%= content_tag :li, link_to(t('plugins.ecommerce.table.make_bank_confirmed', default: 'Mark as Paid'), url_for(action: :mark_bank_confirmed, order_id: order.slug), class: 'btn btn-xs', 'data-confirm'=> t('plugins.ecommerce.table.confirm_mark_as_paid', default: 'Are you sure to mark as Paid?')) if order.bank_pending? || order.on_delivery_pending? %>
@@ -115,24 +119,18 @@
             </tbody>
         </table>
         <%= content_tag("div", raw(t('camaleon_cms.admin.message.data_found_list')), class: "alert alert-warning") if @orders.empty? %>
-        <%= will_paginate @orders %>
+        <%= raw cama_do_pagination @orders %>
     </div>
 </div>
 <script>
     jQuery(function () {
         var panel = $('#commerce-orders-list');
+        panel.find('.date_field_w').datepicker();
+
         panel.find('.mark_shipped_btn').click(function(e){
             var link = $(this);
             e.preventDefault();
             open_modal({title: link.text(), content: panel.find('#commerce_shipped_modal').html(), callback: function(modal){ modal.find('form').attr('action', link.attr('href')).validate(); }});
-        });
-
-        panel.find('#ecommerce_adv_search_btn').click(function(e){
-            var link = $(this);
-            e.preventDefault();
-            open_modal({title: link.attr('title'), content: panel.find('#commerce_adv_search_modal').html(), callback: function(modal){
-                modal.find('form').validate();
-            }});
         });
 
         panel.find('.mark_canceled_btn').click(function(e){

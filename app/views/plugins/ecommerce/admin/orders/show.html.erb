@@ -3,7 +3,7 @@
         <h4><%= t('.title', default: 'Order Details') %>: <%= @order.slug %></h4>
     </div>
     <div class="panel-body">
-        <%= render file: plugin_view('front/orders/show'), as_partial: true %>
+        <%= render file: plugin_view('front/orders/show'), locals:{as_partial: true} %>
     </div>
     <div class="panel-footer">
         <button class="btn btn-default" onclick="history.back()"><%= t('camaleon_cms.admin.button.back') %></button>

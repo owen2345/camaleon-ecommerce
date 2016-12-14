@@ -34,8 +34,10 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
         flash[:cama_ecommerce][:error] = errors.join('<br>')
         redirect_to :back
       else
+        hooks_run('plugin_ecommerce_before_complete_free_order', @cart)
         @cart.set_meta('free_order', true)
-        mark_order_like_received(@cart)
+        commerce_mark_cart_received(@cart)
+        hooks_run('plugin_ecommerce_after_complete_free_order', @cart)
         redirect_to plugins_ecommerce_orders_path
       end
     else
@@ -121,20 +123,20 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
       end
       redirect_to :back
     else
-      mark_order_like_received(@cart)
+      commerce_mark_cart_received(@cart)
       redirect_to plugins_ecommerce_orders_url
     end
   end
 
   def pay_by_bank_transfer
     @cart.set_meta("payment_data", params[:details])
-    mark_order_like_received(@cart, 'bank_pending')
+    commerce_mark_cart_received(@cart, 'bank_pending')
     redirect_to plugins_ecommerce_orders_url
   end
 
   def pay_by_on_delivery
     @cart.set_meta("payment_data", params[:details])
-    mark_order_like_received(@cart, 'on_delivery')
+    commerce_mark_cart_received(@cart, 'on_delivery')
     redirect_to plugins_ecommerce_orders_url
   end
 
@@ -153,7 +155,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
       flash[:payment_error] = true
       redirect_to :back
     else
-      mark_order_like_received(@cart)
+      commerce_mark_cart_received(@cart)
       redirect_to plugins_ecommerce_orders_url
     end
   end
@@ -167,7 +169,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
 
     if response.success?
       @cart.set_meta('payment_data', {token: params[:token], PayerID: params[:PayerID], ip: request.remote_ip})
-      mark_order_like_received(@cart)
+      commerce_mark_cart_received(@cart)
     else
       flash[:cama_ecommerce][:error] = response.message
     end

@@ -24,4 +24,18 @@ class Plugins::Ecommerce::CartDecorator < Draper::Decorator
   def the_total_shipping
     h.e_parse_price(object.total_shipping)
   end
+
+  # convert the cart into order with specific status
+  def convert_to_order(status = 'paid')
+    prepare_to_pay
+    update_amounts
+    object.update_columns(
+      status: status,
+      kind: 'order',
+      received_at: Time.current
+    )
+    order = h.current_site.orders.find(object.id).decorate
+    order.paid! if status == 'paid'
+    order
+  end
 end

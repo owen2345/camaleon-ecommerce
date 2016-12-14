@@ -36,8 +36,9 @@ module Plugins::Ecommerce::EcommerceHelper
         items_i << {icon: "taxi", title: t('plugins.ecommerce.shipping_methods', default: 'Shipping Methods'), url: admin_plugins_ecommerce_shipping_methods_path}
         items_i << {icon: "credit-card", title: t('plugins.ecommerce.payment_methods', default: 'Payment Methods'), url: admin_plugins_ecommerce_payment_methods_path}
         items_i << {icon: "tag", title: t('plugins.ecommerce.coupons', default: 'Coupons'), url: admin_plugins_ecommerce_coupons_path}
-        items_i << {icon: "cogs", title: t('camaleon_cms.admin.button.settings', default: 'Settings'), url: admin_plugins_ecommerce_settings_path}
         items_i << {icon: "cubes", title: t('plugins.ecommerce.product_attributes', default: 'Product Attributes'), url: admin_plugins_ecommerce_product_attributes_path}
+        items_i << {icon: "cogs", title: t('camaleon_cms.admin.button.settings', default: 'Settings'), url: admin_plugins_ecommerce_settings_path}
+        hooks_run('plugin_ecommerce_after_menus', items_i) # permit to add menus for ecommerce plugin
       end
 
       admin_menu_insert_menu_after("content", "e-commerce", {icon: "shopping-cart", title: t('plugins.ecommerce.e_commerce', default: 'E-commerce'), url: "", items: items_i}) if items_i.present?

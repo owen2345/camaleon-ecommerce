@@ -8,6 +8,7 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
 
   belongs_to :site, :class_name => "CamaleonCms::Site", foreign_key: :site_id
   belongs_to :user, :class_name => "CamaleonCms::User", foreign_key: :user_id
+  belongs_to :shipping_method, class_name: 'Plugins::Ecommerce::ShippingMethod'
   scope :active_cart, ->{ where("#{Plugins::Ecommerce::Cart.table_name}.updated_at >= ?", 24.hours.ago) }
 
   after_create :generate_slug
@@ -16,7 +17,6 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
   #         paid => paid by some method
   #         canceled => canceled order
   #         shipped => shipped status
-  #         accepted => received status
 
   def payment_method
     @_cama_cache_payment_method ||= Plugins::Ecommerce::PaymentMethod.find_by_id(get_meta('payment_method_id', self.payment_method_id))
@@ -94,16 +94,6 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
     end
   end
 
-  # convert into order current cart
-  def convert_to_order
-    self.update_columns(kind: 'order', created_at: Time.current)
-    site.orders.find(self.id)
-  end
-
-  def shipping_method
-    Plugins::Ecommerce::ShippingMethod.find_by_id(self.shipping_method_id)
-  end
-
   # return the total price without coupon price
   def total_to_pay_without_discounts
     sub_total + tax_total + total_shipping
@@ -177,13 +167,6 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
       cache_the_weight: c.the_weight_total,
       cache_the_discounts: c.the_total_discounts,
       cache_the_shipping: c.the_total_shipping,
-    )
-  end
-
-  def mark_paid(status = 'paid')
-    self.update_columns(
-      status: status,
-      paid_at: Time.current,
     )
   end
 

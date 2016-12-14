@@ -18,25 +18,12 @@ class Plugins::Ecommerce::Order < Plugins::Ecommerce::Cart
     status == 'accepted'
   end
 
-  def accepted!
-    update_columns({status: 'accepted', accepted_at: Time.current})
-  end
-
   def shipped?
     status == 'shipped'
   end
 
-  def shipped!(code)
-    update_columns({status: 'shipped', shipped_at: Time.current})
-    set_meta('consignment_number', code)
-  end
-
   def canceled?
     status == 'canceled'
-  end
-
-  def canceled!
-    update_columns({status: 'canceled', shipped_at: Time.current})
   end
 
   def received?
@@ -49,14 +36,6 @@ class Plugins::Ecommerce::Order < Plugins::Ecommerce::Cart
 
   def on_delivery_pending?
     status == 'on_delivery'
-  end
-
-  def bank_confirmed!
-    update_columns({status: 'paid', updated_at: Time.current})
-  end
-
-  def on_delivery_confirmed!
-    update_columns({status: 'paid', updated_at: Time.current})
   end
 
   def payment_data

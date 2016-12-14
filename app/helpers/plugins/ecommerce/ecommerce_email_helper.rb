@@ -1,47 +1,15 @@
 module Plugins::Ecommerce::EcommerceEmailHelper
   include CamaleonCms::EmailHelper
 
-  def mark_order_like_received(cart, status = 'paid')
-    cart_service = Plugins::Ecommerce::CartService.new(current_site, cart)
-    order = cart_service.convert_to_order(status)
-
-    # send email to buyer
-    commerce_send_order_received_email(order)
-
-    # Send email to products owner
-    commerce_send_order_received_admin_notice(order)
-
+  # mark current cart into order with specific status
+  def commerce_mark_cart_received(cart, status = 'paid')
+    args = {cart: cart, status: status}; hooks_run('commerce_before_payment_completed', args)
+    order = cart.convert_to_order(status)
+    order.set_meta('locale', I18n.locale)
+    commerce_order_send_mail(order)
     flash[:notice] = t('plugins.ecommerce.messages.payment_completed', default: "Payment completed successfully")
-    args = {order: order}; hooks_run("commerce_after_payment_completed", args)
-
+    args = {order: order, status: status}; hooks_run("commerce_after_payment_completed", args)
     order
-  end
-
-  def commerce_send_order_received_email(order, is_after_bank_confirmation = false)
-    data = _commerce_prepare_send_order_email_data(order)
-    if is_after_bank_confirmation
-      cama_send_email(order.user.email, t('plugins.ecommerce.mail.order_confirmed.subject'), {template_name: 'order_confirmed', extra_data: data[:extra_data], attachs: data[:files]})
-    else
-      data.delete(:files) unless order.paid?
-      cama_send_email(order.user.email, t('plugins.ecommerce.email.order_received.subject'), {template_name: 'order_received', extra_data: data[:extra_data], attachs: data[:files]})
-    end
-  end
-
-  def commerce_send_order_received_admin_notice(order)
-    data = _commerce_prepare_send_order_email_data(order)
-    data[:owners].each do |user|
-      data[:extra_data][:admin] = user
-      cama_send_email(user.email, t('plugins.ecommerce.email.order_received_admin.subject'), {template_name: 'order_received_admin', extra_data: data[:extra_data], attachs: data[:files]})
-    end
-  end
-
-  def send_recovery_cart_email(order)
-    extra_data = {
-      :fullname => order.user.fullname,
-      :order => order
-    }
-    send_email(order.user.email, t('plugins.ecommerce.email.recovery_cart.subject'), '', nil, [], 'recovery_cart', nil, extra_data)
-    Rails.logger.info "Send recovery to #{order.user.email} with order #{order.slug}"
   end
 
   # return translated message
@@ -85,24 +53,57 @@ module Plugins::Ecommerce::EcommerceEmailHelper
     errors
   end
 
-  private
-  def _commerce_prepare_send_order_email_data(order)
-    data = {}
-    data[:extra_data] = {
-      :fullname => order.user.fullname,
-      :order_slug => order.slug,
-      :order_url => plugins_ecommerce_order_show_url(order: order.slug),
-      :billing_information => order.get_meta('billing_address'),
-      :shipping_address => order.get_meta('shipping_address'),
-      :subtotal => order.cache_the_sub_total,
-      :total_cost => order.cache_the_total,
-      :order => order,
-      :order_details_html => render_to_string(file: 'plugins/ecommerce/front/orders/show', layout: false, locals: {as_partial: true, order: order.decorated? ? order : order.decorate})
+  # send the email to the user for specific events or status
+  # event: (String) email_order_received | email_order_shipped | email_order_cancelled | email_order_confirmed_bank | email_order_confirmed_on_delivery
+  def commerce_order_send_mail(order, event = 'email_order_received')
+    bk_l = I18n.locale
+    I18n.locale = order.get_meta('locale', 'en').to_s
+    subject, content_key = case event
+                         when 'email_order_received'
+                           [I18n.t('plugins.ecommerce.email.order_received_label', default: 'Order Received'), 'email_order_received']
+                         when 'email_order_confirmed'
+                           [I18n.t('plugins.ecommerce.email.order_confirmed_label', default: 'Order Confirmed'), 'email_order_confirmed']
+                         when 'email_order_confirmed_bank'
+                           [I18n.t('plugins.ecommerce.email.order_bank_confirmed_label', default: 'Order Bank Confirmed'), 'email_order_confirmed']
+                         when 'email_order_confirmed_on_delivery'
+                           [I18n.t('plugins.ecommerce.email.order_on_delivery_confirmed_label', default: 'Order on Delivery Confirmed'), 'email_order_confirmed']
+                         when 'email_order_shipped'
+                           [I18n.t('plugins.ecommerce.email.order_shipped_label', default: 'Order Shipped'), 'email_order_shipped']
+                         when 'email_order_cancelled'
+                           [I18n.t('plugins.ecommerce.email.order_cancelled_label', default: 'Order Cancelled'), 'email_order_cancelled']
+                       end
+    data = {content: current_site.e_email_for(content_key).to_s.translate, files: []}
+    replaces = {
+      order_table: render_to_string(partial: 'plugins/ecommerce/partials/email/product_table', locals: {order: order}),
+      shipping_info: render_to_string(partial: 'plugins/ecommerce/partials/email/shipping_address', locals: {order: order}),
+      billing_info: render_to_string(partial: 'plugins/ecommerce/partials/email/billing_address', locals: {order: order}),
+      cancelled_description: order.get_meta('description').to_s,
+      root_url: current_site.the_url,
+      date: order.the_created_at,
+      current_date: l(Date.today, format: :long),
+      number: order.slug,
+      name: order.user.first_name,
+      full_name: order.user.fullname,
+      tracking_url: order.the_url_tracking.to_s,
+      shipping_name: order.the_shipping_method.to_s,
+      invoice_number: order.invoice_number.to_s,
+      status: order.the_status,
+      url: order.the_url
     }
-    order_service = Plugins::Ecommerce::OrderService.new(current_site, order)
-    data[:owners] = order_service.product_owners
-    data[:files] = order_service.product_files
-    data
-  end
+    args={order: order, replaces: replaces}; hooks_run('commerce_custom_email_replacements', args) # permit to add custom replacements
 
+    if order.status == 'paid'
+      order.products.each do |product|
+        data[:files] += product.get_fields('ecommerce_files').map{|f| CamaleonCmsLocalUploader::private_file_path(f, current_site) }
+      end
+      data[:files] = data[:files].uniq
+      pdf_path = order.the_invoice_path
+      File.open(pdf_path, 'wb'){|file| file << WickedPdf.new.pdf_from_string(order.the_email_content_for('email_order_invoice').to_s.cama_replace_codes(replaces, format_code = '{'), encoding: 'utf8') }
+      data[:files] << pdf_path
+      order.update_column(:invoice_path, pdf_path.split('/').last)
+    end
+    data[:content] = data[:content].to_s.cama_replace_codes(replaces, format_code = '{')
+    cama_send_email(order.user.email, subject, data)
+    I18n.locale = bk_l
+  end
 end

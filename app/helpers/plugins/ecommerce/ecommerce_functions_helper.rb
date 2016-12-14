@@ -1,10 +1,5 @@
 #encoding: utf-8
 module Plugins::Ecommerce::EcommerceFunctionsHelper
-  # return the settings for ecommerce (Hash)
-  def ecommerce_get_settings
-    current_site.get_meta("_setting_ecommerce", {})
-  end
-
   # return the visitor key which is used to relate the cart until login/register
   def ecommerce_get_visitor_key
     cookies[:e_cart_id] ||= cama_get_session_id unless cama_current_user.present?
@@ -17,12 +12,12 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
 
   # return all shipping country codes supported for shipping
   def e_shipping_countries
-    ecommerce_get_settings[:shipping_countries] || ISO3166::Country.codes
+    current_site.e_settings[:shipping_countries] || ISO3166::Country.codes
   end
 
   # return (Array) all the currencies for visitors
   def e_visitor_unit_currencies
-    ecommerce_get_settings[:visitor_unit_currencies] || ['USD']
+    current_site.e_settings[:visitor_unit_currencies] || ['USD']
   end
 
   # draw a select dropdown with all frontend currencies and actions to change current currency
@@ -61,7 +56,7 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
 
   # return the currency defined for admin panel
   def e_system_currency
-    ecommerce_get_settings[:current_unit] || 'USD'
+    current_site.e_settings[:current_unit] || 'USD'
   end
 
   # render price formatted of a product with current currency
@@ -275,7 +270,7 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
 
   def ecommerce_draw_breadcrumb
     res = '<ol class="breadcrumb" style="margin: 0;">'
-    @ecommerce_breadcrumb.each_with_index do |m, index|
+    (@ecommerce_breadcrumb || []).each_with_index do |m, index|
       if m[1].present?
         res << "<li class='#{"active" if @ecommerce_breadcrumb.size == index+1}'><a href='#{m[1]}'>#{m[0]}</a></li>"
       else

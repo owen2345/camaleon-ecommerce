@@ -24,7 +24,7 @@
             <h4><%= t('.billing_address', default: 'Billing Address') %></h4>
             <% detail = order.get_meta("billing_address", {}) %>
             <ul class="ec-list-orders-address">
-                <li><strong><%= t('.address', default: 'Address1') %>:</strong> <%= detail[:address1] %></li>
+                <li><strong><%= t('.address', default: 'Address') %>1:</strong> <%= detail[:address1] %></li>
                 <li><strong><%= t('.address', default: 'Address') %>2:</strong> <%= detail[:address2] %></li>
                 <li><strong><%= t('.city', default: 'City') %>:</strong> <%= detail[:city] %></li>
                 <li><strong><%= t('.state', default: 'State') %>:</strong> <%= detail[:state] %></li>
@@ -38,7 +38,7 @@
             <h4><%= t('.shipping_address', default: 'Shipping Address') %></h4>
             <% detail = order.get_meta("shipping_address", {}) %>
             <ul class="ec-list-orders-address">
-                <li><strong><%= t('.address', default: 'Address1') %>:</strong> <%= detail[:address1] %></li>
+                <li><strong><%= t('.address', default: 'Address') %>1:</strong> <%= detail[:address1] %></li>
                 <li><strong><%= t('.address', default: 'Address') %>2:</strong> <%= detail[:address2] %></li>
                 <li><strong><%= t('.city', default: 'City') %>:</strong> <%= detail[:city] %></li>
                 <li><strong><%= t('.state', default: 'State') %>:</strong> <%= detail[:state] %></li>
@@ -57,12 +57,12 @@
                 <table class="table table-bordered">
                     <tbody>
                     <tr>
-                        <th id="quantity_col"><%= t('.qty', default: 'Quantity') %></th>
-                        <th id="item_col"><%= t('.item', default: 'Item') %></th>
-                        <th id="price_col"><%= t('.price', default: 'Price') %></th>
+                        <th><%= t('.qty', default: 'Quantity') %></th>
+                        <th><%= t('.item', default: 'Item') %></th>
+                        <th><%= t('.price', default: 'Price') %></th>
 
-                        <th id="tax_col"><%= t('.tax', default: 'Tax') %></th>
-                        <th id="subtotal_col"><%= t('.subtotal', default: 'Sub Total') %></th>
+                        <th><%= t('.tax', default: 'Tax') %></th>
+                        <th><%= t('.subtotal', default: 'Sub Total') %></th>
                     </tr>
                     <% order.product_items.each do |item| %>
                         <tr>
@@ -136,8 +136,6 @@
                 </tr>
                 </tbody>
             </table>
-            <div class="text-center">
-            </div>
         </div>
     </div>
 </div>

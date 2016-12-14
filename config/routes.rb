@@ -47,6 +47,7 @@ Rails.application.routes.draw do
         post 'product_attributes' => 'admin#save_product_attributes'
         resources :orders, controller: 'admin/orders' do
           get 'mark_accepted'
+          get 'resend_email'
           get 'mark_bank_confirmed'
           post 'mark_shipped'
           post 'mark_canceled'
