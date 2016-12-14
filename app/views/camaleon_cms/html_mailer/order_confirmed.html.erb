@@ -1,2 +1,0 @@
-<p><%= t('plugins.ecommerce.mail.dear', default: 'Dear %{name}: ', name: @extra_data[:fullname]) %></p>
-<p><%= t('plugins.ecommerce.mail.order_confirmed.message', default: 'We have confirmed your payment by bank transfer for the order #%{order}.\n\n Thanks for your preference.', order: @extra_data[:order_slug]).gsub(/\n/, '<br>').gsub('\n', '<br>') %></p>
