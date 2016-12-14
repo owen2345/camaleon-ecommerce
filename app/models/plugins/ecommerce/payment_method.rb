@@ -4,6 +4,10 @@ class Plugins::Ecommerce::PaymentMethod < CamaleonCms::TermTaxonomy
 
   scope :actives, -> {where(status: '1')}
 
+  def skip_slug_validation?
+    true
+  end
+
   def method_text
     if options[:type] == 'paypal'
       I18n.t 'plugins.ecommerce.by_paypal', default: 'Paypal'

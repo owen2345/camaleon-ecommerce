@@ -25,6 +25,18 @@ class Plugins::Ecommerce::OrderDecorator < Draper::Decorator
     h.l(object.created_at, format: format.to_sym)
   end
 
+  def the_paid_at(format = :long)
+    h.l(object.paid_at, format: format.to_sym) rescue ''
+  end
+
+  def the_received_at(format = :long)
+    h.l(object.received_at, format: format.to_sym) rescue ''
+  end
+
+  def the_shipped_at(format = :long)
+    h.l(object.shipped_at, format: format.to_sym) rescue ''
+  end
+
   # return shipping method title
   def the_shipping_method
     object.shipping_method.try(:decorate).try(:the_title)

@@ -69,16 +69,16 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
     product = current_site.products.find(data[:product_id]).decorate
     unless product.valid_variation?(params[:variation_id])
       flash[:cama_ecommerce][:error] = t('plugins.ecommerce.messages.missing_variation', default: 'Invalid Product Variation')
-      return redirect_to action: :cart_index
+      return params[:format] == 'json' ? render(json: flash.discard(:cama_ecommerce).to_hash) : (redirect_to action: :cart_index)
     end
 
     unless product.can_added?(qty, params[:variation_id])
       flash[:cama_ecommerce][:error] =  t('plugins.ecommerce.messages.not_enough_product_qty', product: product.the_variation_title(params[:variation_id]), qty: product.the_qty_real(params[:variation_id]), default: 'There is not enough products "%{product}" (Available %{qty})')
-      return redirect_to :back
+      return params[:format] == 'json' ? render(json: flash.discard(:cama_ecommerce).to_hash) : (redirect_to :back)
     end
     @cart.add_product(product, qty, params[:variation_id])
     flash[:cama_ecommerce][:notice] = t('plugins.ecommerce.messages.added_product_in_cart', default: 'Product added into cart')
-    redirect_to action: :cart_index
+    params[:format] == 'json' ? render(json: flash.discard(:cama_ecommerce).to_hash) : (redirect_to action: :cart_index)
   end
 
   def cart_update
@@ -95,19 +95,19 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
     end
     flash[:cama_ecommerce][:error] = errors.join('<br>') if errors.present?
     flash[:cama_ecommerce][:notice] = t('plugins.ecommerce.messages.cart_updated', default: 'Shopping cart updated') unless errors.present?
-    redirect_to action: :cart_index
+    params[:format] == 'json' ? render(json: flash.discard(:cama_ecommerce).to_hash) : (redirect_to action: :cart_index)
   end
 
   def cart_remove
     @cart.product_items.find(params[:product_item_id]).destroy
     flash[:cama_ecommerce][:notice] = t('plugins.ecommerce.messages.cart_deleted', default: 'Product removed from your shopping cart')
-    redirect_to action: :cart_index
+    params[:format] == 'json' ? render(json: flash.discard(:cama_ecommerce).to_hash) : (redirect_to action: :cart_index)
   end
 
   def cancel_order
     @cart.update({status: 'canceled', kind: 'order', closed_at: Time.now})
     flash[:cama_ecommerce][:notice] = t('plugins.ecommerce.messages.canceled_order', default: "Canceled Order")
-    redirect_to plugins_ecommerce_orders_url
+    params[:format] == 'json' ? render(json: flash.discard(:cama_ecommerce).to_hash) : (redirect_to plugins_ecommerce_orders_url)
   end
 
   def pay_by_stripe
@@ -177,7 +177,6 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
   end
 
   def cancel_paypal
-    # @cart = current_site.orders.find_by_slug(params[:order])
     redirect_to plugins_ecommerce_orders_url
   end
 

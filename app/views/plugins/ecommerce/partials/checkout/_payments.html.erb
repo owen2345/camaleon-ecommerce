@@ -33,7 +33,7 @@
                                 <%= form_tag(plugins_ecommerce_checkout_pay_by_bank_transfer_path(order: @cart.slug), :method => "post") do %>
                                     <ul class="ec-list-orders-address">
                                         <li><strong><%= t('.account_number', default: 'Account Number') %>: </strong><span> <%= payment.options[:bank_transfer_number_account] %></span></li>
-                                        <li><strong><%= t('.details_transfer', default: 'Details') %>: </strong><span> <%= payment.options[:bank_transfer_detail] %></span></li>
+                                        <li><strong><%= t('.details_transfer', default: 'Details') %>: </strong><span> <%= payment.options[:bank_transfer_detail].to_s.translate %></span></li>
                                     </ul>
                                     <div class="form-group">
                                         <label><%= t('.bank_name', default: 'Bank name') %></label>
@@ -110,6 +110,7 @@
                                     <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                                             data-key="<%= payment.options[:stripe_key] %>"
                                             data-description="Payment Products: <%= @cart.products_title %>"
+                                            data-email="<%= cama_current_user.email %>"
                                             data-amount="<%= Plugins::Ecommerce::UtilService.ecommerce_money_to_cents(@cart.total_amount) %>"
                                             data-locale="<%= I18n.locale %>"></script>
                                 <% end %>

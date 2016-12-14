@@ -72,7 +72,7 @@ module Plugins::Ecommerce::EcommerceEmailHelper
                          when 'email_order_cancelled'
                            [I18n.t('plugins.ecommerce.email.order_cancelled_label', default: 'Order Cancelled'), 'email_order_cancelled']
                        end
-    data = {content: current_site.e_email_for(content_key).to_s.translate, files: []}
+    data = {template_name: nil, content: current_site.e_email_for(content_key).to_s.translate, files: []}
     replaces = {
       order_table: render_to_string(partial: 'plugins/ecommerce/partials/email/product_table', locals: {order: order}),
       shipping_info: render_to_string(partial: 'plugins/ecommerce/partials/email/shipping_address', locals: {order: order}),
@@ -98,7 +98,7 @@ module Plugins::Ecommerce::EcommerceEmailHelper
       end
       data[:files] = data[:files].uniq
       pdf_path = order.the_invoice_path
-      File.open(pdf_path, 'wb'){|file| file << WickedPdf.new.pdf_from_string(order.the_email_content_for('email_order_invoice').to_s.cama_replace_codes(replaces, format_code = '{'), encoding: 'utf8') }
+      File.open(pdf_path, 'wb'){|file| file << WickedPdf.new.pdf_from_string(current_site.e_email_for('email_order_invoice').to_s.translate.to_s.cama_replace_codes(replaces, format_code = '{'), encoding: 'utf8') }
       data[:files] << pdf_path
       order.update_column(:invoice_path, pdf_path.split('/').last)
     end

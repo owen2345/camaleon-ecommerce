@@ -27,7 +27,7 @@
         <td><%= order.cache_the_sub_total  %></td>
         <td><%= order.cache_the_discounts  %></td>
         <td><%= order.cache_the_total  %></td>
-        <td><%= order.paid_at %></td>
+        <td><%= order.the_paid_at %></td>
         <td><%= order.payment_method.name rescue '' %></td>
         <td>
           <a href="<%= plugins_ecommerce_order_show_path(order: order.slug) %>" class="btn btn-default btn-xs"><%= t('.view', default: 'View') %></a>

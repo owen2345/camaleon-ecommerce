@@ -75,7 +75,7 @@ module Plugins::Ecommerce::EcommerceHelper
       # verify no deletable variances
       no_deletable_variances = false
       args[:post].product_variations.where.not(id: params[:product_variation].keys).each{|prod| no_deletable_variances = true unless prod.destroy }
-      flash[:warning] += cama_t('plugins.ecommerce.variations.not_deletable_product_variations') if no_deletable_variances
+      flash[:warning] += t('plugins.ecommerce.variations.not_deletable_product_variations', default: 'Some Product variations can not be deleted.') if no_deletable_variances
 
       params[:product_variation].each do |p_key, p_var|
         data = {amount: p_var[:price], photo: p_var[:photo], sku: p_var[:sku], weight: p_var[:weight], qty: p_var[:qty], attribute_ids: (p_var[:attributes] || []).map{|at| at[:value] }.join(',')}

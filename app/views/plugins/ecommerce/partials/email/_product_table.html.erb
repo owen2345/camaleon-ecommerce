@@ -1,0 +1,46 @@
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+        <th><%= t('.qty', default: 'Quantity') %></th>
+        <th><%= t('.item', default: 'Item') %></th>
+        <th><%= t('.price', default: 'Price') %></th>
+
+        <th><%= t('.tax', default: 'Tax') %></th>
+        <th><%= t('.subtotal', default: 'Sub Total') %></th>
+    </tr>
+    <% order.product_items.each do |item| %>
+        <tr>
+            <td><%= item.qty %></td>
+            <td><%= link_to(item.cache_the_title, item.product.try(:decorate).try(:the_url)) %></td>
+            <td><%= item.cache_the_price %></td>
+            <td><%= item.cache_the_tax %></td>
+            <td><%= item.cache_the_sub_total %></td>
+        </tr>
+    <% end %>
+    <tr>
+        <td colspan="2"></td>
+        <td colspan="2" class="text-right"><%= t('.total_excl', default: 'Total (excluding Tax)') %> </td>
+        <td><%= order.cache_the_sub_total %></td>
+    </tr>
+    <tr>
+        <td colspan="2"></td>
+        <td colspan="2" class="text-right"><%= t('.tax', default: 'Tax') %></td>
+        <td id="tax_total"><%= order.cache_the_tax %></td>
+    </tr>
+    <tr>
+        <td colspan="2"></td>
+        <td colspan="2" class="text-right"><%= t('.discount', default: 'Discount') %></td>
+        <td><%= order.cache_the_discounts %></td>
+    </tr>
+    <tr>
+        <td colspan="2"></td>
+        <td colspan="2" class="text-right"><%= t('.total_shipping', default: 'Total shipping') %></td>
+        <td><%= order.cache_the_shipping %></td>
+    </tr>
+    <tr>
+        <td colspan="2"></td>
+        <td colspan="2" class="text-right"><%= t('.total_price', default: 'Total Price') %></td>
+        <td><%= order.cache_the_total %></td>
+    </tr>
+    </tbody>
+</table>

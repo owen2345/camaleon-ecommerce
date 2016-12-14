@@ -1,67 +1,67 @@
 <%= stylesheet_link_tag plugin_asset_path('multi-select') %>
 <%= javascript_include_tag plugin_asset_path('admin_settings') %>
-<% keywords = "#{t('keywords_to_use', default: 'Keywords to use')}: #{current_site.e_email_keys}" %>
+<% keywords = "#{t('.keywords_to_use', default: 'Keywords to use')}: #{current_site.e_email_keys}" %>
 <div class="panel panel-default">
     <div class="panel-heading ui-draggable-handle">
-        <h4><span class="fa fa-cogs"></span> <%= cama_t('plugins.ecommerce.e_commerce_settings') %></h4>
+        <h4><span class="fa fa-cogs"></span> <%= t('.title', default: 'E-Commerce Settings') %></h4>
     </div>
     <%= form_tag(url_for(action: :saved, :method => "post"), :class => "validate", id: 'ecommerce_settings_form') do %>
         <div class="panel-body">
             <div class="row">
                 <div class="col-lg-3">
                     <div class="form-group">
-                        <label><%= cama_t('plugins.ecommerce.table.system_currency_unit') %></label><br>
+                        <label><%= t('.system_currency_unit', default: 'System Currency Unit') %></label><br>
                         <%= select_tag( "setting[current_unit]", options_for_select(e_get_all_currencies.collect{|k, x| ["#{x[:label]} (#{x[:symbol]})", k]}, e_system_currency), class: "form-control required masked_select", 'data-live-search' => true) %>
                     </div>
                     <div class="form-group">
-                        <label><%= cama_t('plugins.ecommerce.table.currency_weight') %></label><br>
+                        <label><%= t('.currency_weight', default: 'Currency Unit') %></label><br>
                         <%= select_tag( "setting[current_weight]",  options_for_select(e_get_currency_weights.collect{|k,x| ["#{x} (#{k})", k]}, @setting[:current_weight] || 'kg'), class: "form-control required") %>
                     </div>
                     <div class="form-group">
-                        <label><%= cama_t('.invoice_number_from', default: 'Invoice Number From') %></label><br>
+                        <label><%= t('.invoice_number_from', default: 'Invoice Number From') %></label><br>
                         <%= text_field_tag( "setting[invoice_number_from]",  current_site.e_invoice_number_from, class: "form-control required") %>
                     </div>
                     <div class="form-group">
-                        <label><%= cama_t('.invoice_number_from', default: 'Invoice Number From') %></label><br>
+                        <label><%= t('.invoice_number_to', default: 'Invoice Number To') %></label><br>
                         <%= text_field_tag( "setting[invoice_number_to]",  current_site.e_invoice_number_to, class: "form-control required") %>
                     </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="form-group">
-                        <label><%= cama_t('plugins.ecommerce.table.shipping_countries') %></label><br>
+                        <label><%= t('.shipping_countries', default: 'Shipping Countries') %></label><br>
                         <%= country_select :setting, :shipping_countries, {locale: I18n.locale.to_s, iso_codes: true, selected:  e_shipping_countries}, { :name => 'setting[shipping_countries][]',  class: 'form-control', multiple: true, 'data-live-search' => true, 'data-actions-box' => true } %>
                     </div>
                 </div>
 
                 <div class="form-group col-lg-5">
-                    <label><%= cama_t('plugins.ecommerce.table.available_currencies_unit') %></label><br>
+                    <label><%= t('.available_currencies_unit', default: 'Visitor Available Currencies') %></label><br>
                     <%= select_tag( "setting[visitor_unit_currencies]", options_for_select(e_get_all_currencies.collect{|k, x| ["#{x[:label]} (#{x[:symbol]})", k]}, e_visitor_unit_currencies), class: "form-control required", multiple: true, 'data-live-search' => true) %>
                 </div>
             </div>
             <h3><%= t('.email_settings', default: 'Email Settings') %></h3>
             <div>
                 <div class="form-group">
-                    <label><%= t('.email_order_received', default: 'Order Paid') %> <%= raw cama_html_tooltip(keywords, 'right') %></label><br>
+                    <label><%= t('.email_order_received', default: 'Order Received') %> <%= raw cama_html_tooltip(keywords, 'right') %></label><br>
                     <%= text_area_tag 'setting[email_order_received]', current_site.e_email_for('email_order_received'), class: 'form-control required required_all_langs translatable editor' %>
                 </div>
 
                 <div class="form-group">
-                    <label><%= t('.email_order_confirmed') %> <%= raw cama_html_tooltip(keywords, 'right') %></label><br>
+                    <label><%= t('.email_order_confirmed', default: 'Order Confirmed') %> <%= raw cama_html_tooltip(keywords, 'right') %></label><br>
                     <%= text_area_tag 'setting[email_order_confirmed]', current_site.e_email_for('email_order_confirmed'), class: 'form-control required required_all_langs translatable editor' %>
                 </div>
 
                 <div class="form-group">
-                    <label><%= t('.email_order_shipped') %> <%= raw cama_html_tooltip(keywords, 'right') %></label><br>
+                    <label><%= t('.email_order_shipped', default: 'Order Shipped') %> <%= raw cama_html_tooltip(keywords, 'right') %></label><br>
                     <%= text_area_tag 'setting[email_order_shipped]', current_site.e_email_for('email_order_shipped'), class: 'form-control required required_all_langs translatable editor' %>
                 </div>
 
                 <div class="form-group">
-                    <label><%= t('.email_order_cancelled') %> <%= raw cama_html_tooltip(keywords, 'right') %></label><br>
+                    <label><%= t('.email_order_cancelled', default: 'Order Cancelled') %> <%= raw cama_html_tooltip(keywords, 'right') %></label><br>
                     <%= text_area_tag 'setting[email_order_cancelled]', current_site.e_email_for('email_order_cancelled'), class: 'form-control required required_all_langs translatable editor' %>
                 </div>
 
                 <div class="form-group">
-                    <label><%= t('.email_order_invoice') %> <%= raw cama_html_tooltip(keywords, 'right') %></label><br>
+                    <label><%= t('.email_order_invoice', default: 'Invoice Template') %> <%= raw cama_html_tooltip(keywords, 'right') %></label><br>
                     <%= text_area_tag 'setting[email_order_invoice]', current_site.e_email_for('email_order_invoice'), class: 'form-control required required_all_langs translatable editor' %>
                 </div>
             </div>

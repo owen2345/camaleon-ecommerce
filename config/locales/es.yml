@@ -54,6 +54,8 @@ es:
       list_payment_methods: "Lista Métodos de Pago"
       list_coupons: "Lista Cupones"
       mark_Shipped: "Marcar como enviado"
+      variations:
+        not_deletable_product_variations: 'Algunos variaciones de producto no pueden ser eliminados'
       message:
         consignment_number: "Use {{numero_envio}} para insertar el no."
         error_paypal_values: "Error Valores Paypal"
@@ -241,7 +243,22 @@ es:
       admin:
         settings:
           index:
-            email_settings: 'Configuración de correos'
+            title: 'Configuración de Comercio Clectrónico'
+            keywords_to_use: 'Palabras Clave para usar'
+            email_settings: 'Email Settings'
+            system_currency_unit: 'Tipo de Moneda para el administrador'
+            currency_weight: 'Unidad de Peso'
+            invoice_number_from: 'Número de Inicio de facturación'
+            invoice_number_to: 'Número Final de facturación'
+            shipping_countries: 'Paises para envío'
+            available_currencies_unit: 'Unidades de Moneda disponibles para visitantes'
+            email_order_received: 'Orden Recibido'
+            email_order_confirmed: 'Orden Confirmado'
+            email_order_shipped: 'Orden Enviado'
+            email_order_cancelled: 'Orden Cancelado'
+            email_order_invoice: 'Formato de Factura'
+
+
         orders:
           index:
             search_field: 'Correo, Código o Cupón'
@@ -369,7 +386,8 @@ es:
             details: 'Detalles'
             shipping_address: 'Dirección de envío'
             created_at: 'Fecha de Creación'
-            received_at: 'Received At'
+            received_at: 'Fecha de Recepción'
+            invoice_number: 'Número de Factura'
             shipped_at: 'Enviado En'
             city: 'Ciudad'
             state: 'Estado'

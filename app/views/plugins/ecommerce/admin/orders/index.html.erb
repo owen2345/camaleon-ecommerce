@@ -25,7 +25,7 @@
             </div>
             <div class="col-md-2">
                 <%= f.label :status_eq, t('.search_status', default: 'Status') %>
-                <%= f.select :status_eq, [[cama_t('plugins.ecommerce.select.shipped'), "shipped"], [cama_t('plugins.ecommerce.select.canceled'), "canceled"], [cama_t('plugins.ecommerce.select.paid'), "paid"], [t('plugins.ecommerce.messages.order_status.bank_pending'), "bank_pending"], [cama_t('plugins.ecommerce.by_on_delivery'), "on_delivery"]], {include_blank: true}, class: 'form-control' %>
+                <%= f.select :status_eq, [[t('plugins.ecommerce.select.shipped', default: 'Shipped'), "shipped"], [t('plugins.ecommerce.select.canceled', default: 'Cancelled'), "canceled"], [t('plugins.ecommerce.select.paid', default: 'Paid'), "paid"], [t('plugins.ecommerce.messages.order_status.bank_pending', default: 'Bank Pending'), "bank_pending"], [t('plugins.ecommerce.by_on_delivery', default: 'Payment no Delivery'), "on_delivery"]], {include_blank: true}, class: 'form-control' %>
             </div>
             <div class="col-md-2">
                 <%= f.label :user_id_eq, t('.search_user', default: 'User') %>
@@ -64,15 +64,15 @@
         <table class="table">
             <thead>
             <tr>
-                <th><%= cama_t('plugins.ecommerce.table.id') %></th>
-                <th><%= cama_t('plugins.ecommerce.table.customer') %></th>
-                <th><%= cama_t('plugins.ecommerce.table.status') %></th>
-                <th><%= cama_t('plugins.ecommerce.table.paid') %></th>
-                <th><%= cama_t('plugins.ecommerce.table.products') %></th>
-                <th><%= cama_t('plugins.ecommerce.table.amount') %></th>
-                <th><%= cama_t('plugins.ecommerce.table.created_at') %></th>
-                <th><%= cama_t('plugins.ecommerce.table.payment_method') %></th>
-                <th><%= cama_t('camaleon_cms.admin.table.actions') %></th>
+                <th><%= t('plugins.ecommerce.table.id', default: 'Id') %></th>
+                <th><%= t('plugins.ecommerce.table.customer', default: 'Customer') %></th>
+                <th><%= t('plugins.ecommerce.table.status', default: 'Status') %></th>
+                <th><%= t('plugins.ecommerce.table.paid', default: 'Paid?') %></th>
+                <th><%= t('plugins.ecommerce.table.products', default: 'Products') %></th>
+                <th><%= t('plugins.ecommerce.table.amount', default: 'Amount') %></th>
+                <th><%= t('plugins.ecommerce.table.created_at', default: 'Created at') %></th>
+                <th><%= t('plugins.ecommerce.table.payment_method', default: 'Payment Method') %></th>
+                <th><%= t('camaleon_cms.admin.table.actions', default: 'Actions') %></th>
             </tr>
             </thead>
             <tbody>
@@ -97,7 +97,7 @@
                         <% end %>
                     </td>
                     <td><%= order.cache_the_total %></td>
-                    <td><%= order.created_at %></td>
+                    <td><%= order.the_created_at %></td>
                     <td><%= order.payment_method.name rescue "" %></td>
                     <td>
                         <%= link_to raw('<i class="fa fa-eye"></i>'), {action: :show, id: order.slug}, class: "btn btn-info btn-xs", title: "#{t('camaleon_cms.admin.button.preview')}" %>
