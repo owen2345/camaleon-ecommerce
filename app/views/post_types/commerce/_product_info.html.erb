@@ -31,7 +31,7 @@
         <% end %>
         <div class="input-group" id="e_add_to_cart_field_group">
             <span class="input-group-addon"><%= t('plugins.ecommerce.single.qty', default: 'Qty') %></span>
-            <%= number_field :cart, :qty, class: 'form-control', value: 1, min: 0, max: product.the_qty %>
+            <%= number_field :cart, :qty, class: 'form-control', value: 1, min: 0 %>
             <%= hidden_field :cart, :product_id, value: product.id %>
             <span class="input-group-btn"><button class="btn btn-default" type="submit"><i class="fa fa-shopping-cart"></i> <%= t('plugins.ecommerce.single.add_to_cart', default: 'Add to cart') %></button></span>
         </div>
