@@ -30,6 +30,8 @@
                     <div class="form-group">
                         <label><%= t('.shipping_countries', default: 'Shipping Countries') %></label><br>
                         <%= country_select :setting, :shipping_countries, {locale: I18n.locale.to_s, iso_codes: true, selected:  e_shipping_countries}, { :name => 'setting[shipping_countries][]',  class: 'form-control', multiple: true, 'data-live-search' => true, 'data-actions-box' => true } %>
+                        <a href='#' class='shipping_countries_link select_all'><%= t('.select_all', default: 'Select All') %></a> /
+                        <a href='#' class='shipping_countries_link deselect-all'><%= t('deselect_all', default: 'Deselect All') %></a>
                     </div>
                 </div>
 

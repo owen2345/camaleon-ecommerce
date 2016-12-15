@@ -257,6 +257,8 @@ es:
             email_order_shipped: 'Orden Enviado'
             email_order_cancelled: 'Orden Cancelado'
             email_order_invoice: 'Formato de Factura'
+            select_all: 'Seleccionar todo'
+            deselect_all: 'Des seleccionar todo'
 
 
         orders:
