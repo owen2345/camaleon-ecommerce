@@ -46,7 +46,7 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
   end
 
   def the_photos
-    object.get_field_values('ecommerce_photos') || []
+    is_variation_product? ? object.product_variations.pluck(:photo) : object.get_field_values('ecommerce_photos') || []
   end
 
   def in_stock?(variation_id = nil)

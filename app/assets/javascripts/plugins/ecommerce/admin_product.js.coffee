@@ -86,7 +86,7 @@ $ ->
 
   # check the variation status and disable or enable some custom fields
   check_variation_status = ->
-    fields = ['ecommerce_sku', 'ecommerce_price', 'ecommerce_weight', 'ecommerce_stock', 'ecommerce_qty']
+    fields = ['ecommerce_sku', 'ecommerce_price', 'ecommerce_weight', 'ecommerce_stock', 'ecommerce_qty', 'ecommerce_photos']
     if product_variations.find('.product_variation').length > 0 # is a variation product
       for key in fields
         p_field = form.find('.c-field-group .item-custom-field[data-field-key="'+key+'"]')

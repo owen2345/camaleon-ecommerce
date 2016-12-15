@@ -8,7 +8,6 @@
         <table class="table">
             <thead>
             <tr>
-                <th id=""><%= t('plugins.ecommerce.table.id') %></th>
                 <th id=""><%= t('plugins.ecommerce.table.name') %></th>
                 <th id=""><%= t('plugins.ecommerce.table.status') %></th>
                 <th id=""><%= t('plugins.ecommerce.table.description') %></th>
@@ -20,10 +19,9 @@
                @shipping_methods.each do |row|
             %>
                 <tr>
-                    <td><%= row.slug %></td>
-                    <td><%= row.name %></td>
+                    <td><%= row.name.to_s.translate %></td>
                     <td><%= row.status %></td>
-                    <td><%= row.description  %></td>
+                    <td><%= row.description.to_s.translate  %></td>
                     <td>
                         <%= link_to raw('<i class="fa fa-usd"></i> ' + "#{t('plugins.ecommerce.shipping_prices', default: 'Prices')}"), admin_plugins_ecommerce_shipping_method_prices_path(row.id), class: "btn btn-primary btn-xs" %>
                         <%= link_to raw('<i class="fa fa-edit"></i>'), {action: :edit, id: row.id }, class: "btn btn-default btn-xs", title: "#{t('camaleon_cms.admin.button.edit')}" %>
