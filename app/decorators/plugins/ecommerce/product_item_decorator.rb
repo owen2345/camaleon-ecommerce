@@ -4,6 +4,10 @@ class Plugins::Ecommerce::ProductItemDecorator < Draper::Decorator
     get_product.the_variation_title(object.variation_id)
   end
 
+  def the_url
+    get_product.the_url(variation_id: object.variation_id)
+  end
+
   def the_sub_total
     h.e_parse_price(object.sub_total)
   end
@@ -43,6 +47,6 @@ class Plugins::Ecommerce::ProductItemDecorator < Draper::Decorator
   # verify if the quantity of the cart item is avilable
   # return true if quantity is available
   def is_valid_qty?
-    (get_product.the_qty_real(object.variation_id) - object.qty).to_i >= 0
+    (get_product.the_qty(object.variation_id) - object.qty).to_i >= 0
   end
 end

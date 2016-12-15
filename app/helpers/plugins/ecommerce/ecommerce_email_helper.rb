@@ -38,7 +38,7 @@ module Plugins::Ecommerce::EcommerceEmailHelper
     cart.product_items.decorate.each do |item|
       unless item.is_valid_qty?
         product = item.product.decorate
-        errors << t('plugins.ecommerce.messages.not_enough_product_qty', product: product.the_title, qty: product.the_qty_real, default: 'There is not enough products "%{product}" (Available %{qty})')
+        errors << t('plugins.ecommerce.messages.not_enough_product_qty', product: product.the_variation_title(item.variation_id), qty: product.the_qty(item.variation_id), default: 'There is not enough products "%{product}" (Available %{qty})')
       end
     end
 

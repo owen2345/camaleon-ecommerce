@@ -1,4 +1,3 @@
-<!--TODO: validate real quantity-->
 <div id="totals_section">
     <h3><%= t('.total', default: 'Total') %></h3>
     <table class="table table-bordered">
@@ -11,10 +10,12 @@
             <th id="tax_col"><%= t('.tax', default: 'Tax') %></th>
             <th id="subtotal_col"><%= t('.subtotal', default: 'Sub Total') %></th>
         </tr>
-        <% @cart.product_items.decorate.each do |item| product = item.product.decorate %>
+        <% @cart.product_items.decorate.each do |item| %>
             <tr>
                 <td><%= item.qty %></td>
-                <td><%= link_to(item.the_title, product.the_url) %></td>
+                <td>
+                    <%= link_to(item.the_title, item.the_url) %>
+                </td>
                 <td><%= item.the_price %></td>
                 <td><%= item.the_tax %></td>
                 <td><%= item.the_sub_total %></td>

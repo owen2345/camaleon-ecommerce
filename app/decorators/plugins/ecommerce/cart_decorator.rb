@@ -25,6 +25,11 @@ class Plugins::Ecommerce::CartDecorator < Draper::Decorator
     h.e_parse_price(object.total_shipping)
   end
 
+  # return the product titles in array format
+  def products_title
+    object.product_items.map{|i| p=i.product.decorate; p.the_variation_title(i.variation_id) }.join(', ')
+  end
+
   # convert the cart into order with specific status
   def convert_to_order(status = 'paid')
     prepare_to_pay

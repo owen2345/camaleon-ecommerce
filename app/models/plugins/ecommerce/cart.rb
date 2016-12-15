@@ -32,11 +32,6 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
     pi
   end
 
-  # return the product titles in array format
-  def products_title
-    product_items.map{|i| p=i.product.decorate; p.the_variation_title(i.variation_id) }.join(', ')
-  end
-
   def items_total
     product_items.map{|item| item.qty }.inject{|sum,x| sum + x } || 0
   end
@@ -79,8 +74,8 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
             res[:discount] = opts[:amount].to_f
         end
       end
-    else
-      res[:error] = 'coupon_not_found'
+    # else
+    #   res[:error] = 'coupon_not_found'
     end
     res
   end
