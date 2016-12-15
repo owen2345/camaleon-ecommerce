@@ -51,6 +51,9 @@ https://github.com/owen2345/camaleon-ecommerce/blob/master/app/helpers/plugins/e
   - Go to admin panel -> appearances and install e-shop theme
   - Configure your store and enjoy
 
+More information [here](http://camaleon.tuzitio.com/store/plugins/6).   
+Sample theme: [here](https://github.com/owen2345/cama-ecommerce-theme)
+
 ## Author
 Owen Peredo Diaz
 
@@ -63,6 +66,3 @@ http://camaleon.tuzitio.com/license.html
 * Commit your changes (git commit -am "Added a sweet feature")
 * Push to the branch (git push origin my_feature_branch)
 * Create a pull request from your branch into master (Please be sure to provide enough detail for us to cipher what this change is doing)
-
-More information [here](http://camaleon.tuzitio.com/store/plugins/6).   
-Sample theme: [here](https://github.com/owen2345/cama-ecommerce-theme)
