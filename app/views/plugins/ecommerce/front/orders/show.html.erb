@@ -131,7 +131,7 @@
                     <th><%= t('.track_url', default: 'URL Tracking') %></th>
                 </tr>
                 <tr>
-                    <td><%= order.shipping_method.name rescue t('.no_shipping', default: 'Not Shipped Assigned') %></td>
+                    <td><%= order.the_shipping_method || t('.no_shipping', default: 'Not Shipped Assigned') %></td>
                     <td><%= order.shipped_at.presence || t('.no_shipped', default: 'Not Shipped') %></td>
                     <td><%= order.the_url_tracking %></td>
                 </tr>

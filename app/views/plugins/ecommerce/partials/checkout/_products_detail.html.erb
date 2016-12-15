@@ -1,3 +1,4 @@
+<%= content_tag :div, "<small><i>#{@cart.shipping_method.description.translate}</i></small>".html_safe, class: 'shipping_method_descr text-right' if @cart.shipping_method_id.present? %>
 <div id="totals_section">
     <h3><%= t('.total', default: 'Total') %></h3>
     <table class="table table-bordered">

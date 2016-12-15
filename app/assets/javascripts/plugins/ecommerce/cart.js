@@ -30,6 +30,7 @@ function cama_checkout_actions(){
             steps.filter('.active').next().trigger('next_step');
         }).complete(function(){
             $(form).fadeTo("fast", 1);
+            $(window).scrollTop($('#cama_checkout_view').offset().top);
         }).error(function(e){
             alert(e.responseText);
         });

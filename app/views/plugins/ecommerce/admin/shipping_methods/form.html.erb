@@ -10,12 +10,8 @@
                 <%= f.text_field :name, :class => "form-control required" %>
             </div>
             <div class="form-group">
-                <%= f.label t('camaleon_cms.admin.table.slug') %><br>
-                <%= f.text_field :slug, :class => "form-control slug", "data-parent" => 'plugins_ecommerce_shipping_method_name' %>
-            </div>
-            <div class="form-group">
                 <%= f.label t('camaleon_cms.admin.table.description') %><br>
-                <%= f.text_area :description, :class => "form-control", :rows => 4 %>
+                <%= f.text_area :description, :class => "form-control translatable", :rows => 4 %>
             </div>
 
             <% options = @shipping_method.options rescue {url_tracking: 'http://trackingurl.com/track/{{consignment_number}}'}
