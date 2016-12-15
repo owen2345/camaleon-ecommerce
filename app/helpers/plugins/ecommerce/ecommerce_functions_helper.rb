@@ -62,7 +62,7 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
   # render price formatted of a product with current currency
   def e_parse_price(price)
     currency = cama_is_admin_request? ? e_system_currency : e_current_visitor_currency
-    args = {currency: currency, price: price, data: "#{currency} #{sprintf('%.2f', e_parse_to_current_currency(price))}"}; hooks_run('ecommerce_parse_price', args) # permit to customize price format
+    args = {currency: currency, price: price, data: number_to_currency(e_parse_to_current_currency(price), unit: currency)}; hooks_run('ecommerce_parse_price', args) # permit to customize price format
     args[:data]
   end
 

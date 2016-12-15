@@ -3,7 +3,7 @@
     <div class="alert alert-danger"><%= raw warning.join("<br>") %></div>
 <% end %>
 <div id="cama_checkout_view" class="row checkout_view">
-    <%= render plugin_view('partials/cart_widget') %>
+    <%= render 'post_types/commerce/cart_widget' %>
     <h1><%= t('.check_out_process', default: 'Checkout Process') %></h1>
     <div class="stepwizard col-md-offset-3 col-sm-offset-3">
         <div class="stepwizard-row setup-panel">

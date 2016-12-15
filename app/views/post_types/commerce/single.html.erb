@@ -1,10 +1,5 @@
-<% args={custom_slider: nil, custom_footer: nil, extra_footer: nil, custom_sidebar: nil, custom_cart_widget: nil, product: @post}; hooks_run('ecommerce_product_page', args) # permit custom footer %>
-<% if args[:custom_cart_widget].nil? %>
-    <%= render plugin_view('partials/cart_widget') %>
-<% else %>
-    <%= raw args[:custom_cart_widget] %>
-<% end %>
-<%= render :partial => "camaleon_cms/flash_messages", locals:{ flash: (flash[:cama_ecommerce] || {}).with_indifferent_access } %>
+<% args={custom_slider: nil, custom_footer: nil, extra_footer: nil, custom_sidebar: nil, product: @post}; hooks_run('ecommerce_product_page', args) # permit custom footer %>
+<%= render 'post_types/commerce/cart_widget' %>
 <div class="row">
     <div class="col-md-9 post-view">
         <article class="post-content" id="product_view">
