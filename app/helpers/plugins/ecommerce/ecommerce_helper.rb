@@ -48,6 +48,13 @@ module Plugins::Ecommerce::EcommerceHelper
   def ecommerce_app_before_load
   end
 
+  # permit to generate invoice PDF by background just before delivery email
+  def ecommerce_admin_before_email_send(args)
+    if args[:ecommerce_invoice].present?
+      File.open(args[:ecommerce_invoice][:pdf_path], 'wb'){|file| file << WickedPdf.new.pdf_from_string(args[:ecommerce_invoice][:html], encoding: 'utf8') }
+    end
+  end
+
   # here all actions on plugin destroying
   # plugin: plugin model
   def ecommerce_on_destroy(plugin)

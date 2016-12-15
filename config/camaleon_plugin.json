@@ -30,6 +30,7 @@
     ],
     "post_form_custom_html": ["ecommerce_admin_product_form"],
     "created_post": ["ecommerce_admin_product_saved"],
-    "updated_post": ["ecommerce_admin_product_saved"]
+    "updated_post": ["ecommerce_admin_product_saved"],
+    "email_late": ["ecommerce_admin_before_email_send"]
   }
 }

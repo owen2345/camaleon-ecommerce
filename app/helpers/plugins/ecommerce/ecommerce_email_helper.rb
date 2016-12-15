@@ -98,7 +98,7 @@ module Plugins::Ecommerce::EcommerceEmailHelper
       end
       data[:files] = data[:files].uniq
       pdf_path = order.the_invoice_path
-      File.open(pdf_path, 'wb'){|file| file << WickedPdf.new.pdf_from_string(current_site.e_email_for('email_order_invoice').to_s.translate.to_s.cama_replace_codes(replaces, format_code = '{'), encoding: 'utf8') }
+      data[:ecommerce_invoice] = {pdf_path: pdf_path, html: current_site.e_email_for('email_order_invoice').to_s.translate.to_s.cama_replace_codes(replaces, format_code = '{')}
       data[:files] << pdf_path
       order.update_column(:invoice_path, pdf_path.split('/').last)
     end
