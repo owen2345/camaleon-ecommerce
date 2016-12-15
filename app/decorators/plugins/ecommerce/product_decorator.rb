@@ -88,7 +88,7 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
   end
 
   def the_stock_status(variation_id = nil)
-    if in_stock?(variation_id) && the_qty_real.to_i > 0
+    if in_stock?(variation_id)
       "<span class='label label-success'>#{I18n.t('plugins.ecommerce.product.in_stock')}</span>"
     else
       "<span class='label label-danger'>#{I18n.t('plugins.ecommerce.product.not_in_tock')}</span>"
