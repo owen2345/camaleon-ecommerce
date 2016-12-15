@@ -7,35 +7,37 @@
 <hr/>
 <p><%= product.the_excerpt %></p>
 <hr/>
-<% if product.in_stock? %>
-    <%= form_tag(plugins_ecommerce_checkout_cart_add_path, :method => "post", :class => "form") do %>
-        <% if product.is_variation_product? %>
-            <div class="form-group">
-                <%= label_tag :variation_id %>
-                <select class="form-control required" name="variation_id" id="product_variation_id">
-                    <% product.product_variations.each_with_index do |variation, index| %>
-                        <option data-sku="<%= variation.sku %>" <%= 'selected' if params[:variation_id].to_s == variation.id.to_s %> <%= 'disabled' if !product.in_stock?(variation.id) || product.the_qty(variation.id) <= 0 %> data-price="<%= product.the_price(variation.id) %>" value="<%= variation.id %>"><%= product.the_variation_title(variation.id) %></option>
-                    <% end %>
-                </select>
-            </div>
-            <script>
-                jQuery(function(){
-                    var panel = $('#product_view');
-                    panel.find('#product_variation_id').change(function(){ var op = $(this).find('option:selected'); panel.find('#product_sku').html(op.attr('data-sku')); panel.find('#product_price').html(op.attr('data-price'));  }).trigger('change');
-                    if(panel.find('#product_variation_id option').not('[disabled]').length == 0){
-                        panel.find('#e_add_to_cart_field_group').html('<p><%= t('plugins.ecommerce.single.noavailable_items', default: 'No items available') %></p>')
-                        panel.find('#product_price').next().hide();
-                    }
-                });
-            </script>
-        <% end %>
+<%= form_tag(plugins_ecommerce_checkout_cart_add_path, :method => "post", :class => "form") do %>
+    <% if product.is_variation_product? %>
+        <div class="form-group">
+            <%= label_tag :variation_id %>
+            <select class="form-control required" name="variation_id" id="product_variation_id">
+                <% product.product_variations.each_with_index do |variation, index| %>
+                    <option data-sku="<%= variation.sku %>" <%= 'selected' if params[:variation_id].to_s == variation.id.to_s %> <%= 'data-disabled="true"' if !product.in_stock?(variation.id) %> data-price="<%= product.the_price(variation.id) %>" value="<%= variation.id %>"><%= product.the_variation_title(variation.id) %></option>
+                <% end %>
+            </select>
+        </div>
+        <script>
+            jQuery(function(){
+                var panel = $('#product_view');
+                panel.find('#product_variation_id').change(function(){
+                    var op = $(this).find('option:selected');
+                    panel.find('#product_sku').html(op.attr('data-sku'));
+                    panel.find('#product_price').html(op.attr('data-price'));
+                    panel.find('#e_add_to_cart_field_group input, button').prop('disabled', !!op.attr('data-disabled'))
+                    panel.find('#ecommerce-product-slider .carousel-indicators li:eq('+$(this).children().index(op)+')').click();
+                }).trigger('change');
+            });
+        </script>
+    <% end %>
+    <% if product.in_stock? %>
         <div class="input-group" id="e_add_to_cart_field_group">
             <span class="input-group-addon"><%= t('plugins.ecommerce.single.qty', default: 'Qty') %></span>
             <%= number_field :cart, :qty, class: 'form-control', value: 1, min: 0 %>
             <%= hidden_field :cart, :product_id, value: product.id %>
             <span class="input-group-btn"><button class="btn btn-default" type="submit"><i class="fa fa-shopping-cart"></i> <%= t('plugins.ecommerce.single.add_to_cart', default: 'Add to cart') %></button></span>
         </div>
+    <% else %>
+        <p><%= t('plugins.ecommerce.single.noavailable_items', default: 'No items available') %></p>
     <% end %>
-<% else %>
-    <p><%= t('plugins.ecommerce.single.noavailable_items', default: 'No items available') %></p>
 <% end %>

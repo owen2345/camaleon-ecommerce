@@ -6,11 +6,11 @@
             <div class="row">
                 <div class="col-md-6">
                     <% unless args[:custom_slider].present? %>
-                        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                        <div id="ecommerce-product-slider" class="carousel slide" data-ride="carousel" data-interval="false">
                             <!-- Indicators -->
                             <ol class="carousel-indicators">
                                 <% @post.the_photos.each_with_index do |pthoto, index| %>
-                                    <li data-target="#carousel-example-generic" data-slide-to="<%= index %>" class="<%= 'active' if index == 0 %>"></li>
+                                    <li data-target="#ecommerce-product-slider" data-slide-to="<%= index %>" class="<%= 'active' if index == 0 %>"></li>
                                 <% end %>
                             </ol>
 
@@ -24,11 +24,11 @@
                             </div>
 
                             <!-- Controls -->
-                            <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                            <a class="left carousel-control" href="#ecommerce-product-slider" role="button" data-slide="prev">
                                 <span class="glyphicon glyphicon-chevron-left fa fa-chevron-left" aria-hidden="true"></span>
                                 <span class="sr-only">Previous</span>
                             </a>
-                            <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                            <a class="right carousel-control" href="#ecommerce-product-slider" role="button" data-slide="next">
                                 <span class="glyphicon glyphicon-chevron-right fa fa-chevron-right " aria-hidden="true"></span>
                                 <span class="sr-only">Next</span>
                             </a>
@@ -45,14 +45,14 @@
 
             <% unless args[:custom_footer].present? %>
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <h3><%= t('plugins.ecommerce.single.descr', default: 'Description') %></h3>
                         <div class="item-content">
                             <%= raw @post.the_content %>
                         </div>
                     </div>
-                    <% if (attrs = @post.the_attribute_fields('ecommerce_attrs').to_a).present? %>
-                        <div class="col-md-6">
+                    <% if (attrs = @post.the_attribute_fields('ecommerce_attrs').to_a).present? && attrs.map{|k,v| v.present? }.any? %>
+                        <div class="col-md-12">
                             <h3><%= t('plugins.ecommerce.single.attrs', default: 'Attributes') %></h3>
                             <table class="table table-bordered">
                                 <% attrs.each_with_index do |attr, index| %>
