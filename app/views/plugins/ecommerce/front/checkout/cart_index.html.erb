@@ -16,7 +16,7 @@
           <tbody>
           <% @products.each do |item| product = item.product.decorate %>
               <tr>
-                  <td><a href="<%= product.the_url %>"><%= product.the_variation_title(item.variation_id) %></a></td>
+                  <td><a href="<%= product.the_url(variation_id: item.variation_id) %>"><%= product.the_variation_title(item.variation_id) %></a></td>
                   <td><%= item.the_price %></td>
                   <td><%= item.the_tax %></td>
                   <td>

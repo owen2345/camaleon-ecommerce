@@ -4,6 +4,7 @@
 <% else %>
     <%= raw args[:custom_cart_widget] %>
 <% end %>
+<%= render :partial => "camaleon_cms/flash_messages", locals:{ flash: (flash[:cama_ecommerce] || {}).with_indifferent_access } %>
 <div class="row">
     <div class="col-md-9 post-view">
         <article class="post-content" id="product_view">

@@ -125,7 +125,8 @@ module Plugins::Ecommerce::EcommerceHelper
       group.add_manual_field({"name" => "t('plugins.ecommerce.product.price', default: 'Price')", "slug" => "ecommerce_price", "description" => "t('plugins.ecommerce.product.current_unit', default: 'Current unit: %{unit}', unit: current_site.current_unit.to_s)"}, {field_key: "numeric", required: true, label_eval: true})
       group.add_manual_field({"name" => "t('plugins.ecommerce.product.tax', default: 'Tax')", "slug" => "ecommerce_tax"}, {field_key: "select_eval", required: false, command: "options_from_collection_for_select(current_site.tax_rates.all, \"id\", \"the_name\")", label_eval: true})
       group.add_manual_field({"name" => "t('plugins.ecommerce.product.weight', default: 'Weight')", "slug" => "ecommerce_weight", "description" => "t('plugins.ecommerce.product.current_weight', default: 'Current weight: %{weight}', weight: current_site.current_weight.to_s)"}, {field_key: "text_box", required: true, label_eval: true})
-      group.add_manual_field({"name" => "t('plugins.ecommerce.product.stock', default: 'Stock')", "slug" => "ecommerce_stock"}, {field_key: "checkbox", default: true, label_eval: true})
+      # changed to validate using the quantity of the inventory
+      # group.add_manual_field({"name" => "t('plugins.ecommerce.product.stock', default: 'Stock')", "slug" => "ecommerce_stock"}, {field_key: "checkbox", default: true, label_eval: true})
       group.add_manual_field({"name" => "t('plugins.ecommerce.product.qty', default: 'Quantity')", "slug" => "ecommerce_qty"}, {field_key: "numeric", required: true, label_eval: true})
       group.add_manual_field({"name" => "t('plugins.ecommerce.product.files', default: 'Product files')", "slug" => "ecommerce_files"}, {field_key: "private_file", multiple: true, required: false, label_eval: true})
     end

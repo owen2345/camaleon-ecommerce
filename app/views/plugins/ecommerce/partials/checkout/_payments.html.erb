@@ -14,10 +14,10 @@
                     </div>
                 <% end %>
                 <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" id="heading<%= payment.slug %>">
-                        <a role="button" data-toggle="collapse" data-parent="#e_accordion_payments" href="#<%= payment.slug %>" aria-expanded="true" aria-controls="collapseOne"><%= t(".#{payment.options[:type]}", default: payment.options[:type].titleize) %></a>
+                    <div class="panel-heading" role="tab" id="heading<%= payment.id %>">
+                        <a role="button" data-toggle="collapse" data-parent="#e_accordion_payments" href="#payment_tab_<%= payment.id %>" aria-expanded="true" aria-controls="collapseOne"><%= t(".#{payment.options[:type]}", default: payment.options[:type].titleize) %></a>
                     </div>
-                    <div id="<%= payment.slug %>" class="panel-collapse collapse <%= "in" if index == 0 %>" role="tabpanel" aria-labelledby="heading<%= payment.slug %>">
+                    <div id="payment_tab_<%= payment.id %>" class="panel-collapse collapse <%= "in" if index == 0 %>" role="tabpanel" aria-labelledby="heading<%= payment.id %>">
                         <div class="panel-body">
                             <p><%= payment.description.translate %></p>
                             <% if payment.options[:type] == 'paypal' %>

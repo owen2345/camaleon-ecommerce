@@ -32,7 +32,7 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
     if variation_id.present?
       get_variation(variation_id).qty || 0
     else
-      is_variation_product? ? (get_default_variation.qty || 0) : object.get_field_value('ecommerce_qty').to_i || 0
+      is_variation_product? ? map_variations_the_qty.map{|k,v| v }.reduce(&:+) : (object.get_field_value('ecommerce_qty').to_i || 0)
     end
   end
 
@@ -50,11 +50,7 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
   end
 
   def in_stock?(variation_id = nil)
-    if variation_id.present?
-      get_variation(variation_id).qty > 0
-    else
-      object.get_field_value('ecommerce_stock').to_s.to_bool
-    end
+    the_qty(variation_id) > 0
   end
 
   def price(variation_id = nil)
@@ -113,7 +109,7 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
 
   # check if there are enough products to be purchased
   def can_added?(qty, variation_id = nil)
-    (the_qty_real(variation_id) - qty).to_i >= 0
+    (the_qty(variation_id) - qty).to_i >= 0
   end
 
   def self.object_class_name
@@ -136,11 +132,22 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
   end
 
   # return (Hash) all variations qty for each variation, sample: {1: 10, 5: 2, 3: 0}
+  # note: this includes the quantity of items of user carts
   def map_variations_the_qty_real
     res = {}
     return res unless is_variation_product?
     object.product_variations.eager_load(:product).each do |var|
       res[var.id] = var.product.decorate.the_qty_real
+    end
+    res
+  end
+
+  # return (Hash) all variations qty for each variation, sample: {1: 10, 5: 2, 3: 0}
+  def map_variations_the_qty
+    res = {}
+    return res unless is_variation_product?
+    object.product_variations.each do |var|
+      res[var.id] = var.qty
     end
     res
   end

@@ -73,7 +73,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
     end
 
     unless product.can_added?(qty, params[:variation_id])
-      flash[:cama_ecommerce][:error] =  t('plugins.ecommerce.messages.not_enough_product_qty', product: product.the_variation_title(params[:variation_id]), qty: product.the_qty_real(params[:variation_id]), default: 'There is not enough products "%{product}" (Available %{qty})')
+      flash[:cama_ecommerce][:error] =  t('plugins.ecommerce.messages.not_enough_product_qty', product: product.the_variation_title(params[:variation_id]), qty: product.the_qty(params[:variation_id]), default: 'There is not enough products "%{product}" (Available %{qty})')
       return params[:format] == 'json' ? render(json: flash.discard(:cama_ecommerce).to_hash) : (redirect_to :back)
     end
     @cart.add_product(product, qty, params[:variation_id])
@@ -90,7 +90,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
       if product.can_added?(qty, item.variation_id)
         @cart.add_product(product, qty, item.variation_id)
       else
-        errors << t('plugins.ecommerce.messages.not_enough_product_qty', product: product.the_variation_title(item.variation_id), qty: product.the_qty_real(item.variation_id), default: 'There is not enough products "%{product}" (Available %{qty})')
+        errors << t('plugins.ecommerce.messages.not_enough_product_qty', product: product.the_variation_title(item.variation_id), qty: product.the_qty(item.variation_id), default: 'There is not enough products "%{product}" (Available %{qty})')
       end
     end
     flash[:cama_ecommerce][:error] = errors.join('<br>') if errors.present?
