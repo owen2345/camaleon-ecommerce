@@ -1,5 +1,6 @@
 # E-Commerce Plugin
 Simple E-Commerce Plugin for [Camaleon CMS](http://camaleon.tuzitio.com).   
+This is a simple E-Commerce plugin that permits to start selling in about 10 minutes, because it takes advantage of all features of Camaleon CMS to easy management by admin panel.
 ![](screenshot.png)
 ## Installation
 * Add in your Gemfile
