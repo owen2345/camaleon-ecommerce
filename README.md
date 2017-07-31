@@ -9,8 +9,16 @@ gem 'camaleon_ecommerce', '>= 2.0.0'
 * In your console
 ```
 bundle install
+```
+* Run migrations
+```
+rake db:migrate
+``` 
+* Restart server
+```
 rails s
 ```
+## Configurations
 * Navigate and activate the plugin in http://localhost:3000/admin -> plugins -> ecommerce
 * Configure your store
   - Payment Methods
