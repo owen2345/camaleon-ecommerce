@@ -80,12 +80,17 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
     hooks_run('ecommerce_calculate_exchange', args) # permit to use custom exchange app by setting the value in :exchange attribute
     return (args[:exchange] * amount).round(2) if args[:exchange].present?
 
-    # request to google's finance converter site
-    res = open("https://www.google.com/finance/converter?a=1&from=#{args[:from]}&to=#{args[:to]}").read
-    res = res.scan(/\<span class=bld\>(.+?)\<\/span\>/).first.first.split(' ') # => ["69.3000", "BOB"]
-    exchange = res.first.to_f.round(4)
+    exchange = e_finance_exchange_converter(args)
     cama_ecommerce_post_type.set_option(e_current_visitor_currency, {date: Date.today.to_s, exchange: exchange, base: e_system_currency}, 'currencies')
     (exchange * amount).round(2)
+  end
+
+  # helper to calculate exchanges
+  def e_finance_exchange_converter(args)
+    # request to google's finance converter site
+    res = open("https://finance.google.com/finance/converter?a=1&from=#{args[:from]}&to=#{args[:to]}").read
+    res = res.scan(/\<span class=bld\>(.+?)\<\/span\>/).first.first.split(' ') # => ["69.3000", "BOB"]
+    res.first.to_f.round(4)
   end
 
   # return all currencies to use as a base currency

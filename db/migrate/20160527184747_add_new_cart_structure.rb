@@ -1,4 +1,4 @@
-class AddNewCartStructure < ActiveRecord::Migration
+class AddNewCartStructure < CamaManager.migration_class
   def change
     create_table :plugins_ecommerce_orders do |t|
       t.string :name, :slug, :kind, :coupon, :the_coupon_amount

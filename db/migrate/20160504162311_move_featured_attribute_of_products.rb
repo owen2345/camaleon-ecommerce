@@ -1,4 +1,4 @@
-class MoveFeaturedAttributeOfProducts < ActiveRecord::Migration
+class MoveFeaturedAttributeOfProducts < CamaManager.migration_class
   def change
     Cama::Site.all.each do |site|
       ptype = site.post_types.where(slug: 'commerce').first

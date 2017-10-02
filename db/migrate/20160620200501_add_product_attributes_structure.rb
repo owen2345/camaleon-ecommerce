@@ -1,4 +1,4 @@
-class AddProductAttributesStructure < ActiveRecord::Migration
+class AddProductAttributesStructure < CamaManager.migration_class
   def change
     create_table :plugins_ecommerce_attributes do |t|
       t.string :key, :label

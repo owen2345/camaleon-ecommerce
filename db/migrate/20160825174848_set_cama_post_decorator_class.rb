@@ -1,4 +1,4 @@
-class SetCamaPostDecoratorClass < ActiveRecord::Migration
+class SetCamaPostDecoratorClass < CamaManager.migration_class
   def change
     CamaleonCms::Site.reset_column_information
     CamaleonCms::PostType.reset_column_information

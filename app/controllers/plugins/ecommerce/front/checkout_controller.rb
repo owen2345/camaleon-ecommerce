@@ -32,7 +32,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
       errors = ecommerce_verify_cart_errors(@cart)
       if errors.present?
         flash[:cama_ecommerce][:error] = errors.join('<br>')
-        redirect_to :back
+        redirect_to request.referer
       else
         hooks_run('plugin_ecommerce_before_complete_free_order', @cart)
         @cart.set_meta('free_order', true)
@@ -42,7 +42,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
       end
     else
       flash[:cama_ecommerce][:error] = "Invalid complete payment"
-      redirect_to :back
+      redirect_to request.referer
     end
   end
 
@@ -74,7 +74,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
 
     unless product.can_added?(qty, params[:variation_id])
       flash[:cama_ecommerce][:error] =  t('plugins.ecommerce.messages.not_enough_product_qty', product: product.the_variation_title(params[:variation_id]), qty: product.the_qty(params[:variation_id]), default: 'There is not enough products "%{product}" (Available %{qty})')
-      return params[:format] == 'json' ? render(json: flash.discard(:cama_ecommerce).to_hash) : (redirect_to :back)
+      return params[:format] == 'json' ? render(json: flash.discard(:cama_ecommerce).to_hash) : (redirect_to request.referer)
     end
     @cart.add_product(product, qty, params[:variation_id])
     flash[:cama_ecommerce][:notice] = t('plugins.ecommerce.messages.added_product_in_cart', default: 'Product added into cart')
@@ -121,7 +121,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
       if result[:payment_error]
         flash[:payment_error] = true
       end
-      redirect_to :back
+      redirect_to request.referer
     else
       commerce_mark_cart_received(@cart)
       redirect_to plugins_ecommerce_orders_url
@@ -153,7 +153,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
     if res[:error].present?
       flash[:cama_ecommerce][:error] = res[:error]
       flash[:payment_error] = true
-      redirect_to :back
+      redirect_to request.referer
     else
       commerce_mark_cart_received(@cart)
       redirect_to plugins_ecommerce_orders_url
