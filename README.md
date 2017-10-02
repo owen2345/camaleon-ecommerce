@@ -5,7 +5,7 @@ This is a simple E-Commerce plugin that permits to start selling in about 10 min
 ## Installation
 * Add in your Gemfile
 ```
-gem 'camaleon_ecommerce', '>= 2.0.0'
+gem 'camaleon_ecommerce', '>= 2.4.4.3'
 ```
 * In your console
 ```
@@ -13,6 +13,7 @@ bundle install
 ```
 * Run migrations
 ```
+rake camaleon_cms:generate_migrations
 rake db:migrate
 ``` 
 * Restart server
@@ -46,7 +47,7 @@ https://github.com/owen2345/camaleon-ecommerce/blob/master/app/helpers/plugins/e
   
 
 ## Requirements
-* Camaleon CMS >= 2.3.7.2
+* Camaleon CMS >= 2.4.4.3
 
 ## Demonstrations
 * Example   
