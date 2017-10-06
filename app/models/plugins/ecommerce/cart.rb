@@ -74,8 +74,8 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
             res[:discount] = opts[:amount].to_f
         end
       end
-    # else
-    #   res[:error] = 'coupon_not_found'
+    else
+      res[:error] = 'coupon_not_found'
     end
     res
   end

@@ -3,9 +3,10 @@ Simple E-Commerce Plugin for [Camaleon CMS](http://camaleon.tuzitio.com).
 This is a simple E-Commerce plugin that permits to start selling in about 10 minutes, because it takes advantage of all features of Camaleon CMS to easy management by admin panel.
 ![](screenshot.png)
 ## Installation
+* Install [Camaleon CMS](https://github.com/owen2345/camaleon-cms#installation)
 * Add in your Gemfile
 ```
-gem 'camaleon_ecommerce', '>= 2.4.4.3'
+gem 'camaleon_ecommerce', '>= 2.0.3'
 ```
 * In your console
 ```
@@ -25,10 +26,11 @@ rails s
 * Configure your store
   - Payment Methods
   - Shipping Methods
-  - Product Attributes
   - Tax Rates
-  - Create Products, Categories
-  - Site menus
+  - Product Attributes (Optional)
+  - Create Products, Categories for products
+  - Add your product to your menus (Optional)
+  - Create your coupons (Optional)
 * Start Selling on http://localhost:3000
 
 ## Features

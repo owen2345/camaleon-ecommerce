@@ -10,8 +10,8 @@ Gem::Specification.new do |s|
   s.authors = ['Owen']
   s.email = ['owenperedo@gmail.com']
   s.homepage = 'http://camaleon.tuzitio.com/store/plugins/6'
-  s.summary = ': Summary of Ecommerce.'
-  s.description = ': Description of Ecommerce.'
+  s.summary = 'This is a simple E-Commerce plugin that permits to start selling in about 10 minutes, because it takes advantage of all features of Camaleon CMS to easy management by admin panel.'
+  s.description = 'This is a simple E-Commerce plugin that permits to start selling in about 10 minutes, because it takes advantage of all features of Camaleon CMS to easy management by admin panel.'
   s.license = 'MIT'
 
   s.files = Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.rdoc']

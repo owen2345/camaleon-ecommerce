@@ -14,7 +14,7 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
   def step_address
     @cart.set_meta("billing_address", params[:order][:billing_address])
     @cart.set_meta("shipping_address", params[:order][:shipping_address])
-    render nothing: true
+    render inline: ''
   end
 
   def step_shipping
