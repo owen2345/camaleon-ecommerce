@@ -1,11 +1,13 @@
-<% detail = order.get_meta("shipping_address", {}) %>
-<ul class="ec-list-orders-address">
-    <li><strong><%= t('.address', default: 'Address') %>1:</strong> <%= detail[:address1] %></li>
-    <li><strong><%= t('.address', default: 'Address') %>2:</strong> <%= detail[:address2] %></li>
-    <li><strong><%= t('.city', default: 'City') %>:</strong> <%= detail[:city] %></li>
-    <li><strong><%= t('.state', default: 'State') %>:</strong> <%= detail[:state] %></li>
-    <li><strong><%= t('.zip_code', default: 'Zip code') %>:</strong> <%= detail[:zip] %></li>
-    <li><strong><%= t('.country', default: 'Country') %>:</strong> <%= detail[:country] %></li>
-    <li><strong><%= t('.phone_number', default: 'Phone Number') %>:</strong> <%= detail[:phone_number] %>
-    </li>
-</ul>
+<% if physical_products %>
+  <% detail = order.get_meta("shipping_address", {}) %>
+  <ul class="ec-list-orders-address">
+      <li><strong><%= t('.address', default: 'Address') %>1:</strong> <%= detail[:address1] %></li>
+      <li><strong><%= t('.address', default: 'Address') %>2:</strong> <%= detail[:address2] %></li>
+      <li><strong><%= t('.city', default: 'City') %>:</strong> <%= detail[:city] %></li>
+      <li><strong><%= t('.state', default: 'State') %>:</strong> <%= detail[:state] %></li>
+      <li><strong><%= t('.zip_code', default: 'Zip code') %>:</strong> <%= detail[:zip] %></li>
+      <li><strong><%= t('.country', default: 'Country') %>:</strong> <%= detail[:country] %></li>
+      <li><strong><%= t('.phone_number', default: 'Phone Number') %>:</strong> <%= detail[:phone_number] %>
+      </li>
+  </ul>
+<% end %>

@@ -6,7 +6,7 @@ module Plugins::Ecommerce::EcommerceEmailHelper
     args = {cart: cart, status: status}; hooks_run('commerce_before_payment_completed', args)
     order = cart.convert_to_order(status)
     order.set_meta('locale', I18n.locale)
-    commerce_order_send_mail(order)
+    commerce_order_send_mail(order,'email_order_received', cart.contains_physical_products?)
     flash[:cama_ecommerce][:notice] = t('plugins.ecommerce.messages.payment_completed', default: "Payment completed successfully")
     args = {order: order, status: status}; hooks_run("commerce_after_payment_completed", args)
     order
@@ -55,7 +55,7 @@ module Plugins::Ecommerce::EcommerceEmailHelper
 
   # send the email to the user for specific events or status
   # event: (String) email_order_received | email_order_shipped | email_order_cancelled | email_order_confirmed_bank | email_order_confirmed_on_delivery
-  def commerce_order_send_mail(order, event = 'email_order_received')
+  def commerce_order_send_mail(order, event = 'email_order_received', physical_products = true)
     bk_l = I18n.locale
     I18n.locale = order.get_meta('locale', 'en').to_s
     subject, content_key = case event
@@ -75,7 +75,7 @@ module Plugins::Ecommerce::EcommerceEmailHelper
     data = {template_name: nil, content: current_site.e_email_for(content_key).to_s.translate, files: []}
     replaces = {
       order_table: render_to_string(partial: 'plugins/ecommerce/partials/email/product_table', locals: {order: order}),
-      shipping_info: render_to_string(partial: 'plugins/ecommerce/partials/email/shipping_address', locals: {order: order}),
+      shipping_info: render_to_string(partial: 'plugins/ecommerce/partials/email/shipping_address', locals: {order: order, physical_products: physical_products}) ,
       billing_info: render_to_string(partial: 'plugins/ecommerce/partials/email/billing_address', locals: {order: order}),
       cancelled_description: order.get_meta('description').to_s,
       root_url: current_site.the_url,

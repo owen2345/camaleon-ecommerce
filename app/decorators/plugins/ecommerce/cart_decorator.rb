@@ -25,6 +25,14 @@ class Plugins::Ecommerce::CartDecorator < Draper::Decorator
     h.e_parse_price(object.total_shipping)
   end
 
+  # check if item is a phisical products, to not display shipping address form
+  def contains_physical_products?
+    object.product_items.each do |item|
+      return true unless item.product.decorate.is_service?
+    end
+    false
+  end
+
   # return the product titles in array format
   def products_title
     object.product_items.map{|i| p=i.product.decorate; p.the_variation_title(i.variation_id) }.join(', ')

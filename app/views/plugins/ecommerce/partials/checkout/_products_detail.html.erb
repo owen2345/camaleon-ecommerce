@@ -37,11 +37,13 @@
             <td colspan="2" class="text-right"><%= t('.discount', default: 'Discount') %></td>
             <td><%= @cart.the_total_discounts %></td>
         </tr>
-        <tr>
-            <td colspan="2"></td>
-            <td colspan="2" class="text-right"><%= t('.total_shipping', default: 'Total shipping') %></td>
-            <td id="shipping_total"><%= @cart.the_total_shipping %></td>
-        </tr>
+        <% if @cart.contains_physical_products?%>
+          <tr>
+              <td colspan="2"></td>
+              <td colspan="2" class="text-right"><%= t('.total_shipping', default: 'Total shipping') %></td>
+              <td id="shipping_total"><%= @cart.the_total_shipping %></td>
+          </tr>
+        <% end %>
         <tr>
             <td colspan="2"></td>
             <td colspan="2" class="text-right"><%= t('.total_price', default: 'Total Price') %></td>

@@ -2,6 +2,7 @@
     cart ||= @cart
     billing_address = cart.get_meta("billing_address", {})
     shipping_address = cart.get_meta("shipping_address", {})
+    shipping_address = {} unless shipping_address
 %>
 <div class="row">
     <div id="billing_address" class="col-md-6">
@@ -43,49 +44,50 @@
             <%= text_field_tag 'order[billing_address][phone_number]',billing_address[:phone_number], class: 'form-control' %>
         </div>
     </div>
+    <% if (cart.kind == 'cart'  && cart.contains_physical_products?)  || shipping_address[:address1].present?%>
+      <div id="shipping_address" class="col-md-6">
+          <h3>
+              <%= t('.shipping_address') %>
+          </h3>
 
-    <div id="shipping_address" class="col-md-6">
-        <h3>
-            <%= t('.shipping_address') %>
-        </h3>
-
-        <div class="form-group">
-            <label><%= t('.firstname', default: 'First Name') %></label>
-            <%= text_field_tag 'order[shipping_address][first_name]', shipping_address[:first_name], class: 'form-control required' %>
-        </div>
-        <div class="form-group">
-            <label><%= t('.lastname', default: 'Last Name') %></label>
-            <%= text_field_tag 'order[shipping_address][last_name]', shipping_address[:last_name], class: 'form-control required' %>
-        </div>
-        <div class="form-group">
-            <label><%= t('.address', default: 'Address') %></label>
-            <%= text_field_tag 'order[shipping_address][address1]', shipping_address[:address1], class: 'form-control required' %>
-        </div>
-        <div class="form-group">
-            <label><%= t('.address', default: 'Address') %> 2</label>
-            <%= text_field_tag 'order[shipping_address][address2]', shipping_address[:address2], class: 'form-control' %>
-        </div>
-        <div class="form-group">
-            <label><%= t('.city', default: 'City') %></label>
-            <%= text_field_tag 'order[shipping_address][city]', shipping_address[:city], class: 'form-control required' %>
-        </div>
-        <div class="form-group">
-            <label><%= t('.country', default: 'Country') %></label>
-            <%= country_select :shipping_address, :country, {locale: I18n.locale.to_s, iso_codes: true, selected:  billing_address[:country], only: e_shipping_countries}, { :name => 'order[shipping_address][country]',  class: 'form-control' } %>
-        </div>
-        <div class="form-group">
-            <label><%= t('.state', default: 'State') %></label>
-            <%= text_field_tag 'order[shipping_address][state]', shipping_address[:state], class: 'form-control' %>
-        </div>
-        <div class="form-group">
-            <label><%= t('.code_zip', default: 'Zip code') %></label>
-            <%= text_field_tag 'order[shipping_address][zip]', shipping_address[:zip], class: 'form-control' %>
-        </div>
-        <div class="form-group">
-            <label><%= t('.phone_number', default: 'Phone Number') %></label>
-            <%= text_field_tag 'order[shipping_address][phone_number]', shipping_address[:phone_number], class: 'form-control' %>
-        </div>
-    </div>
+          <div class="form-group">
+              <label><%= t('.firstname', default: 'First Name') %></label>
+              <%= text_field_tag 'order[shipping_address][first_name]', shipping_address[:first_name], class: 'form-control required' %>
+          </div>
+          <div class="form-group">
+              <label><%= t('.lastname', default: 'Last Name') %></label>
+              <%= text_field_tag 'order[shipping_address][last_name]', shipping_address[:last_name], class: 'form-control required' %>
+          </div>
+          <div class="form-group">
+              <label><%= t('.address', default: 'Address') %></label>
+              <%= text_field_tag 'order[shipping_address][address1]', shipping_address[:address1], class: 'form-control required' %>
+          </div>
+          <div class="form-group">
+              <label><%= t('.address', default: 'Address') %> 2</label>
+              <%= text_field_tag 'order[shipping_address][address2]', shipping_address[:address2], class: 'form-control' %>
+          </div>
+          <div class="form-group">
+              <label><%= t('.city', default: 'City') %></label>
+              <%= text_field_tag 'order[shipping_address][city]', shipping_address[:city], class: 'form-control required' %>
+          </div>
+          <div class="form-group">
+              <label><%= t('.country', default: 'Country') %></label>
+              <%= country_select :shipping_address, :country, {locale: I18n.locale.to_s, iso_codes: true, selected:  billing_address[:country], only: e_shipping_countries}, { :name => 'order[shipping_address][country]',  class: 'form-control' } %>
+          </div>
+          <div class="form-group">
+              <label><%= t('.state', default: 'State') %></label>
+              <%= text_field_tag 'order[shipping_address][state]', shipping_address[:state], class: 'form-control' %>
+          </div>
+          <div class="form-group">
+              <label><%= t('.code_zip', default: 'Zip code') %></label>
+              <%= text_field_tag 'order[shipping_address][zip]', shipping_address[:zip], class: 'form-control' %>
+          </div>
+          <div class="form-group">
+              <label><%= t('.phone_number', default: 'Phone Number') %></label>
+              <%= text_field_tag 'order[shipping_address][phone_number]', shipping_address[:phone_number], class: 'form-control' %>
+          </div>
+      </div>
+    <% end %>
     <div class="clearfix"></div>
     <% unless defined?(as_partial) %>
         <div class="text-right col-md-12">
@@ -93,4 +95,3 @@
         </div>
     <% end %>
 </div>
-
