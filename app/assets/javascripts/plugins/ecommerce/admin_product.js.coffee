@@ -3,7 +3,7 @@ $ ->
   variation_id = 1
   product_variations = form.find('#product_variations')
   form.find('.content-frame-body > .c-field-group:last').after(product_variations.removeClass('hidden'))
-  SERVICE_PRODUCT = "service product"
+  SERVICE_PRODUCT = "service_product"
   
   # this variables is defined in _variations.html.erb
   is_service = IS_SERVICE
@@ -108,7 +108,7 @@ $ ->
 
   check_product_type  = ->
     fields = ['ecommerce_weight', 'ecommerce_qty']
-    if is_service  # is a physical product
+    if is_service  # is a service product
       if product_variations.find('.product_variation').length > 0
         # check if exists variations 
         for p_variation in product_variations.find('.product_variation')

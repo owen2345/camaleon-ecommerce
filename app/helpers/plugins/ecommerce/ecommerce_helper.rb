@@ -126,7 +126,7 @@ module Plugins::Ecommerce::EcommerceHelper
     unless ecommerce.get_field_groups.where(slug: "plugin_ecommerce_product_data").present?
       ecommerce.get_field_groups.destroy_all
       group = ecommerce.add_custom_field_group({name: 'Products Details', slug: 'plugin_ecommerce_product_data'})
-      group.add_manual_field({"name" => "t('plugins.ecommerce.product.product_type', default: 'Product Type')", "slug" => "ecommerce_product_type"}, {field_key: "select", required: true, multiple_options:[{title:'Physical Product', value:'physical product',default: 1},{title:'Service Product', value:'service product'}] , label_eval: true})
+      group.add_manual_field({"name" => "t('plugins.ecommerce.product.product_type', default: 'Product Type')", "slug" => "ecommerce_product_type"}, {field_key: "select", required: true, multiple_options:[{title:'Physical Product', value:'physical_product',default: 1},{title:'Service Product', value:'service_product'}] , label_eval: true})
 
       group.add_manual_field({"name" => "t('plugins.ecommerce.product.sku', default: 'Sku')", "slug" => "ecommerce_sku"}, {field_key: "text_box", required: true, label_eval: true})
       group.add_manual_field({"name" => "t('plugins.ecommerce.product.attrs', default: 'Attributes')", "slug" => "ecommerce_attrs", description: "t('plugins.ecommerce.product.attrs_descr', default: 'Please enter your product attributes separated by commas, like: Color ==> Red, Blue, Green')"}, {field_key: "field_attrs", required: false, multiple: true, false: true, translate: true, label_eval: true})
