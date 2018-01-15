@@ -19,7 +19,7 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
   def the_weight(variation_id = nil)
     "#{h.current_site.current_weight} #{weight(variation_id)}"
   end
-  
+
   def weight(variation_id = nil)
     if variation_id.present?
       get_variation(variation_id).weight || 0
@@ -109,14 +109,12 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
   end
 
   def product_type(variation_id = nil)
-    if variation_id.present?
-      get_variation(variation_id).product_type
-    else
-      is_variation_product? ? get_default_variation.product_type : object.get_field_value('ecommerce_product_type').to_s
-    end
+    return get_variation(variation_id).product_type if variation_id.present?
+    return get_default_variation.product_type if is_variation_product?
+    object.get_field_value('ecommerce_product_type').to_s
   end
-  
-  # check if the product is a service 
+
+  # check if the product is a service
   def is_service?(variation_id = nil)
     product_type(variation_id) == 'service_product' ? true : false
   end

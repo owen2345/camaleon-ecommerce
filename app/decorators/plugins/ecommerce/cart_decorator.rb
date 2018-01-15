@@ -27,10 +27,9 @@ class Plugins::Ecommerce::CartDecorator < Draper::Decorator
 
   # check if item is a phisical products, to not display shipping address form
   def contains_physical_products?
-    object.product_items.each do |item|
-      return true unless item.product.decorate.is_service?
-    end
-    false
+    object.product_items.find { |product_item|
+      !product_item.product.decorate.is_service?
+    }.present?
   end
 
   # return the product titles in array format

@@ -3,12 +3,10 @@ $ ->
   variation_id = 1
   product_variations = form.find('#product_variations')
   form.find('.content-frame-body > .c-field-group:last').after(product_variations.removeClass('hidden'))
-  SERVICE_PRODUCT = "service_product"
-  
-  # this variables is defined in _variations.html.erb
-  is_service = IS_SERVICE
-  product_type = PRODUCT_TYPE
+  SERVICE_PRODUCT_TYPE = "service_product"
 
+  # this variables is defined in _variations.html.erb
+  product_type = ORIGIN_PRODUCT_TYPE
   # photo uploader
   product_variations.on('click', '.product_variation_photo_link', ->
     $input = $(this).prev()
@@ -26,15 +24,10 @@ $ ->
   cache_variation = product_variations.find('.blank_product_variation').remove().clone().removeClass('hidden')
   cache_values = cache_variation.find('.sortable_values > li:first').remove().clone()
 
-  #change product_type
+  # change product_type
   form.on('change', '.c-field-group .item-custom-field[data-field-key="ecommerce_product_type"] select', ->
-    selected = $(this).val()
-    if selected == SERVICE_PRODUCT
-      is_service = true
-      product_type = selected
-    else
-      is_service = false
-      product_type = selected
+    product_type = $(this).val()
+    
     check_product_type()
   )
 
@@ -43,11 +36,13 @@ $ ->
     clone = cache_variation.clone().attr('data-id', 'new_'+variation_id+=1)
     product_variations.children('.variations_sortable').append(clone)
     clone.trigger('fill_variation_id')
-    if is_service
+
+    if product_type == SERVICE_PRODUCT_TYPE
       fields_not_required = clone.find('.fn-not-service-product-required')
-      clone.find('.fn-product-variation-field').attr('value', SERVICE_PRODUCT)
+      clone.find('.fn-product-variation-field').attr('value', SERVICE_PRODUCT_TYPE)
       for p_field in  fields_not_required
         $(p_field).hide().find('.required').addClass('e_skip_required').removeClass('required')
+
     check_variation_status()
     return false
 
@@ -106,50 +101,84 @@ $ ->
     return false
   )
 
-  check_product_type  = ->
-    fields = ['ecommerce_weight', 'ecommerce_qty']
-    if is_service  # is a service product
-      if product_variations.find('.product_variation').length > 0
-        # check if exists variations 
-        for p_variation in product_variations.find('.product_variation')
-          fields_not_required = $(p_variation).find('.fn-not-service-product-required')
-          $(p_variation).find('.fn-product-variation-field').attr('value',product_type)
-          for p_field in  fields_not_required
-            $(p_field).hide().find('.required').addClass('e_skip_required').removeClass('required')
-      else
-        for key in fields
-          p_field = form.find('.c-field-group .item-custom-field[data-field-key="'+key+'"]')
-          p_field.hide().find('.required').addClass('e_skip_required').removeClass('required')
-      
-    else
-      # check variations
-      if product_variations.find('.product_variation').length > 0
-        for p_variation in product_variations.find('.product_variation')
-          fields_not_required = $(p_variation).find('.fn-not-service-product-required')
-          $(p_variation).find('.fn-product-variation-field').attr('value',product_type)
-          for p_field in  fields_not_required
-            $(p_field).show().find('.e_skip_required').removeClass('e_skip_required').addClass('required')   
-      else
-        for key in fields
-          p_field = form.find('.c-field-group .item-custom-field[data-field-key="'+key+'"]')
-          p_field.show().find('.e_skip_required').removeClass('e_skip_required').addClass('required')
-  check_product_type()
+  set_variantion_physical_product_fields = (p_variation, show_fields) ->
+    fields_not_required = $(p_variation)
+      .find('.fn-not-service-product-required')
 
+    $(p_variation)
+      .find('.fn-product-variation-field')
+      .attr('value', product_type)
+
+    for p_field in fields_not_required
+      if show_fields
+        $(p_field)
+          .hide()
+          .find('.required')
+          .addClass('e_skip_required')
+          .removeClass('required')
+      else
+        $(p_field)
+          .show()
+          .find('.e_skip_required')
+          .removeClass('e_skip_required')
+          .addClass('required')
+
+  set_physical_product_fields = (show_fields) ->
+    not_service_product_field_keys = ['ecommerce_weight', 'ecommerce_qty']
+
+    for field_key in not_service_product_field_keys
+      p_field = form
+        .find(
+          '.c-field-group .item-custom-field[data-field-key="' + field_key + '"]'
+        )
+
+      if show_fields
+       p_field
+          .hide()
+          .find('.required')
+          .addClass('e_skip_required')
+          .removeClass('required')
+      else
+        p_field
+          .show()
+          .find('.e_skip_required')
+          .removeClass('e_skip_required')
+          .addClass('required')
+          
+
+  check_product_type  = ->
+    if product_variations.find('.product_variation').length > 0
+      for p_variation in product_variations.find('.product_variation')
+        set_variantion_physical_product_fields(
+          p_variation, product_type == SERVICE_PRODUCT_TYPE
+        )
+    else
+      set_physical_product_fields(product_type == SERVICE_PRODUCT_TYPE)
+
+
+  check_product_type()
 
   # check the variation status and disable or enable some custom fields
   check_variation_status = ->
-    if is_service
-      fields = ['ecommerce_sku', 'ecommerce_price', 'ecommerce_stock', 'ecommerce_photos']
-    else
-      fields = ['ecommerce_sku', 'ecommerce_price', 'ecommerce_weight', 'ecommerce_stock', 'ecommerce_qty', 'ecommerce_photos']
+    fields = ['ecommerce_sku', 'ecommerce_price','ecommerce_stock', 'ecommerce_photos']
 
-    if product_variations.find('.product_variation').length > 0 # is a variation product
-      fields.push('ecommerce_stock', 'ecommerce_qty')
+    if product_variations.find('.product_variation').length > 0 
+      fields.push('ecommerce_weight', 'ecommerce_qty')
       for key in fields
         p_field = form.find('.c-field-group .item-custom-field[data-field-key="'+key+'"]')
-        p_field.hide().find('.required').addClass('e_skip_required').removeClass('required')
+        p_field.hide()
+               .find('.required')
+               .addClass('e_skip_required')
+               .removeClass('required')
     else
+      if product_type != SERVICE_PRODUCT_TYPE 
+        fields.push('ecommerce_weight', 'ecommerce_qty')
+
       for key in fields
         p_field = form.find('.c-field-group .item-custom-field[data-field-key="'+key+'"]')
-        p_field.show().find('.e_skip_required').removeClass('e_skip_required').addClass('required')
+        p_field.show()
+                .find('.e_skip_required')
+                .removeClass('e_skip_required')
+                .addClass('required')
+
   check_variation_status()

@@ -75,6 +75,5 @@
 <script>
   var PRODUCT_ATTRIBUTES = <%= raw current_site.product_attributes.map{|item| item.label = item.label.to_s.translate; item }.to_json(include: :translated_values) %>;
   // Variables for product type checking in file  'admin_product.js.coffee'
-  var IS_SERVICE = <%= product.decorate.is_service? %>;
-  var PRODUCT_TYPE = '<%= product.decorate.product_type.to_s%>';
+  var ORIGIN_PRODUCT_TYPE = '<%= product.decorate.product_type.to_s%>';
 </script>
