@@ -116,7 +116,7 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
 
   # check if the product is a service
   def is_service?(variation_id = nil)
-    product_type(variation_id) == 'service_product' ? true : false
+    product_type(variation_id) == 'service_product'
   end
 
   # check if there are enough products to be purchased

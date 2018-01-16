@@ -6,7 +6,7 @@ module Plugins::Ecommerce::EcommerceEmailHelper
     args = {cart: cart, status: status}; hooks_run('commerce_before_payment_completed', args)
     order = cart.convert_to_order(status)
     order.set_meta('locale', I18n.locale)
-    commerce_order_send_mail(order,'email_order_received', cart.contains_physical_products?)
+    commerce_order_send_mail(order, 'email_order_received', cart.contains_physical_products?)
     flash[:cama_ecommerce][:notice] = t('plugins.ecommerce.messages.payment_completed', default: "Payment completed successfully")
     args = {order: order, status: status}; hooks_run("commerce_after_payment_completed", args)
     order

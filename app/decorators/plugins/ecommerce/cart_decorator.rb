@@ -25,7 +25,7 @@ class Plugins::Ecommerce::CartDecorator < Draper::Decorator
     h.e_parse_price(object.total_shipping)
   end
 
-  # check if item is a phisical products, to not display shipping address form
+  # check if item is a phisical product, to not display shipping address form
   def contains_physical_products?
     object.product_items.find { |product_item|
       !product_item.product.decorate.is_service?

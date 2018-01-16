@@ -1,8 +1,7 @@
 <%
     cart ||= @cart
     billing_address = cart.get_meta("billing_address", {})
-    shipping_address = cart.get_meta("shipping_address", {})
-    shipping_address = {} unless shipping_address
+    shipping_address = cart.get_meta("shipping_address", {}) || {}
 %>
 <div class="row">
     <div id="billing_address" class="col-md-6">
