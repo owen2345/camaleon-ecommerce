@@ -50,6 +50,7 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
   end
 
   def in_stock?(variation_id = nil)
+    return true if is_service?(variation_id)
     the_qty(variation_id) > 0
   end
 
@@ -107,8 +108,20 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
     end
   end
 
+  def product_type(variation_id = nil)
+    return get_variation(variation_id).product_type if variation_id.present?
+    return get_default_variation.product_type if is_variation_product?
+    object.get_field_value('ecommerce_product_type').to_s
+  end
+
+  # check if the product is a service
+  def is_service?(variation_id = nil)
+    product_type(variation_id) == 'service_product'
+  end
+
   # check if there are enough products to be purchased
   def can_added?(qty, variation_id = nil)
+    return true if is_service?(variation_id)
     (the_qty(variation_id) - qty).to_i >= 0
   end
 

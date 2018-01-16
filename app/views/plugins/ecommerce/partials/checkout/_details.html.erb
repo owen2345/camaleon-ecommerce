@@ -13,7 +13,7 @@
         <% end %>
     </div>
     <div class="col-md-6">
-        <% if current_site.shipping_methods.any? %>
+        <% if current_site.shipping_methods.any? && @cart.contains_physical_products? %>
             <div id="shipping" data-no-turbolink="">
                 <h3><%= t('.shipping_options', default: 'Shipping Options') %></h3>
                 <div class="form-group">

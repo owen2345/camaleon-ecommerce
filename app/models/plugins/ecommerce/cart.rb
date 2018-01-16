@@ -116,7 +116,11 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
 
   # return the total price of shipping
   def total_shipping
-    shipping_method.present? ? shipping_method.get_price_from_weight(weight_total) : 0
+    if decorate.contains_physical_products?
+      shipping_method.present? ? shipping_method.get_price_from_weight(weight_total) : 0
+    else
+      0
+    end
   end
 
   # set user in filter (filter carts by user_id or cookie_id)

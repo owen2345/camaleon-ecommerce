@@ -53,13 +53,16 @@
                             <label><%= t('.price', default: 'Price') %></label><em class="text-danger">*</em><br>
                         <%= number_field_tag "product_variation[#{variation.id}][price]", variation.amount, class: 'form-control required number' %>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group fn-not-service-product-required">
                         <label><%= t('.weight', default: 'Weight') %></label><em class="text-danger">*</em><br>
                         <%= number_field_tag "product_variation[#{variation.id}][weight]", variation.weight, class: 'form-control required number' %>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group fn-not-service-product-required">
                         <label><%= t('.qty', default: 'Quantity') %></label>
                         <%= number_field_tag "product_variation[#{variation.id}][qty]", variation.qty, class: 'form-control number' %>
+                    </div>
+                    <div class="hidden">
+                        <%= text_field_tag "product_variation[#{variation.id}][product_type]", variation.product_type, class: 'fn-product-variation-field' %>
                     </div>
                 </div>
             </div>
@@ -69,4 +72,8 @@
         <a class="btn btn-warning add_new_variation btn-xs" href="#"><i class="fa fa-plus"></i> <%= t('.add_new_variation', default: 'Add new variation') %></a>
     </div>
 </div>
-<script>var PRODUCT_ATTRIBUTES = <%= raw current_site.product_attributes.map{|item| item.label = item.label.to_s.translate; item }.to_json(include: :translated_values) %></script>
+<script>
+  var PRODUCT_ATTRIBUTES = <%= raw current_site.product_attributes.map{|item| item.label = item.label.to_s.translate; item }.to_json(include: :translated_values) %>;
+  // Variables for product type checking in file  'admin_product.js.coffee'
+  var ORIGIN_PRODUCT_TYPE = '<%= product.decorate.product_type.to_s%>';
+</script>
