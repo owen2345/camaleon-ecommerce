@@ -27,7 +27,7 @@ $ ->
   # change product_type
   form.on('change', '.c-field-group .item-custom-field[data-field-key="ecommerce_product_type"] select', ->
     product_type = $(this).val()
-    
+
     check_product_type()
   )
 
@@ -101,7 +101,7 @@ $ ->
     return false
   )
 
-  set_variantion_physical_product_fields = (p_variation, show_fields) ->
+  set_variantion_physical_product_fields = (p_variation, hide_fields) ->
     fields_not_required = $(p_variation)
       .find('.fn-not-service-product-required')
 
@@ -110,7 +110,7 @@ $ ->
       .attr('value', product_type)
 
     for p_field in fields_not_required
-      if show_fields
+      if hide_fields
         $(p_field)
           .hide()
           .find('.required')
@@ -123,7 +123,7 @@ $ ->
           .removeClass('e_skip_required')
           .addClass('required')
 
-  set_physical_product_fields = (show_fields) ->
+  set_physical_product_fields = (hide_fields) ->
     not_service_product_field_keys = ['ecommerce_weight', 'ecommerce_qty']
 
     for field_key in not_service_product_field_keys
@@ -132,7 +132,7 @@ $ ->
           '.c-field-group .item-custom-field[data-field-key="' + field_key + '"]'
         )
 
-      if show_fields
+      if hide_fields
        p_field
           .hide()
           .find('.required')
@@ -144,7 +144,7 @@ $ ->
           .find('.e_skip_required')
           .removeClass('e_skip_required')
           .addClass('required')
-          
+
 
   check_product_type  = ->
     if product_variations.find('.product_variation').length > 0
@@ -162,7 +162,7 @@ $ ->
   check_variation_status = ->
     fields = ['ecommerce_sku', 'ecommerce_price','ecommerce_stock', 'ecommerce_photos']
 
-    if product_variations.find('.product_variation').length > 0 
+    if product_variations.find('.product_variation').length > 0
       fields.push('ecommerce_weight', 'ecommerce_qty')
       for key in fields
         p_field = form.find('.c-field-group .item-custom-field[data-field-key="'+key+'"]')
@@ -171,7 +171,7 @@ $ ->
                .addClass('e_skip_required')
                .removeClass('required')
     else
-      if product_type != SERVICE_PRODUCT_TYPE 
+      if product_type != SERVICE_PRODUCT_TYPE
         fields.push('ecommerce_weight', 'ecommerce_qty')
 
       for key in fields
