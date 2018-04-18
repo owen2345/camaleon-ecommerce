@@ -39,11 +39,15 @@
                         <div> <a href="#" class="btn btn-warning btn-xs add_new_value"> <i class="fa fa-plus"></i> <%= t('.add_new_value', default: 'Add new value') %></a></div>
                     </div>
                     <div class="form-group">
-                        <label><%= t('.photo', default: 'Photo') %></label><em class="text-danger">*</em><br>
+                        <label><%= t('.photo', default: 'Photo') %></label><br>
                         <div class=" input-group">
-                            <%= text_field_tag "product_variation[#{variation.id}][photo]", variation.photo, data:{dimension: field.options[:dimension], versions: field.options[:versions], thumb_size: field.options[:thumb_size]}, class: 'data-error-place-parent form-control required' %>
+                            <%= text_field_tag "product_variation[#{variation.id}][photo]", variation.photo, data:{dimension: field.options[:dimension], versions: field.options[:versions], thumb_size: field.options[:thumb_size]}, class: 'data-error-place-parent form-control' %>
                             <a href="#" class="input-group-addon product_variation_photo_link"><i class="fa fa-upload"></i> <%= t('camaleon_cms.admin.button.upload_image', default: 'Upload Photo')%> <%= "(#{field.get_option('dimension')})" if field.get_option('dimension').present? %></a>
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label><%= t('.title', default: 'Title') %></label><em class="text-danger">*</em><br>
+                        <%= text_field_tag "product_variation[#{variation.id}][title]", variation.title, class: 'form-control required' %>
                     </div>
                     <div class="form-group">
                         <label><%= t('.sku', default: 'SKU') %></label><em class="text-danger">*</em><br>

@@ -85,7 +85,7 @@ module Plugins::Ecommerce::EcommerceHelper
       flash[:warning] += t('plugins.ecommerce.variations.not_deletable_product_variations', default: 'Some Product variations can not be deleted.') if no_deletable_variances
 
       params[:product_variation].each do |p_key, p_var|
-        data = {amount: p_var[:price], photo: p_var[:photo], sku: p_var[:sku], weight: p_var[:weight], qty: p_var[:qty], attribute_ids: (p_var[:attributes] || []).map{|at| at[:value] }.join(','), product_type: p_var[:product_type]}
+        data = {amount: p_var[:price], photo: p_var[:photo], title: p_var[:title], sku: p_var[:sku], weight: p_var[:weight], qty: p_var[:qty], attribute_ids: (p_var[:attributes] || []).map{|at| at[:value] }.join(','), product_type: p_var[:product_type]}
         if p_key.include?('new_') # new variation
           args[:post].product_variations.create(data)
         else

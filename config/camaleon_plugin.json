@@ -1,7 +1,7 @@
 {
   "title": "E-Commerce",
   "descr": "Plugins E-commerce",
-  "version": "0.2",
+  "version": "0.2.3",
   "key": "ecommerce",
   "helpers": [
     "Plugins::Ecommerce::EcommerceHelper",

@@ -64,7 +64,13 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
 
   # return the title for variation prefixed with the title of the product
   def the_variation_title(variation_id = nil)
-    "#{the_title}#{" - #{get_variation(variation_id).attribute_values.pluck(:label).join(', ').translate.presence || 'Not defined'}" if variation_id.present? }"
+    if variation_id.present?
+      get_variation(variation_id).title
+      "#{ get_variation(variation_id).title } #{ "(#{ get_variation(variation_id).attribute_values.pluck(:label).join(', ').translate.presence })" if get_variation(variation_id).attribute_values.present? }"
+    else
+      "#{the_title}"
+    end
+    # "#{the_title}#{" - #{get_variation(variation_id).attribute_values.pluck(:label).join(', ').translate.presence || 'Not defined'}" if variation_id.present? }"
   end
 
   # return a product variation by id

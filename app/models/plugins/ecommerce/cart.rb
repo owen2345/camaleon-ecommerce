@@ -52,8 +52,11 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
   # verify an return {error: (error code), discount: amount of discount} coupon for current cart
   # price: the total price including shipping price (used for free discount type)
   def discount_for(coupon_code, price = nil)
+    res = {error: '', discount: 0, coupon: nil}
+    return res unless coupon_code.blank?
+    
     coupon = site.coupons.find_by_slug(coupon_code)
-    res = {error: '', discount: 0, coupon: coupon}
+    res[:coupon] = coupon
     if coupon.present?
       opts = coupon.options
       if coupon.expired?
