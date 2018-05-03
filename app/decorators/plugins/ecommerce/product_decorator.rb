@@ -62,6 +62,30 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
     end
   end
 
+  def bucket(variation_id = nil)
+    if variation_id.present?
+      get_variation(variation_id).bucket || ''
+    else
+      is_variation_product? ? (get_default_variation.bucket || '') : object.get_field_value(:ecommerce_bucket) || ''
+    end
+  end
+
+  def the_bucket(variation_id = nil)
+    bucket(variation_id)
+  end
+
+  def hours(variation_id = nil)
+    if variation_id.present?
+      get_variation(variation_id).hours || 1
+    else
+      is_variation_product? ? (get_default_variation.hours || 1) : object.get_field_value(:ecommerce_hours).to_f || 1
+    end
+  end
+
+  def the_hours(variation_id = nil)
+    hours(variation_id)
+  end
+
   # return the title for variation prefixed with the title of the product
   def the_variation_title(variation_id = nil)
     if variation_id.present?

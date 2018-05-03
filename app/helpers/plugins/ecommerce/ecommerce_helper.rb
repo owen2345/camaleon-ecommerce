@@ -85,7 +85,16 @@ module Plugins::Ecommerce::EcommerceHelper
       flash[:warning] += t('plugins.ecommerce.variations.not_deletable_product_variations', default: 'Some Product variations can not be deleted.') if no_deletable_variances
 
       params[:product_variation].each do |p_key, p_var|
-        data = {amount: p_var[:price], photo: p_var[:photo], title: p_var[:title], sku: p_var[:sku], weight: p_var[:weight], qty: p_var[:qty], attribute_ids: (p_var[:attributes] || []).map{|at| at[:value] }.join(','), product_type: p_var[:product_type]}
+        data = { amount: p_var[:price],
+                 photo: p_var[:photo],
+                 title: p_var[:title],
+                 sku: p_var[:sku],
+                 weight: p_var[:weight],
+                 qty: p_var[:qty],
+                 attribute_ids: (p_var[:attributes] || []).map{|at| at[:value] }.join(','),
+                 product_type: p_var[:product_type],
+                 bucket: p_var[:bucket],
+                 hours: p_var[:hours]}
         if p_key.include?('new_') # new variation
           args[:post].product_variations.create(data)
         else
@@ -127,6 +136,8 @@ module Plugins::Ecommerce::EcommerceHelper
       ecommerce.get_field_groups.destroy_all
       group = ecommerce.add_custom_field_group({name: 'Products Details', slug: 'plugin_ecommerce_product_data'})
       group.add_manual_field({"name" => "t('plugins.ecommerce.product.product_type', default: 'Product Type')", "slug" => "ecommerce_product_type"}, {field_key: "select", required: true, multiple_options:[{title:'Physical Product', value:'physical_product',default: 1},{title:'Service Product', value:'service_product'}] , label_eval: true})
+      group.add_manual_field({"name" => "t('plugins.ecommerce.product.bucket', default: 'Bucket')", "slug" => "ecommerce_bucket"}, {field_key: "select_eval", required: true, command:'options_for_select(HourBucket.available.collect {|bucket| [bucket.titleize, bucket]})' , label_eval: true})
+      group.add_manual_field({"name" => "t('plugins.ecommerce.product.hours', default: 'Hours')", "slug" => "ecommerce_hours"}, {field_key: "numeric", required: false, label_eval: true, default_value:1 })
 
       group.add_manual_field({"name" => "t('plugins.ecommerce.product.sku', default: 'Sku')", "slug" => "ecommerce_sku"}, {field_key: "text_box", required: true, label_eval: true})
       group.add_manual_field({"name" => "t('plugins.ecommerce.product.attrs', default: 'Attributes')", "slug" => "ecommerce_attrs", description: "t('plugins.ecommerce.product.attrs_descr', default: 'Please enter your product attributes separated by commas, like: Color ==> Red, Blue, Green')"}, {field_key: "field_attrs", required: false, multiple: true, false: true, translate: true, label_eval: true})

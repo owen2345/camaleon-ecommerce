@@ -1,5 +1,5 @@
-<% if physical_products %>
-  <% detail = order.get_meta("shipping_address", {}) %>
+<% detail = order.get_meta("shipping_address", {}) %>
+<% if physical_products && detail %>
   <ul class="ec-list-orders-address">
       <li><strong><%= t('.address', default: 'Address') %>1:</strong> <%= detail[:address1] %></li>
       <li><strong><%= t('.address', default: 'Address') %>2:</strong> <%= detail[:address2] %></li>

@@ -20,6 +20,13 @@ class Plugins::Ecommerce::OrderDecorator < Draper::Decorator
     end
   end
 
+  # check if item is a phisical product, to not display shipping address form
+  def contains_physical_products?
+    object.product_items.find { |product_item|
+      !product_item.product.decorate.is_service?
+    }.present?
+  end
+
   # return created at date formatted
   def the_created_at(format = :long)
     h.l(object.created_at, format: format.to_sym)

@@ -16,6 +16,14 @@ class Plugins::Ecommerce::ProductItemDecorator < Draper::Decorator
     get_product.the_price(object.variation_id)
   end
 
+  def the_bucket
+    get_product.the_bucket(object.variation_id)
+  end
+
+  def the_hours
+    get_product.the_hours(object.variation_id)
+  end
+
   def the_tax
     get_product.the_tax(object.variation_id)
   end
@@ -23,7 +31,7 @@ class Plugins::Ecommerce::ProductItemDecorator < Draper::Decorator
   def price
     get_product.price(object.variation_id)
   end
-  
+
   def is_service
     get_product.is_service?(object.variation_id)
   end

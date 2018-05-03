@@ -7,7 +7,7 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
   has_many :products, foreign_key: :order_id, through: :product_items
 
   belongs_to :site, :class_name => "CamaleonCms::Site", foreign_key: :site_id
-  belongs_to :user, :class_name => "CamaleonCms::User", foreign_key: :user_id
+  belongs_to :user, :class_name => "User", foreign_key: :user_id
   belongs_to :shipping_method, class_name: 'Plugins::Ecommerce::ShippingMethod'
   scope :active_cart, ->{ where("#{Plugins::Ecommerce::Cart.table_name}.updated_at >= ?", 24.hours.ago) }
 
@@ -53,8 +53,7 @@ class Plugins::Ecommerce::Cart < ActiveRecord::Base
   # price: the total price including shipping price (used for free discount type)
   def discount_for(coupon_code, price = nil)
     res = {error: '', discount: 0, coupon: nil}
-    return res unless coupon_code.blank?
-    
+    return res if coupon_code.blank?
     coupon = site.coupons.find_by_slug(coupon_code)
     res[:coupon] = coupon
     if coupon.present?

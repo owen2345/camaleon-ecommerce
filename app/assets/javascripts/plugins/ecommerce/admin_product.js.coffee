@@ -30,6 +30,8 @@ $ ->
 
     check_product_type()
   )
+  # Add min value and step options to hours field
+  form.find('.c-field-group .item-custom-field[data-field-key="ecommerce_hours"] input').attr({'min': 0, 'step': 0.5})
 
   # add new variation
   product_variations.find('.add_new_variation').click ->
@@ -160,7 +162,7 @@ $ ->
 
   # check the variation status and disable or enable some custom fields
   check_variation_status = ->
-    fields = ['ecommerce_sku', 'ecommerce_price','ecommerce_stock', 'ecommerce_photos']
+    fields = ['ecommerce_sku', 'ecommerce_price','ecommerce_stock', 'ecommerce_photos', 'ecommerce_bucket', 'ecommerce_hours']
 
     if product_variations.find('.product_variation').length > 0
       fields.push('ecommerce_weight', 'ecommerce_qty')

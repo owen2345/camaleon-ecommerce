@@ -1,4 +1,5 @@
 <% field = post_type.get_field_object('ecommerce_photos') %>
+<% buckets_collections = HourBucket.available.collect {|bucket| [bucket.titleize, bucket]} %>
 <div class="panel panel-default hidden" id="product_variations" data-confirm-msg="<%= t('.confirm_del', default: 'Are you sure to delete this variation?') %>">
     <div class="panel-heading ">
         <h3 class="panel-title"><%= t('.title', default: 'Product Variations') %></h3>
@@ -57,6 +58,17 @@
                             <label><%= t('.price', default: 'Price') %></label><em class="text-danger">*</em><br>
                         <%= number_field_tag "product_variation[#{variation.id}][price]", variation.amount, class: 'form-control required number' %>
                     </div>
+
+                    <div class="form-group">
+                        <label><%= t('.qty', default: 'Bucket') %></label>
+                        <%= select_tag "product_variation[#{variation.id}][bucket]",options_for_select(buckets_collections, variation.bucket), include_blank: true, class: 'form-control required fn-bucket' %>
+                    </div>
+
+                    <div class="form-group">
+                            <label><%= t('.hours', default: 'Hours') %></label><em class="text-danger">*</em><br>
+                        <%= number_field_tag "product_variation[#{variation.id}][hours]", variation.hours, class: 'form-control number', min: 0, step: 0.5 %>
+                    </div>
+
                     <div class="form-group fn-not-service-product-required">
                         <label><%= t('.weight', default: 'Weight') %></label><em class="text-danger">*</em><br>
                         <%= number_field_tag "product_variation[#{variation.id}][weight]", variation.weight, class: 'form-control required number' %>
