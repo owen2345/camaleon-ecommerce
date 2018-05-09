@@ -88,7 +88,7 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
   # helper to calculate exchanges
   def e_finance_exchange_converter(args)
     # request to google's finance converter site
-    res = open("https://finance.google.com/finance/converter?a=1&from=#{args[:from]}&to=#{args[:to]}").read
+    res = open("https://finance.google.com/bctzjpnsun/converter?a=1&from=#{args[:from]}&to=#{args[:to]}").read
     res = res.scan(/\<span class=bld\>(.+?)\<\/span\>/).first.first.split(' ') # => ["69.3000", "BOB"]
     res.first.to_f.round(4)
   end
