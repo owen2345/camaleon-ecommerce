@@ -5,6 +5,7 @@ Rails.application.routes.draw do
       namespace 'ecommerce' do
         controller :front do
           get 'login'
+          get 'cart_rescue'
           post 'login' => :do_login
           get 'register'
           post 'register' => :do_register
