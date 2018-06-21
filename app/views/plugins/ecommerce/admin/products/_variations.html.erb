@@ -59,12 +59,12 @@
                         <%= number_field_tag "product_variation[#{variation.id}][price]", variation.amount, class: 'form-control required number' %>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group fn-not-physical-product-required">
                         <label><%= t('.qty', default: 'Bucket') %></label>
                         <%= select_tag "product_variation[#{variation.id}][bucket]",options_for_select(buckets_collections, variation.bucket), include_blank: true, class: 'form-control required fn-bucket' %>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group fn-not-physical-product-required">
                             <label><%= t('.hours', default: 'Hours') %></label><em class="text-danger">*</em><br>
                         <%= number_field_tag "product_variation[#{variation.id}][hours]", variation.hours, class: 'form-control number', min: 0, step: 0.5 %>
                     </div>

@@ -31,7 +31,7 @@ $ ->
     check_product_type()
   )
   # Add min value and step options to hours field
-  form.find('.c-field-group .item-custom-field[data-field-key="ecommerce_hours"] input').attr({'min': 0, 'step': 0.5})
+  form.find('.c-field-group .item-custom-field[data-field-key="ecommerce_hours"] input[type="number"]').attr({'min': 0, 'step': 0.5})
 
   # add new variation
   product_variations.find('.add_new_variation').click ->
@@ -42,6 +42,10 @@ $ ->
     if product_type == SERVICE_PRODUCT_TYPE
       fields_not_required = clone.find('.fn-not-service-product-required')
       clone.find('.fn-product-variation-field').attr('value', SERVICE_PRODUCT_TYPE)
+      for p_field in  fields_not_required
+        $(p_field).hide().find('.required').addClass('e_skip_required').removeClass('required')
+    else
+      fields_not_required = clone.find('.fn-not-physical-product-required')
       for p_field in  fields_not_required
         $(p_field).hide().find('.required').addClass('e_skip_required').removeClass('required')
 
@@ -107,10 +111,19 @@ $ ->
     fields_not_required = $(p_variation)
       .find('.fn-not-service-product-required')
 
+    set_variantion_fields(fields_not_required, hide_fields)
+
     $(p_variation)
       .find('.fn-product-variation-field')
       .attr('value', product_type)
 
+  set_variantion_service_product_fields = (p_variation, hide_fields) ->
+    fields_not_required = $(p_variation)
+      .find('.fn-not-physical-product-required')
+    set_variantion_fields(fields_not_required, !hide_fields)
+
+
+  set_variantion_fields = (fields_not_required, hide_fields) ->
     for p_field in fields_not_required
       if hide_fields
         $(p_field)
@@ -126,9 +139,14 @@ $ ->
           .addClass('required')
 
   set_physical_product_fields = (hide_fields) ->
-    not_service_product_field_keys = ['ecommerce_weight', 'ecommerce_qty']
+    set_fields(['ecommerce_weight', 'ecommerce_qty'], hide_fields)
 
-    for field_key in not_service_product_field_keys
+  set_service_product_fields = (hide_fields) ->
+    set_fields(['ecommerce_bucket', 'ecommerce_hours'], !hide_fields)
+
+
+  set_fields = (not_physical_product_field_keys, hide_fields) ->
+    for field_key in not_physical_product_field_keys
       p_field = form
         .find(
           '.c-field-group .item-custom-field[data-field-key="' + field_key + '"]'
@@ -147,15 +165,18 @@ $ ->
           .removeClass('e_skip_required')
           .addClass('required')
 
-
   check_product_type  = ->
     if product_variations.find('.product_variation').length > 0
       for p_variation in product_variations.find('.product_variation')
         set_variantion_physical_product_fields(
           p_variation, product_type == SERVICE_PRODUCT_TYPE
         )
+        set_variantion_service_product_fields(
+          p_variation, product_type == SERVICE_PRODUCT_TYPE
+        )
     else
       set_physical_product_fields(product_type == SERVICE_PRODUCT_TYPE)
+      set_service_product_fields(product_type == SERVICE_PRODUCT_TYPE)
 
 
   check_product_type()
@@ -174,7 +195,7 @@ $ ->
                .removeClass('required')
     else
       if product_type != SERVICE_PRODUCT_TYPE
-        fields.push('ecommerce_weight', 'ecommerce_qty')
+        fields.splice(4,2, 'ecommerce_weight', 'ecommerce_qty')
 
       for key in fields
         p_field = form.find('.c-field-group .item-custom-field[data-field-key="'+key+'"]')
