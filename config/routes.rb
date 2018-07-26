@@ -5,6 +5,7 @@ Rails.application.routes.draw do
       namespace 'ecommerce' do
         controller :front do
           get 'login'
+          get 'cart_rescue'
           post 'login' => :do_login
           get 'register'
           post 'register' => :do_register
@@ -30,7 +31,7 @@ Rails.application.routes.draw do
         get 'checkout/complete_free_order' => 'front/checkout#complete_free_order'
         post 'checkout/cart/add' => 'front/checkout#cart_add'
         post 'checkout/cart/update' => 'front/checkout#cart_update'
-        get 'checkout/cart/remove' => 'front/checkout#cart_remove'
+        delete 'checkout/cart/remove' => 'front/checkout#cart_remove'
         post 'res_coupon' => 'front/checkout#res_coupon'
         get 'orders' => 'front/orders#index'
         get 'orders/:order/show' => 'front/orders#show', as: :order_show

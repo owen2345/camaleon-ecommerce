@@ -50,6 +50,7 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
   end
 
   def in_stock?(variation_id = nil)
+    return true if is_service?(variation_id)
     the_qty(variation_id) > 0
   end
 
@@ -61,9 +62,39 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
     end
   end
 
+  def bucket(variation_id = nil)
+    if variation_id.present?
+      get_variation(variation_id).bucket || ''
+    else
+      is_variation_product? ? (get_default_variation.bucket || '') : object.get_field_value(:ecommerce_bucket) || ''
+    end
+  end
+
+  def the_bucket(variation_id = nil)
+    bucket(variation_id)
+  end
+
+  def hours(variation_id = nil)
+    if variation_id.present?
+      get_variation(variation_id).hours || 1
+    else
+      is_variation_product? ? (get_default_variation.hours || 1) : object.get_field_value(:ecommerce_hours).to_f || 1
+    end
+  end
+
+  def the_hours(variation_id = nil)
+    hours(variation_id)
+  end
+
   # return the title for variation prefixed with the title of the product
   def the_variation_title(variation_id = nil)
-    "#{the_title}#{" - #{get_variation(variation_id).attribute_values.pluck(:label).join(', ').translate.presence || 'Not defined'}" if variation_id.present? }"
+    if variation_id.present?
+      get_variation(variation_id).title
+      "#{ get_variation(variation_id).title } #{ "(#{ get_variation(variation_id).attribute_values.pluck(:label).join(', ').translate.presence })" if get_variation(variation_id).attribute_values.present? }"
+    else
+      "#{the_title}"
+    end
+    # "#{the_title}#{" - #{get_variation(variation_id).attribute_values.pluck(:label).join(', ').translate.presence || 'Not defined'}" if variation_id.present? }"
   end
 
   # return a product variation by id
@@ -107,8 +138,20 @@ class Plugins::Ecommerce::ProductDecorator < CamaleonCms::PostDecorator
     end
   end
 
+  def product_type(variation_id = nil)
+    return get_variation(variation_id).product_type if variation_id.present?
+    return get_default_variation.product_type if is_variation_product?
+    object.get_field_value('ecommerce_product_type').to_s
+  end
+
+  # check if the product is a service
+  def is_service?(variation_id = nil)
+    product_type(variation_id) == 'service_product'
+  end
+
   # check if there are enough products to be purchased
   def can_added?(qty, variation_id = nil)
+    return true if is_service?(variation_id)
     (the_qty(variation_id) - qty).to_i >= 0
   end
 

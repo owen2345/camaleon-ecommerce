@@ -16,12 +16,24 @@ class Plugins::Ecommerce::ProductItemDecorator < Draper::Decorator
     get_product.the_price(object.variation_id)
   end
 
+  def the_bucket
+    get_product.the_bucket(object.variation_id)
+  end
+
+  def the_hours
+    get_product.the_hours(object.variation_id)
+  end
+
   def the_tax
     get_product.the_tax(object.variation_id)
   end
 
   def price
     get_product.price(object.variation_id)
+  end
+
+  def is_service
+    get_product.is_service?(object.variation_id)
   end
 
   def get_product
@@ -36,6 +48,7 @@ class Plugins::Ecommerce::ProductItemDecorator < Draper::Decorator
   # update quantity of product or product variation used in current cart item
   def decrement_qty!
     val = get_product.the_qty(object.variation_id) - object.qty
+    val = 0 if is_service
     if object.variation_id.present?
       product_variation.update_column(:qty, val)
     else
@@ -47,6 +60,7 @@ class Plugins::Ecommerce::ProductItemDecorator < Draper::Decorator
   # verify if the quantity of the cart item is avilable
   # return true if quantity is available
   def is_valid_qty?
+    return true  if is_service
     (get_product.the_qty(object.variation_id) - object.qty).to_i >= 0
   end
 end

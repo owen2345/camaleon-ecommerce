@@ -3,8 +3,15 @@ class Plugins::Ecommerce::FrontController < CamaleonCms::Apps::PluginsFrontContr
   before_action :ecommerce_add_assets_in_front
   before_action :save_cache_redirect, only: [:login, :register]
   def login
-    @user ||= current_site.users.new
-    render 'login'
+    redirect_to new_session_path(:user)
+  end
+
+  def cart_rescue
+    if current_user
+      callback_login(current_user)
+      return redirect_to cookies.delete(:e_return_to)
+    end
+    redirect_to plugins_ecommerce_orders_path
   end
 
   def do_login
@@ -57,7 +64,7 @@ class Plugins::Ecommerce::FrontController < CamaleonCms::Apps::PluginsFrontContr
   # callback after log in
   def callback_login(user)
     if cookies[:e_cart_id].present?
-      e_current_cart(ecommerce_get_visitor_key).change_user(user)
+      e_current_cart(cookies[:e_cart_id]).change_user(user)
       cookies.delete(:e_cart_id)
     end
   end

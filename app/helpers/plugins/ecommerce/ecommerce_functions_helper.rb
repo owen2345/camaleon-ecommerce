@@ -17,7 +17,7 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
 
   # return (Array) all the currencies for visitors
   def e_visitor_unit_currencies
-    current_site.e_settings[:visitor_unit_currencies] || ['USD']
+    current_site.e_settings[:visitor_unit_currencies] || ['$']
   end
 
   # draw a select dropdown with all frontend currencies and actions to change current currency
@@ -37,7 +37,7 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
   # return current currency defined by the current visitor
   def e_current_visitor_currency(new_currency = nil)
     session[:e_current_visitor_currency] = new_currency if new_currency.present?
-    session[:e_current_visitor_currency] || 'USD'
+    session[:e_current_visitor_currency] || '$'
   end
 
   # return all currency weights supported by the plugin
@@ -56,7 +56,7 @@ module Plugins::Ecommerce::EcommerceFunctionsHelper
 
   # return the currency defined for admin panel
   def e_system_currency
-    current_site.e_settings[:current_unit] || 'USD'
+    current_site.e_settings[:current_unit] || '$'
   end
 
   # render price formatted of a product with current currency

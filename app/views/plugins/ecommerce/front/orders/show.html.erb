@@ -1,4 +1,8 @@
-<% order ||= @order %>
+<% order ||= @order 
+    billing_address = order.get_meta("billing_address", {})
+    shipping_address = order.get_meta("shipping_address", {})
+    shipping_address = {} unless shipping_address
+%>
 <div class="order_details">
     <% unless defined?(as_partial) %>
         <%= raw ecommerce_draw_breadcrumb %>
@@ -25,29 +29,31 @@
             <h4><%= t('.billing_address', default: 'Billing Address') %></h4>
             <% detail = order.get_meta("billing_address", {}) %>
             <ul class="ec-list-orders-address">
-                <li><strong><%= t('.address', default: 'Address') %>1:</strong> <%= detail[:address1] %></li>
-                <li><strong><%= t('.address', default: 'Address') %>2:</strong> <%= detail[:address2] %></li>
-                <li><strong><%= t('.city', default: 'City') %>:</strong> <%= detail[:city] %></li>
-                <li><strong><%= t('.state', default: 'State') %>:</strong> <%= detail[:state] %></li>
-                <li><strong><%= t('.zip_code', default: 'Zip code') %>:</strong> <%= detail[:zip] %></li>
-                <li><strong><%= t('.country', default: 'Country') %>:</strong> <%= detail[:country] %></li>
-                <li><strong><%= t('.phone_number', default: 'Phone Number') %>:</strong> <%= detail[:phone_number] %>
+                <li><strong><%= t('.address', default: 'Address') %>1:</strong> <%= billing_address[:address1] %></li>
+                <li><strong><%= t('.address', default: 'Address') %>2:</strong> <%= billing_address[:address2] %></li>
+                <li><strong><%= t('.city', default: 'City') %>:</strong> <%= billing_address[:city] %></li>
+                <li><strong><%= t('.state', default: 'State') %>:</strong> <%= billing_address[:state] %></li>
+                <li><strong><%= t('.zip_code', default: 'Zip code') %>:</strong> <%= billing_address[:zip] %></li>
+                <li><strong><%= t('.country', default: 'Country') %>:</strong> <%= billing_address[:country] %></li>
+                <li><strong><%= t('.phone_number', default: 'Phone Number') %>:</strong> <%= billing_address[:phone_number] %>
                 </li>
             </ul>
         </div>
         <div class="col-md-6">
-            <h4><%= t('.shipping_address', default: 'Shipping Address') %></h4>
-            <% detail = order.get_meta("shipping_address", {}) %>
-            <ul class="ec-list-orders-address">
-                <li><strong><%= t('.address', default: 'Address') %>1:</strong> <%= detail[:address1] %></li>
-                <li><strong><%= t('.address', default: 'Address') %>2:</strong> <%= detail[:address2] %></li>
-                <li><strong><%= t('.city', default: 'City') %>:</strong> <%= detail[:city] %></li>
-                <li><strong><%= t('.state', default: 'State') %>:</strong> <%= detail[:state] %></li>
-                <li><strong><%= t('.zip_code', default: 'Zip code') %>:</strong> <%= detail[:zip] %></li>
-                <li><strong><%= t('.country', default: 'Country') %>:</strong> <%= detail[:country] %></li>
-                <li><strong><%= t('.phone_number', default: 'Phone Number') %>:</strong> <%= detail[:phone_number] %>
-                </li>
-            </ul>
+            <% if shipping_address[:address1].present? %>
+              <h4><%= t('.shipping_address', default: 'Shipping Address') %></h4>
+              <% detail = order.get_meta("shipping_address", {}) %>
+              <ul class="ec-list-orders-address">
+                  <li><strong><%= t('.address', default: 'Address') %>1:</strong> <%= shipping_address[:address1] %></li>
+                  <li><strong><%= t('.address', default: 'Address') %>2:</strong> <%= shipping_address[:address2] %></li>
+                  <li><strong><%= t('.city', default: 'City') %>:</strong> <%= shipping_address[:city] %></li>
+                  <li><strong><%= t('.state', default: 'State') %>:</strong> <%= shipping_address[:state] %></li>
+                  <li><strong><%= t('.zip_code', default: 'Zip code') %>:</strong> <%= shipping_address[:zip] %></li>
+                  <li><strong><%= t('.country', default: 'Country') %>:</strong> <%= shipping_address[:country] %></li>
+                  <li><strong><%= t('.phone_number', default: 'Phone Number') %>:</strong> <%= shipping_address[:phone_number] %>
+                  </li>
+              </ul>
+            <% end %>
         </div>
     </div>
 

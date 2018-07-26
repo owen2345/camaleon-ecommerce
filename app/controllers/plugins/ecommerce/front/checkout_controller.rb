@@ -53,7 +53,10 @@ class Plugins::Ecommerce::Front::CheckoutController < Plugins::Ecommerce::FrontC
 
   def res_coupon
     code = params[:code].to_s.downcase
-    res = @cart.discount_for(code)
+    res = {error: '', discount: 0, coupon: nil}
+
+    code.blank? ? res[:error] = 'coupon_not_found' : res = @cart.discount_for(code)
+        
     if res[:error].present?
       render inline: commerce_coupon_error_message(res[:error], res[:coupon]), status: 500
     else
