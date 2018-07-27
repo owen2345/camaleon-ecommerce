@@ -1,5 +1,5 @@
 <div class="cart_view">
-    <%= render 'post_types/commerce/cart_widget' %>
+    <%= render 'post_types/commerce/cart_widget', products: @products %>
   <h1><%= t('.title', default: 'Shopping Cart') %></h1>
   <%= form_tag(plugins_ecommerce_checkout_cart_update_path, :method => "post", :class => "form") do %>
       <table id="table-shopping-cart" class="table table-bordered">
@@ -40,8 +40,8 @@
       </table>
       <% if @products.size > 0 %>
           <div class="text-right">
-              <button type="submit" class="btn btn-default"> <%= t('.update', default: 'Update') %> </button>
-              <a class="btn btn-info" href="<%= plugins_ecommerce_checkout_path %>"><i class="fa fa-shopping-cart"></i> <%= t('.proceed', default: 'Proceed to Checkout') %></a>
+              <button type="submit" class="btn btn-ge-gray-radius"> <%= t('.update', default: 'Update') %> </button>
+              <a class="btn-ge-red" href="<%= plugins_ecommerce_checkout_path %>"><i class="fa fa-shopping-cart"></i> <%= t('.proceed', default: 'Proceed to Checkout') %></a>
           </div>
       <% end %>
   <% end %>

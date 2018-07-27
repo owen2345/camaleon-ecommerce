@@ -4,7 +4,7 @@
 <% else %>
     <% if @cart.free_cart? %>
         <div class="free_order text-center col-md-12">
-            <%= link_to(t('.complete_order', default: 'Complete Order'), plugins_ecommerce_checkout_complete_free_order_url, class: 'btn btn-primary col-md-4 col-md-offset-4') %>
+            <%= link_to(t('.complete_order', default: 'Complete Order'), plugins_ecommerce_checkout_complete_free_order_url, class: 'btn btn-red col-md-4 col-md-offset-4') %>
         </div>
     <% else %>
         <div id="e-payments-types" role="tabpanel">

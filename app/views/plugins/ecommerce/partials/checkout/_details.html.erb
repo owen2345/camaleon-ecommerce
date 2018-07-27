@@ -1,11 +1,11 @@
 <div id="add_details" class="row">
-    <div id="coupon" class="col-md-6">
+    <div id="coupon" class="col-md-6  offset-md-3">
         <% unless @cart.coupon.present? %>
             <h3><%= t('.coupon', default: 'Discount Coupon') %></h3>
             <div id="e_coupon_apply_box" data-href="<%= plugins_ecommerce_res_coupon_path %>" data-token="<%= form_authenticity_token %>">
                 <div class="input-group">
                     <input type="text" class="form-control coupon-text" autocomplete="off" placeholder="<%= t('.coupon_msg', default: 'Enter your code here') %>" >
-                    <span class="input-group-btn"><button class="btn btn-default" type="button"><%= t('.apply', default: 'Apply') %></button></span>
+                    <span class="input-group-btn"><button class="btn-ge-red" type="button"><%= t('.apply', default: 'Apply') %></button></span>
                     <span class="input-group-addon hidden"><i class='glyphicon glyphicon-ok'></i></span>
                 </div><!-- /input-group -->
                 <input type="hidden" name="order[payment][coupon_code]" id="coupon_code" value="">
@@ -31,5 +31,5 @@
     <%= render plugin_view('partials/checkout/products_detail') %>
 </div>
 <div class="text-right">
-    <button type="submit" class="btn btn-primary"><%= t('.next', default: 'Next') %></button>
+    <button type="submit" class="btn-ge-red"><%= t('.next', default: 'Next') %></button>
 </div>

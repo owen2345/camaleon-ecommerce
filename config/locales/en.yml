@@ -28,7 +28,7 @@
       add_price: 'Add Price'
       add_coupons: 'Add Coupons'
       add_payment_method: 'Add Payment Method'
-      billing_address: 'Billing Address'
+      billing_address: 'Billing Information'
       by_bank_transfer: 'By bank transfer'
       by_paypal: 'By Paypal'
       by_credit_card: 'By credit card (with paypal)'

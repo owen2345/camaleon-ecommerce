@@ -58,7 +58,7 @@ Rails.application.config.to_prepare do
                                   when 'email_order_cancelled'
                                     '<h1>ORDER {number} CANCELLED</h1> Dear {name}, your order has been cancelled. Please retain this cancellation information for your records. <br>{order_table}'
                                   when 'email_order_invoice'
-                                    '<table style="width: 100%;"><tr><td><h1>INVOICE #{invoice_number}</h1> <h4>Order #{number}</h4><div>{current_date}</div></td><td style="text-align: center;"><img src="http://camaleon.tuzitio.com/media/132/logo2.png"></td></tr></table> <table style="width: 100%;"><tr><td><strong>Billing Address</strong><br>{billing_info}</td><td><strong>Shipping Address</strong><br>{shipping_info}</td></tr><tr><td colspan="2">{order_table}</td></tr></table>'
+                                    '<table style="width: 100%;"><tr><td><h1>INVOICE #{invoice_number}</h1> <h4>Order #{number}</h4><div>{current_date}</div></td><td style="text-align: center;"><img src="http://camaleon.tuzitio.com/media/132/logo2.png"></td></tr></table> <table style="width: 100%;"><tr><td><strong>Billing Information</strong><br>{billing_info}</td><td><strong>Shipping Address</strong><br>{shipping_info}</td></tr><tr><td colspan="2">{order_table}</td></tr></table>'
                                 end
     end
 

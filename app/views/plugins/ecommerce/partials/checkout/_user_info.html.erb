@@ -4,7 +4,7 @@
     shipping_address = cart.get_meta("shipping_address", {}) || {}
 %>
 <div class="row">
-    <div id="billing_address" class="col-md-6">
+    <div id="billing_address" class="col-md-6 offset-md-3">
         <h3><%= t('.billing_address') %></h3>
         <div class="form-group">
             <label><%= t('.firstname', default: 'First Name') %></label>
@@ -28,7 +28,7 @@
         </div>
         <div class="form-group">
             <label><%= t('.country', default: 'Country') %></label>
-            <%= country_select :billing_address, :country, {locale: I18n.locale.to_s, iso_codes: true, selected:  billing_address[:country], only: e_shipping_countries}, { :name => 'order[billing_address][country]',  class: 'form-control' } %>
+            <%= country_select :billing_address, :country, {locale: I18n.locale.to_s, iso_codes: true, selected:  "US", only: e_shipping_countries}, { :name => 'order[billing_address][country]',  class: 'form-control' } %>
         </div>
         <div class="form-group">
             <label><%= t('.state', default: 'State') %></label>
@@ -90,7 +90,7 @@
     <div class="clearfix"></div>
     <% unless defined?(as_partial) %>
         <div class="text-right col-md-12">
-            <button type="submit" class="btn btn-primary"><%= t('.next', default: 'Next') %></button>
+            <button type="submit" class="btn-ge-red-radius"><%= t('.next', default: 'Next') %></button>
         </div>
     <% end %>
 </div>

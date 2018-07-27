@@ -27,11 +27,6 @@
             <td colspan="2" class="text-right"><%= t('.total_excl', default: 'Total (excluding Tax)') %> </td>
             <td><%= @cart.the_sub_total %></td>
         </tr>
-        <tr>
-            <td colspan="2"></td>
-            <td colspan="2" class="text-right"><%= t('.tax', default: 'Tax') %></td>
-            <td id="tax_total"><%= @cart.the_tax_total %></td>
-        </tr>
         <tr id="coupon_application_row">
             <td colspan="2"></td>
             <td colspan="2" class="text-right"><%= t('.discount', default: 'Discount') %></td>
