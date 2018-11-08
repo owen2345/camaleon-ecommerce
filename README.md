@@ -16,7 +16,7 @@ bundle install
 ```
 rake camaleon_cms:generate_migrations
 rake db:migrate
-``` 
+```
 * Restart server
 ```
 rails s
@@ -45,8 +45,8 @@ rails s
 * Categories and Tags
 * Easy extensible by visual custom fields editor
 * Default payments support: Stripe, Bank transfer, On delivery, Paypal, Authorize.net and for custom payment methods:
-https://github.com/owen2345/camaleon-ecommerce/blob/master/app/helpers/plugins/ecommerce/ecommerce_functions_helper.rb#L284
-  
+https://github.com/owen2345/camaleon-ecommerce/blob/master/app/helpers/plugins/ecommerce/ecommerce_functions_helper.rb#L289
+
 
 ## Requirements
 * Camaleon CMS >= 2.4.4.3
