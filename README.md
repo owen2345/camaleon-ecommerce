@@ -18,6 +18,7 @@ bundle install
 rake camaleon_cms:generate_migrations
 rake db:migrate
 ```
+* Add `//= link plugins/ecommerce/admin_product.js` to `app/assets/config/manifest.js` (Only rails 5+)
 * Restart server
 ```
 rails s
