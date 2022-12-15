@@ -6,7 +6,7 @@ This is a simple E-Commerce plugin that permits to start selling in about 10 min
 * Install [Camaleon CMS](https://github.com/owen2345/camaleon-cms#installation)
 * Add in your Gemfile
 ```
-gem 'camaleon_ecommerce', '>= 2.0.3'
+gem 'camaleon_ecommerce', github: 'owen2345/camaleon-ecommerce'
 # gem 'rexml', '~> 3.2', '>= 3.2.4' # if failed with "cannot load such file -- rexml/document"
 ```
 * In your console
